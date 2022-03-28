@@ -1,0 +1,6 @@
+16 March, 2022
+lastdb OKI2018_I69_1.0db ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa
+
+last-train -Q0 OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedOikopleuraAdults/ERR4570987.fastq > trainOKI2018_I69_1.0_ERR4570987.out
+
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987.out OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedOikopleuraAdults/ERR4570987.fastq | last-split -d2 -g OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987.out
