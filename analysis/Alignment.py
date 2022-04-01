@@ -100,7 +100,7 @@ class Alignment():
             '''
             get "s" lines info
             '''
-            sLines = [i for lines if i[0]=='s']
+            sLines = [i for i in lines if i[0]=='s']
             if not sLines: raise Exception('empty alignment')
             if not len(sLines) == 2 : raise Exception('not pairwise alignment')
 
