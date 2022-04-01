@@ -52,8 +52,8 @@ def main(alignmentFile):
     '''
     readID_alignments_dict = {}
     for readID, alnList in getMultiMAFEntries(alnFileHandle):
-        print(readID)
-        for aln in alnList: print(aln)
+        #print(readID)
+        #for aln in alnList: print(aln)
         readID_alignments_dict[readID] = alnList
 
     '''
