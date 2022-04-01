@@ -1,3 +1,5 @@
+from itertools import chain
+
 def dictFromStrings(strings):
     '''
     from Alignments.py inside JSA. written by Anish Shrestha
@@ -71,70 +73,70 @@ class Alignment():
         self.rStrand = kwargs['rStrand']
         self.rSeq = kwargs['rSeq']
 
-        @classmethod
-        def fromMAFEntry(cls, mafEntry):
-            # mafEntry becomes 
-            # [['a', 'score=...', ...],['s','chr', ...],['s',...]]
-            lines = list(map(str.split, mafEntry.splitlines()))
+    @classmethod
+    def fromMAFEntry(cls, mafEntry):
+        # mafEntry becomes 
+        # [['a', 'score=...', ...],['s','chr', ...],['s',...]]
+        lines = list(map(str.split, mafEntry))
 
-            '''
-            get "a" line(s) info:
-            i.e. score, mismap, sense, don, acc
-            '''
-            # extract the line(s) starting with "a"
-            aLines = [i[1:] for i in lines if i[0]=='a']
-            # {'score': 625, 'mismap': 1e-10, 'sense':-4.8 ,...}
-            namesAndValues = dictFromStrings(chain(*aLines))
-            score = int(namesAndValues['score'])
-            mismap = float(namesAndValues['mismap'])
-            sense = float(namesAndValues['sense'])
-            if 'don' in namesAndValues:
-                don = namesAndValues['don']
-            else:
-                don = None
-            if 'acc' in namesAndValues:
-                acc = namesAndValues['acc']
-            else:
-                acc = None
+        '''
+        get "a" line(s) info:
+        i.e. score, mismap, sense, don, acc
+        '''
+        # extract the line(s) starting with "a"
+        aLines = [i[1:] for i in lines if i[0]=='a']
+        # {'score': 625, 'mismap': 1e-10, 'sense':-4.8 ,...}
+        namesAndValues = dictFromStrings(chain(*aLines))
+        score = int(namesAndValues['score'])
+        mismap = float(namesAndValues['mismap'])
+        sense = float(namesAndValues['sense'])
+        if 'don' in namesAndValues:
+            don = namesAndValues['don']
+        else:
+            don = None
+        if 'acc' in namesAndValues:
+            acc = namesAndValues['acc']
+        else:
+            acc = None
 
-            '''
-            get "s" lines info
-            '''
-            sLines = [i for i in lines if i[0]=='s']
-            if not sLines: raise Exception('empty alignment')
-            if not len(sLines) == 2 : raise Exception('not pairwise alignment')
+        '''
+        get "s" lines info
+        '''
+        sLines = [i for i in lines if i[0]=='s']
+        if not sLines: raise Exception('empty alignment')
+        if not len(sLines) == 2 : raise Exception('not pairwise alignment')
 
-            refLine = sLines[0]
-            queryLine = sLines[1]
+        refLine = sLines[0]
+        queryLine = sLines[1]
 
-            gChr = refLine[1]
-            gStart = int(refLine[2])
-            gEnd = gStart+int(refLine[3])-1
-            gStrand = refLine[4]
-            gSeq = refLine[6]
+        gChr = refLine[1]
+        gStart = int(refLine[2])
+        gEnd = gStart+int(refLine[3])-1
+        gStrand = refLine[4]
+        gSeq = refLine[6]
 
-            rID = queryLine[1]
-            rStart = int(queryLine[2])
-            rEnd = rStart+int(queryLine[3])-1
-            rStrand = queryLine[4]
-            rSeq = queryLine[6]
+        rID = queryLine[1]
+        rStart = int(queryLine[2])
+        rEnd = rStart+int(queryLine[3])-1
+        rStrand = queryLine[4]
+        rSeq = queryLine[6]
 
-            '''
-            construct CIGAR
-            '''
-            alignmentColums = zip(refLine[-1].upper(),queryLine[-1].upper())
-            cigar = ''.join(cigarParts(rStart, iter(alignmentColums), int(queryLine[5]-rEnd-1)))
+        '''
+        construct CIGAR
+        '''
+        alignmentColums = zip(refLine[-1].upper(),queryLine[-1].upper())
+        cigar = ''.join(cigarParts(rStart, iter(alignmentColums), int(queryLine[5])-rEnd-1))
 
-            return cls(score=score, sense=sense, don=don, acc=acc, cigar=cigar,
-                       gChr=gChr, gStart=gStart, gEnd=gEnd, gStrand=gStrand, gSeq=gSeq,
-                       rID=rID, rStart=rStart, rEnd=rEnd, rStrand=rStrand, rSeq=rSeq)
+        return cls(score=score, sense=sense, don=don, acc=acc, cigar=cigar,
+                   gChr=gChr, gStart=gStart, gEnd=gEnd, gStrand=gStrand, gSeq=gSeq,
+                   rID=rID, rStart=rStart, rEnd=rEnd, rStrand=rStrand, rSeq=rSeq)
 
-            def __str__(self):
-                toReturn = ' '.join(['score='+str(self.score),'sense='+str(self.sense),
-                                     'don='+self.don,'acc='+self.acc]) + '\n'
-                toReturn += self.cigar + '\n'
-                toReturn += ' '.join([self.gChr, str(self.gStart), str(self.gEnd),
-                                      self.gStrand, self.gSeq]) + '\n'
-                toReturn += ' '.join([self.rID, str(self.rStart), str(self.rEnd),
-                                      self.rStrand, self.rSeq]) + '\n'
-                return toReturn
+    def __str__(self):
+        toReturn = ' '.join(['score='+str(self.score),'sense='+str(self.sense),
+                             'don='+str(self.don),'acc='+str(self.acc)]) + '\n'
+        toReturn += self.cigar + '\n'
+        toReturn += ' '.join([self.gChr, str(self.gStart), str(self.gEnd),
+                              self.gStrand, self.gSeq]) + '\n'
+        toReturn += ' '.join([self.rID, str(self.rStart), str(self.rEnd),
+                              self.rStrand, self.rSeq]) + '\n'
+        return toReturn
