@@ -5,6 +5,7 @@ Output: a pickled dictionary (key: readID, value: a list of Alignment objects)
 from Alignment import Alignment
 from itertools import groupby
 import argparse
+import pickle
 
 def filterComments(lines):
     '''
