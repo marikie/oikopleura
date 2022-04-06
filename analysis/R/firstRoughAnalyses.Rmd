@@ -1,0 +1,34 @@
+---
+title: "Oikopleura First Rough Analyses"
+author: "Mariko NAKAGAWA"
+date: "4/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data
+#### Assembled Genome:
+biohazard:~mcfrith/proj/oikopleura/raw/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa
+
+#### RNA-Seq reads:
+https://www.ncbi.nlm.nih.gov/sra/?term=PRJEB40135
+
+RNA extracted from
+
+- a pool of matured adults
+- a pool of immature adults
+- a pool of embryos
+
+## Deletions
+There are relatively large deletions in the alignments between the genome and RNA-seq reads.
+
+![e.g. matured adults, readID:ERR4570987.12](images/screenShotExampleOfLargeDeletion.png)
+
+
+```{r deletion, echo=FALSE}
+deletionData_maturedAdults <- read.table("~/biohazard/oikopleura/analysis/data/maturedOikopleuraAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
+hist(deletionData_maturedAdults$V1, main="Histgram of deletions in matured adults", xlab = "deletion length")
+```
