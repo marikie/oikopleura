@@ -52,7 +52,9 @@ def cigarParts(beg, alignmentColums, end):
 class Alignment():
 
     def __init__(self, **kwargs):
-
+        '''
+        coordinates are in inbetween coordinates
+        '''
         self.score = kwargs['score']
         self.sense = kwargs['sense']
         # self.comesFirst = kwargs['comesfirst']
@@ -109,16 +111,23 @@ class Alignment():
         refLine = sLines[0]
         queryLine = sLines[1]
 
+        '''
+        change coordinates from 0-based to inbetween
+        '''
         gChr = refLine[1]
         gStart = int(refLine[2])
-        gEnd = gStart+int(refLine[3])-1
+        gEnd = gStart+int(refLine[3])
         gStrand = refLine[4]
         gSeq = refLine[6]
 
         rID = queryLine[1]
-        rStart = int(queryLine[2])
-        rEnd = rStart+int(queryLine[3])-1
         rStrand = queryLine[4]
+        if rStrand == '+':
+            rStart = int(queryLine[2])
+            rEnd = rStart+int(queryLine[3])
+        else: # rStrand == '-'
+            rStart = int(queryLine[5]) - int(queryLine[2]) - int(queryLine[3])
+            rEnd = int(queryLine[5]) - int(queryLine[2])
         rSeq = queryLine[6]
 
         '''
@@ -135,8 +144,18 @@ class Alignment():
         toReturn = ' '.join(['score='+str(self.score),'sense='+str(self.sense),
                              'don='+str(self.don),'acc='+str(self.acc)]) + '\n'
         toReturn += self.cigar + '\n'
-        toReturn += ' '.join([self.gChr, str(self.gStart), str(self.gEnd),
-                              self.gStrand, self.gSeq]) + '\n'
-        toReturn += ' '.join([self.rID, str(self.rStart), str(self.rEnd),
-                              self.rStrand, self.rSeq]) + '\n'
+
+        maxLength_ID = len(max([self.gChr, self.rID], key=len))
+        maxLength_start = len(max([str(self.gStart), str(self.rStart)], key=len))
+        maxLength_end = len(max([str(self.gEnd), str(self.rEnd)], key=len))
+
+        toReturn += self.gChr.ljust(maxLength_ID, ' ') + ' '
+        toReturn += str(self.gStart).rjust(maxLength_start, ' ') + ' '
+        toReturn += str(self.gEnd).rjust(maxLength_end, ' ') + ' '
+        toReturn += ' '.join([self.gStrand, self.gSeq]) + '\n'
+
+        toReturn += self.rID.ljust(maxLength_ID, ' ') + ' '
+        toReturn += str(self.rStart).rjust(maxLength_start, ' ') + ' '
+        toReturn += str(self.rEnd).rjust(maxLength_end, ' ') + ' '
+        toReturn += ' '.join([self.rStrand, self.rSeq]) + '\n'
         return toReturn
