@@ -1,3 +1,14 @@
 Apr 4, 2022
 python makeAlignmentObjs.py ../last/lastsplitOKI2018_I69_1.0_ERR4570987.out
 python getDeletionLengthDistribution.py ./data/readID_alignments_dict_lastsplitOKI2018_I69_10_ERR4570987.pickle > deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt
+
+Apr 13, 2022
+cd data/maturedAdults
+python ../../makeAlignmentObjs.py ../../../last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987.maf
+
+cd data/immatureAdults
+python ../../makeAlignmentObjs.py ../../../last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986.maf
+python ../../getDeletionLengthDistribution.py readID_alignments_dict_lastsplitOKI2018_I69_10_ERR4570986.pickle > deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt
+
+cd data/embryos
+python ../../makeAlignmentObjs.py ../../../last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985.maf
