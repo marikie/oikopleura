@@ -1,8 +1,10 @@
 ---
-title: "Oikopleura First Rough Analyses"
+title: "Oikopleura: First Rough Analyses"
 author: "Mariko NAKAGAWA"
 date: "4/5/2022"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +24,14 @@ RNA extracted from
 - a pool of immature adults
 - a pool of embryos
 
+## Alignment
+#### LAST commands:
+lastdb OikopleuraDB /path/to/OKI2018_I69_1.0.removed_chrUn.fa
+
+last-train -Q0 OikopleuraDB /path/to/RNA-Seq.fastq > trainOikopleura.out
+
+lastal -D10 -p trainOikopleura.out OikopleuraDB /path/to/RNA-Seq.fastq | last-split -d2 -g OikopleuraDB > lastsplitOikopleura.out
+
 ## Deletions
 There are relatively large deletions in the alignments between the genome and RNA-seq reads.
 
@@ -29,6 +39,12 @@ There are relatively large deletions in the alignments between the genome and RN
 
 
 ```{r deletion, echo=FALSE}
-deletionData_maturedAdults <- read.table("~/biohazard/oikopleura/analysis/data/maturedOikopleuraAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
-hist(deletionData_maturedAdults$V1, main="Histgram of deletions in matured adults", xlab = "deletion length")
+deletionData_embryos <- read.table("~/biohazard/oikopleura/analysis/data/embryos/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570985.txt")
+deletionData_immatureAdults <- read.table("~/biohazard/oikopleura/analysis/data/immatureAdults/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt")
+deletionData_maturedAdults <- read.table("~/biohazard/oikopleura/analysis/data/maturedAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
+
+hist(deletionData_embryos$V1, main="Histgram of deletion length in embryos", xlab="deletion length")
+hist(deletionData_immatureAdults$V1, main="Histgram of deletion length in immature adults", xlab="deletion length")
+hist(deletionData_maturedAdults$V1, main="Histgram of deletion length in matured adults", xlab = "deletion length")
+
 ```
