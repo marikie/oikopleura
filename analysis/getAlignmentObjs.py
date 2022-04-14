@@ -18,6 +18,7 @@ def filterComments(lines):
             pass
         else: yield l
 
+
 def getMAFBlock(mafLines):
     '''
     from Alignments.py in JSA. written by Anish Shrestha.
@@ -31,6 +32,7 @@ def getMAFBlock(mafLines):
             # print(mafBlock)
             yield mafBlock
 
+
 def getMultiMAFEntries(alignmentFile):
     '''
     from Alignments.py in JSA. written by Anish Shrestha.
@@ -40,7 +42,8 @@ def getMultiMAFEntries(alignmentFile):
     '''
     alnFileHandle = open(alignmentFile, 'r')
     # alignments must be in MAF format.
-    for rid, mafEntries in groupby(getMAFBlock(alnFileHandle), lambda x: x[2].split()[1]):
+    for rid, mafEntries in groupby(getMAFBlock(alnFileHandle),
+                                   lambda x: x[2].split()[1]):
         mafEntries = list(mafEntries)
         alnObjectList = []
         if len(mafEntries) > 1:
@@ -49,12 +52,14 @@ def getMultiMAFEntries(alignmentFile):
             yield (rid, alnObjectList)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     '''
     File Parsing
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('alignmentFile', help='spliced alignments of reads to reference in MAF format')
+    parser.add_argument('alignmentFile',
+                        help='spliced alignments of reads \
+                              to reference in MAF format')
     args = parser.parse_args()
     '''
     main
