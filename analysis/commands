@@ -1,2 +1,3 @@
 Apr 4, 2022
 python makeAlignmentObjs.py ../last/lastsplitOKI2018_I69_1.0_ERR4570987.out
+python getDeletionLengthDistribution.py ./data/readID_alignments_dict_lastsplitOKI2018_I69_10_ERR4570987.pickle > deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt

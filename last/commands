@@ -1,6 +1,19 @@
-16 March, 2022
+# 16 March, 2022
+# maturedAdults
 lastdb OKI2018_I69_1.0db ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa
 
 last-train -Q0 OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedOikopleuraAdults/ERR4570987.fastq > trainOKI2018_I69_1.0_ERR4570987.out
 
 lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987.out OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedOikopleuraAdults/ERR4570987.fastq | last-split -d2 -g OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987.out
+
+# 11 April, 2022
+# immatureAdults
+last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986.fastq > trainOKI2018_I69_1.0_ERR4570986.out
+
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986.fastq | last-split -d2 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986.out
+
+# embryos
+last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985.fastq > trainOKI2018_I69_1.0_ERR4570985.out
+
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985.fastq | last-split -d2 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985.out
+
