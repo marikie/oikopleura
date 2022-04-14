@@ -1,26 +1,25 @@
 '''
-Input: a pickled dictionary (key: readID, value: a list of Alignment objects)
-Output: print readID and alignments
+Input: an alignment file (MAF format)
+Output: print readID and allignments
 '''
-import pickle
+from getAlignmentObjs import getMultiMAFEntries
 import argparse
 
-def main(pickleFile):
-    with open(pickleFile, 'rb') as f:
-        readID_alignments_dict = pickle.load(f)
-        for readID, alignments in readID_alignments_dict.items():
-            print('< {} >'.format(readID))
-            for aln in alignments: print(aln)
 
-if __name__=='__main__':
+def main(alignmentFile):
+    print('coordinates are inbetween coordinates')
+    for readID, alignments in getMultiMAFEntries(alignmentFile):
+        print('< {} >'.format(readID))
+        for aln in alignments: print(aln)
+
+if __name__ == '__main__':
     '''
     File Parsing
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('pickleFile', help='a picke file: a dictionary, key: readID, value: a list\
-                        of Alignment objects')
+    parser.add_argument('alignmentFile', help='spliced alignments of reads to reference in MAF format')
     args = parser.parse_args()
     '''
     MAIN
     '''
-    main(args.pickleFile)
+    main(args.alignmentFile)
