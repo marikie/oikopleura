@@ -57,7 +57,7 @@ class Alignment():
         '''
         self.score = kwargs['score']
         self.sense = kwargs['sense']
-        # self.comesFirst = kwargs['comesfirst']
+        self.mismap = kwargs['mismap']
         self.don = kwargs['don']
         self.acc = kwargs['acc']
 
@@ -72,12 +72,13 @@ class Alignment():
         self.rID = kwargs['rID']
         self.rStart = kwargs['rStart']
         self.rEnd = kwargs['rEnd']
+        self.rLength = kwargs['rLength']
         self.rStrand = kwargs['rStrand']
         self.rSeq = kwargs['rSeq']
 
     @classmethod
     def fromMAFEntry(cls, mafEntry):
-        # mafEntry becomes 
+        # mafEntry becomes
         # [['a', 'score=...', ...],['s','chr', ...],['s',...]]
         lines = list(map(str.split, mafEntry))
 
@@ -122,12 +123,9 @@ class Alignment():
 
         rID = queryLine[1]
         rStrand = queryLine[4]
-        if rStrand == '+':
-            rStart = int(queryLine[2])
-            rEnd = rStart+int(queryLine[3])
-        else: # rStrand == '-'
-            rStart = int(queryLine[5]) - int(queryLine[2]) - int(queryLine[3])
-            rEnd = int(queryLine[5]) - int(queryLine[2])
+        rStart = int(queryLine[2])
+        rEnd = rStart+int(queryLine[3])
+        rLength = int(queryLine[5])
         rSeq = queryLine[6]
 
         '''
@@ -136,14 +134,16 @@ class Alignment():
         alignmentColums = zip(refLine[-1].upper(),queryLine[-1].upper())
         cigar = ''.join(cigarParts(rStart, iter(alignmentColums), int(queryLine[5])-rEnd-1))
 
-        return cls(score=score, sense=sense, don=don, acc=acc, cigar=cigar,
+        return cls(score=score, sense=sense, mismap=mismap, don=don, acc=acc, cigar=cigar,
                    gChr=gChr, gStart=gStart, gEnd=gEnd, gStrand=gStrand, gSeq=gSeq,
-                   rID=rID, rStart=rStart, rEnd=rEnd, rStrand=rStrand, rSeq=rSeq)
+                   rID=rID, rStart=rStart, rEnd=rEnd, rLength=rLength, rStrand=rStrand, rSeq=rSeq)
 
     def __str__(self):
         toReturn = ' '.join(['score='+str(self.score),'sense='+str(self.sense),
+                             'mismap'+str(self.mismap),
                              'don='+str(self.don),'acc='+str(self.acc)]) + '\n'
-        toReturn += self.cigar + '\n'
+        toReturn += self.cigar + ' '
+        toReturn += 'read length: ' + str(self.rLength) + '\n'
 
         maxLength_ID = len(max([self.gChr, self.rID], key=len))
         maxLength_start = len(max([str(self.gStart), str(self.rStart)], key=len))
