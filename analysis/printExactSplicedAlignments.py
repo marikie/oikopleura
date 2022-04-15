@@ -4,11 +4,19 @@ Output:
     - print out alignments of reads that are spliced-aligned without unaligned
     segments in the middle
 '''
-from makeAlignmentObjs import getMultiMAFEntries
+from getAlignmentObjs import getMultiMAFEntries
 from collections import namedtuple
 import argparse
 import pickle
 
+def convert2CoorOnReverseStrand(alnObj):
+    '''
+    Convert start and end coordinates of a read
+    to start and end coordinates on the reverse strand of read's coordinates
+    '''
+    start = alnObj.rLength - alnObj.rEnd
+    end = alnObj.rLength - alnObj.rStart
+    return (start, end)
 
 def main(alignmentFile):
     start_end = namedtuple('start_end', ['start', 'end'])
@@ -16,15 +24,30 @@ def main(alignmentFile):
         # start and end positions on the + strand of read
         start_end_list = []
         for aln in alignments:
-            start_end_list.append(start_end(aln.rStart, aln.rEnd))
-            # sort according to start positions
-            start_end_list.sort(key=lambda s_e: s_e.start)
-            # if there are alignments whose aligned segments on the read
-            # is continuous, print all the alignments of the read
-            if any([True if start_end_list[i+1].start - start_end_list[i].end == 0
-                    else False for i in range(len(start_end_list)-1)]):
-                for aln in alignments:
-                    print(aln)
+            if aln.sense >= 0:
+                # convert - strand's coordinates to + strand's coordinates
+                if aln.rStrand == '+':
+                    start_end_list.append(start_end(aln.rStart, aln.rEnd))
+                else:
+                    aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
+                    start_end_list.append(start_end(aln.rStart, aln.rEnd))
+            else:
+                # convert + strand's coordinates to - strand's coordinates
+                if aln.rStrand == '+':
+                    aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
+                    start_end_list.append(start_end(aln.rStart, aln.rEnd))
+                else:
+                    start_end_list.append(start_end(aln.rStart, aln.rEnd))
+
+        # sort according to start positions
+        start_end_list.sort(key=lambda s_e: s_e.start)
+        # if there are alignments whose aligned segments on the read
+        # is continuous, print all the alignments of the read
+        if any([True if start_end_list[i+1].start - start_end_list[i].end == 0
+                else False for i in range(len(start_end_list)-1)]):
+            alignments.sort(key=lambda aln: aln.rStart)
+            for aln in alignments:
+                print(aln)
 
 
 if __name__ == '__main__':
