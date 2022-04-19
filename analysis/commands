@@ -12,3 +12,13 @@ python ../../getDeletionLengthDistribution.py readID_alignments_dict_lastsplitOK
 
 cd data/embryos
 python ../../makeAlignmentObjs.py ../../../last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985.maf
+
+Apr 19, 2022
+cd data/maturedAdults
+python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987.maf > splicingSignalsDistOfExactSplicings_matured.tsv 2> splicingSignalsDistOfExactSplicings_matured.error
+
+cd data/immatureAdults
+python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/oikopleura/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986.maf > splicingSignalsDistOfExactSplicings_immature.tsv 2> splicingSignalsDistOfExactSplicings_immature.error
+
+cd data/embryos
+python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985.maf > splicingSignalsDistExactSplicings_embryos.tsv 2> splicingSignalsDistExactSplicings_embryos.error
