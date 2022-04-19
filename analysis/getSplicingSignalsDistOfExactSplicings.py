@@ -9,6 +9,7 @@ Output:
 from getAlignmentObjs import getMultiMAFEntries
 from collections import namedtuple, defaultdict
 import argparse
+import sys
 
 
 def convert2CoorOnReverseStrand(alnObj):
@@ -26,32 +27,40 @@ def main(alignmentFile):
     don_acc_count_dict = defaultdict(lambda: 0)
 
     for readID, alignments in getMultiMAFEntries(alignmentFile):
+        # adjust all coordinates to + strand's coordinates
         for aln in alignments:
-            if aln.sense >= 0:
-                # convert - strand's coordinates to + strand's coordinates
-                if aln.rStrand == '+':
-                    pass
-                else:
-                    aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
+            if aln.rStrand == '+':
+                pass
             else:
-                # convert + strand's coordinates to - strand's coordinates
-                if aln.rStrand == '+':
-                    aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
-                else:
-                    pass
+                aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
 
         # sort according to read's start position
         alignments.sort(key=lambda aln: aln.rStart)
+        # if the first alignment has donor and doesn't have acceptor
+        # and the last alignment doesn't have donor and has acceptor
+        if alignments[0].don and not alignments[0].acc\
+                and not alignments[-1].don and alignments[-1].acc:
+            # do nothing
+            pass
+        # if the first alignment doesn't have donor and has acceptor
+        # and the last alignment has donor and doesn't have acceptor
+        elif not alignments[0].don and alignments[0].acc\
+                and alignments[-1].don and not alignments[-1].acc:
+            # reverse the alignments list
+            alignments.sort(reverse=True, key=lambda aln: aln.rStart)
+            # adjust all coordinates to - strand's coordinates
+            for aln in alignments:
+                aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
+        else:
+            # print to stderr
+            for aln in alignments:
+                print(aln, file=sys.stderr)
+            # go to next readID
+            continue
 
         for aln1, aln2 in zip(alignments, alignments[1:]):
             # if two separate alignments are continuous on the read
             if aln2.rStart - aln1.rEnd == 0:
-                if aln1.don is None:
-                    print(aln1)
-                    raise TypeError
-                if aln2.acc is None:
-                    print(aln2)
-                    raise TypeError
                 # increment the count of its donor and acceptor
                 don_acc_count_dict[don_acc(aln1.don, aln2.acc)] += 1
 
