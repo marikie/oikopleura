@@ -37,15 +37,15 @@ def main(alignmentFile):
         # sort according to read's start position
         alignments.sort(key=lambda aln: aln.rStart)
         # if the first alignment has donor and doesn't have acceptor
-        # and the last alignment doesn't have donor and has acceptor
-        if alignments[0].don and not alignments[0].acc\
-                and not alignments[-1].don and alignments[-1].acc:
+        # or the last alignment doesn't have donor and has acceptor
+        if (alignments[0].don and not alignments[0].acc)\
+                or (not alignments[-1].don and alignments[-1].acc):
             # do nothing
             pass
-        # if the first alignment doesn't have donor and has acceptor
-        # and the last alignment has donor and doesn't have acceptor
-        elif not alignments[0].don and alignments[0].acc\
-                and alignments[-1].don and not alignments[-1].acc:
+        # if the last alignment has donor and doesn't have acceptor
+        # or the first alignment doesn't have donor and has acceptor
+        elif (alignments[-1].don and not alignments[-1].acc)\
+                or (not alignments[0].don and alignments[0].acc):
             # reverse the alignments list
             alignments.sort(reverse=True, key=lambda aln: aln.rStart)
             # adjust all coordinates to - strand's coordinates
