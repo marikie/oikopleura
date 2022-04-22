@@ -2,19 +2,22 @@
 Input:
     - a fasta file of a reference genome
     - chromsom name (str)
-    - sequence start (int)
-    - sequence end (int)
+    - sequence start (int) (inbetween coord)
+    - sequence end (int) (inbetween coord)
 Output:
     - the sequence
 '''
 import argparse
 from Bio import SeqIO
 
-def main(fastaFile, chrName, start, end):
-    refg_dict = SeqIO.to_dict(SeqIO.parse(fastaFile, 'fasta'))
-    print(refg_dict[chrName].seq[start:(end+1)])
 
-if __name__=='__main__':
+def main(fastaFile, chrName, start, end):
+    # start and end are inbetween coordinates
+    refg_dict = SeqIO.to_dict(SeqIO.parse(fastaFile, 'fasta'))
+    print(refg_dict[chrName].seq[start:end])
+
+
+if __name__ == '__main__':
     '''
     Parsing
     '''
