@@ -1,5 +1,5 @@
 ---
-title: "Oikopleura: First Rough Analyses"
+title: "Oikopleura: First Rough Analysis"
 author: "Mariko NAKAGAWA"
 date: "4/5/2022"
 output:
@@ -9,6 +9,8 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
 ```
 
 ## Data
@@ -35,7 +37,7 @@ lastal -D10 -p trainOikopleura.out OikopleuraDB /path/to/RNA-Seq.fastq | last-sp
 ## Deletions
 There are relatively large deletions in the alignments between the genome and RNA-seq reads.
 
-![e.g. matured adults, readID:ERR4570987.12](images/screenShotExampleOfLargeDeletion.png)
+![large deletion e.g.: matured adults, readID:ERR4570987.12](images/screenShotExampleOfLargeDeletion.png)
 
 
 ```{r deletion, echo=FALSE}
@@ -47,4 +49,50 @@ hist(deletionData_embryos$V1, main="Histgram of deletion length in embryos", xla
 hist(deletionData_immatureAdults$V1, main="Histgram of deletion length in immature adults", xlab="deletion length")
 hist(deletionData_maturedAdults$V1, main="Histgram of deletion length in matured adults", xlab = "deletion length")
 
+```
+
+## Splicing Signals
+
+I read output .MAF files of LAST-SPLIT, looked 'don' and 'acc' fields, and extracted donor-and-acceptor pairs.
+
+I discarded data whose donor-and-acceptor pairs are unknown. (When both ends of the read are unaligned, it's impossible to tell the donor-and-acceptor pairs from .MAF file). 
+
+![discarded data e.g.: matured adults, readID:ERR4570987.7290](images/ScreenShotEgOfUnknownDonAccPairs.png)
+```{r splicingSignals, echo=FALSE}
+# --- embryos ----
+ss_embryos <- read.table(file='~/biohazard/oikopleura/analysis/data/embryos/splicingSignalsDistExactSplicings_embryos.tsv', sep='\t', header=T)
+ss_embryos_wNewCol <- ss_embryos %>% mutate(donor_acceptor=paste(!!!rlang::syms(c('donor', 'acceptor')), sep='_'))
+ss_embryos_fewer <- subset(ss_embryos_wNewCol, count >= 180000)
+
+g_ss_embryos <- ggplot(ss_embryos_fewer, aes(x=reorder(x=donor_acceptor, X=count),  y=count, label=scales::comma(count)))
+g_ss_embryos <- g_ss_embryos + geom_bar(stat='identity')
+g_ss_embryos <- g_ss_embryos + coord_flip()
+g_ss_embryos <- g_ss_embryos + labs(x='donor_acceptor')
+g_ss_embryos <- g_ss_embryos + geom_text(hjust=-0.1)
+#g_ss_embryos <- g_ss_embryos + scale_x_continuous(limits=seq(0,7000000))
+plot(g_ss_embryos)
+
+# --- immature ----
+ss_immature <- read.table(file='~/biohazard/oikopleura/analysis/data/immatureAdults/splicingSignalsDistOfExactSplicings_immature.tsv', sep='\t', header=T)
+ss_immature_wNewCol <- ss_immature %>% mutate(donor_acceptor=paste(!!!rlang::syms(c('donor', 'acceptor')), sep='_'))
+ss_immature_fewer <- subset(ss_immature_wNewCol, count >= 180000)
+
+g_ss_immature <- ggplot(ss_immature_fewer, aes(x=reorder(x=donor_acceptor, X=count),  y=count, label=scales::comma(count)))
+g_ss_immature <- g_ss_immature + geom_bar(stat='identity')
+g_ss_immature <- g_ss_immature + coord_flip()
+g_ss_immature <- g_ss_immature + labs(x='donor_acceptor')
+g_ss_immature <- g_ss_immature + geom_text(hjust=-0.1)
+plot(g_ss_immature)
+
+# --- matured ----
+ss_matured <- read.table(file='~/biohazard/oikopleura/analysis/data/maturedAdults/splicingSignalsDistOfExactSplicings_matured.tsv', sep='\t', header=T)
+ss_matured_wNewCol <- ss_matured %>% mutate(donor_acceptor=paste(!!!rlang::syms(c('donor', 'acceptor')), sep='_'))
+ss_matured_fewer <- subset(ss_matured_wNewCol, count >= 180000)
+
+g_ss_matured <- ggplot(ss_matured_fewer, aes(x=reorder(x=donor_acceptor, X=count),  y=count, label=scales::comma(count)))
+g_ss_matured <- g_ss_matured + geom_bar(stat='identity')
+g_ss_matured <- g_ss_matured + coord_flip()
+g_ss_matured <- g_ss_matured + labs(x='donor_acceptor')
+g_ss_matured <- g_ss_matured + geom_text(hjust=-0.1)
+plot(g_ss_matured)
 ```
