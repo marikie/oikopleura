@@ -1,0 +1,26 @@
+---
+title: "2nd Rough Analysis"
+author: "Mariko NAKAGAWA"
+date: '2022-04-28'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r readDeletionData, echo=FALSE}
+deletionData_embryos <- read.table("~/biohazard/oikopleura/analysis/data/embryos/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570985.txt")
+deletionData_immatureAdults <- read.table("~/biohazard/oikopleura/analysis/data/immatureAdults/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt")
+deletionData_maturedAdults <- read.table("~/biohazard/oikopleura/analysis/data/maturedAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
+```
+```{r drawGraph, echo=FALSE}
+# --- embryos ---
+hist(deletionData_embryos$V1, main="Histgram of deletion length in embryos", xlab="deletion length", xlim=c(0,55))
+intron_embryos <- subset(deletionData_embryos, V1 >= 35)$V1
+par(new=TRUE)
+curve(dnorm(x, mean=mean(intron_embryos), sd=sqrt(var(intron_embryos))), axes=FALSE, xlim=c(0,55), xlab="", ylab="")
+```
+### embryos
+
+mean=`r mean(intron_embryos)`, std=`r sqrt(var(intron_embryos))`
+
