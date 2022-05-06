@@ -1,8 +1,8 @@
-Apr 4, 2022
+# Apr 4, 2022
 python makeAlignmentObjs.py ../last/lastsplitOKI2018_I69_1.0_ERR4570987.out
 python getDeletionLengthDistribution.py ./data/readID_alignments_dict_lastsplitOKI2018_I69_10_ERR4570987.pickle > deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt
 
-Apr 13, 2022
+# Apr 13, 2022
 cd data/maturedAdults
 python ../../makeAlignmentObjs.py ../../../last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987.maf
 
@@ -13,7 +13,7 @@ python ../../getDeletionLengthDistribution.py readID_alignments_dict_lastsplitOK
 cd data/embryos
 python ../../makeAlignmentObjs.py ../../../last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985.maf
 
-Apr 19, 2022
+# Apr 19, 2022
 cd data/maturedAdults
 python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987.maf > splicingSignalsDistOfExactSplicings_matured.tsv 2> splicingSignalsDistOfExactSplicings_matured.error
 
@@ -22,3 +22,13 @@ python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/oikople
 
 cd data/embryos
 python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985.maf > splicingSignalsDistExactSplicings_embryos.tsv 2> splicingSignalsDistExactSplicings_embryos.error
+
+# May 6, 2022
+cd data/embryos
+python ../../getDeletionLengthDistribution.py ~/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > deletionDist_lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.txt
+
+cd data/immatureAdults
+python ../../getDeletionLengthDistribution.py ~/oikopleura/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > deletionLengthDist_lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.txt
+
+cd data/maturedAdults
+python ../../getDeletionLengthDistribution.py ~/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > deletionLengthDist_lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.txt
