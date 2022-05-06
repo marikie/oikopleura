@@ -26,7 +26,9 @@ lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/O
 # immatureAdults
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570986_sorted.out
 
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf
+
 # embryos
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570985_sorted.out
 
-
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
