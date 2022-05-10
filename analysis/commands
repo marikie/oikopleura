@@ -32,3 +32,13 @@ python ../../getDeletionLengthDistribution.py ~/oikopleura/last/immatureAdults/l
 
 cd data/maturedAdults
 python ../../getDeletionLengthDistribution.py ~/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > deletionLengthDist_lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.txt
+
+# May 10, 2022
+cd ~/data/oikopleura/analysis/embryos
+python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > splicingSignalsDistExactSplicings_embryos_filtered_trimmed_sorted.tsv 2> splicingSignalsDistExactSplicings_embryos_filtered_trimmed_sorted.error
+
+cd ~/data/oikopleura/analysis/immatureAdults
+python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oikopleura/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > splicingSignalsDistExactSplicings_immature_filtered_trimmed_sorted.tsv 2> splicingSignalsDistExactSplicings_immature_filtered_trimmed_sorted.error
+
+cd ~/data/oikopleura/analysis/maturedAdults
+python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > splicingSignalsDistExactSplicings_matured_filtered_trimmed_sorted.tsv 2> splicingSignalsDistExactSplicings_matured_filtered_trimmed_sorted.error
