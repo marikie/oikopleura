@@ -41,9 +41,9 @@ There are relatively large deletions in the alignments between the genome and RN
 <span style="color: blue;">LAST-SPLIT may report introns as large deletions. Giving intron distribution info as options to LAST-SPLIT may change the results. </span>
 
 ```{r deletion, echo=FALSE}
-deletionData_embryos <- read.table("~/biohazard/oikopleura/analysis/data/embryos/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570985.txt")
-deletionData_immatureAdults <- read.table("~/biohazard/oikopleura/analysis/data/immatureAdults/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt")
-deletionData_maturedAdults <- read.table("~/biohazard/oikopleura/analysis/data/maturedAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
+deletionData_embryos <- read.table("~/biohazard/data/oikopleura/analysis/embryos/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570985.txt")
+deletionData_immatureAdults <- read.table("~/biohazard/data/oikopleura/analysis/immatureAdults/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt")
+deletionData_maturedAdults <- read.table("~/biohazard/data/oikopleura/analysis/maturedAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
 
 hist(deletionData_embryos$V1, main="Histgram of deletion length in embryos", xlab="deletion length")
 hist(deletionData_immatureAdults$V1, main="Histgram of deletion length in immature adults", xlab="deletion length")
@@ -59,9 +59,9 @@ I discarded data whose donor-and-acceptor pairs are unknown. (When both ends of 
 
 ![discarded data e.g.: matured adults, readID:ERR4570987.7290](images/ScreenShotEgOfUnknownDonAccPairs.png)
 ```{r splicingSignals_FileReading, echo=FALSE}
-ss_embryos <- read.table(file='~/biohazard/oikopleura/analysis/data/embryos/splicingSignalsDistExactSplicings_embryos.tsv', sep='\t', header=T)
-ss_immature <- read.table(file='~/biohazard/oikopleura/analysis/data/immatureAdults/splicingSignalsDistOfExactSplicings_immature.tsv', sep='\t', header=T)
-ss_matured <- read.table(file='~/biohazard/oikopleura/analysis/data/maturedAdults/splicingSignalsDistOfExactSplicings_matured.tsv', sep='\t', header=T)
+ss_embryos <- read.table(file='~/biohazard/data/oikopleura/analysis/embryos/splicingSignalsDistExactSplicings_embryos.tsv', sep='\t', header=T)
+ss_immature <- read.table(file='~/biohazard/data/oikopleura/analysis/immatureAdults/splicingSignalsDistOfExactSplicings_immature.tsv', sep='\t', header=T)
+ss_matured <- read.table(file='~/biohazard/data/oikopleura/analysis/maturedAdults/splicingSignalsDistOfExactSplicings_matured.tsv', sep='\t', header=T)
 ```
 The number of splicing signals detected are
 
