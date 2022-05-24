@@ -34,9 +34,9 @@ perl removeUnpairedReads.pl [RUN ID]_1_filtered_trimmed.fastq [RUN ID]_2_filtere
 
 ### Get the Intron Length Distribution from the 1st Rough Analysis
 ```{r readDeletionData, echo=FALSE}
-deletionData_embryos <- read.table("~/biohazard/oikopleura/analysis/data/embryos/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570985.txt")
-deletionData_immatureAdults <- read.table("~/biohazard/oikopleura/analysis/data/immatureAdults/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt")
-deletionData_maturedAdults <- read.table("~/biohazard/oikopleura/analysis/data/maturedAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
+deletionData_embryos <- read.table("~/biohazard/data/oikopleura/analysis/embryos/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570985.txt")
+deletionData_immatureAdults <- read.table("~/biohazard/data/oikopleura/analysis/immatureAdults/deletionLengthDistribution_lastsplitOKI2018_I69_1.0_ERR4570986.txt")
+deletionData_maturedAdults <- read.table("~/biohazard/data/oikopleura/analysis/maturedAdults/deletionLengthDistribution_lastsplitOKI2018_I69_10_ERR4570987.txt")
 ```
 ```{r drawGraph_embryos, echo=FALSE}
 # --- embryos ---
