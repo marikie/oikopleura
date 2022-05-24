@@ -32,3 +32,39 @@ lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/O
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570985_sorted.out
 
 lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
+
+# May 11, 2022
+# embryos
+last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570985_sorted.out
+
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
+
+# immature adults
+last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570986_sorted.out
+
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf
+
+# matured adults
+last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570987_sorted.out
+
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf
+
+# May 24, 2022
+# embryos
+cd ~/data/oikopleura/last/embryos
+
+maf-convert sam lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.sam
+
+samtools view -b lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.sam > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.bam
+# immatureAdults
+cd ~/data/oikopleura/last/immatureAdults
+
+maf-convert sam lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.sam
+
+samtools view -b lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.sam > lastsplitOKI2018_I69_1.0_ERR4570986_sorted.bam
+# maturedAdults
+cd ~/data/oikopleura/last/maturedAdults
+
+maf-convert sam lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.sam
+
+samtools view -b lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.sam > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.bam
