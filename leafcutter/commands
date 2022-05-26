@@ -1,0 +1,10 @@
+# May 26, 2022
+# embryos
+cd ~/data/oikopleura/leafcutter/embryos
+samtools sort ../../last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.bam -o lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.sorted.bam
+# immatureAdults
+cd ~/data/oikopleura/leafcutter/immatureAdults
+samtools sort ../../last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.bam -o lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.sort.bam
+# maturedAdults
+cd ~/data/oikopleura/leafcutter/matureAdults
+samtools sort ../../last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.bam -o lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.sort.bam
