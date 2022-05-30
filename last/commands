@@ -49,3 +49,9 @@ last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/matured
 
 lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf
 
+# May 30, 2022
+# To know strandedness of the RNA-seq data
+# embryos
+lastal -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq > lastal_ERR4570985_1_filtered_trimmed_sorted.maf
+
+lastal -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > lastal_ERR4570985_filtered_trimmed_sorted.maf
