@@ -42,3 +42,8 @@ python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oi
 
 cd ~/data/oikopleura/analysis/maturedAdults
 python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > splicingSignalsDistExactSplicings_matured_filtered_trimmed_sorted.tsv 2> splicingSignalsDistExactSplicings_matured_filtered_trimmed_sorted.error
+
+# May 31, 2022
+# ---- tandem repeats -----
+cd ~/data/oikopleura/tandemRepeats
+tantan -f 4 ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa > tandemrepeats_OKI2018_I69_1.0.removed_chrUn.txt
