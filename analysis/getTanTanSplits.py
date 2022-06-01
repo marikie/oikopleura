@@ -29,14 +29,16 @@ def getTan(trData, aln, EndOrBegin):
     if EndOrBegin == 'End':
         for trRow in trData:
             if (trRow[0] == aln.gChr
-                    and trRow[1] < aln.gEnd and aln.gEnd <= trRow[2]):
+                    and int(trRow[1]) < aln.gEnd
+                    and aln.gEnd <= int(trRow[2])):
                 return trRow
         else:
             return None
     else:  # 'Begin'
         for trRow in trData:
             if (trRow[0] == aln.gChr
-                    and trRow[1] < aln.gStart and aln.gStart <= trRow[2]):
+                    and int(trRow[1]) < aln.gStart
+                    and aln.gStart <= int(trRow[2])):
                 return trRow
         else:
             return None
