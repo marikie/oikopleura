@@ -12,7 +12,7 @@ import argparse
 import sys
 
 
-def convert2CoorOnReverseStrand(alnObj):
+def convert2CoorOnOppositeStrand(alnObj):
     '''
     Convert start and end coordinates of a read
     to start and end coordinates on the reverse strand of read's coordinates
@@ -32,7 +32,7 @@ def main(alignmentFile):
             if aln.rStrand == '+':
                 pass
             else:
-                aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
+                aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
 
         # sort according to read's start position
         alignments.sort(key=lambda aln: aln.rStart)
@@ -50,7 +50,7 @@ def main(alignmentFile):
             alignments.sort(reverse=True, key=lambda aln: aln.rStart)
             # adjust all coordinates to - strand's coordinates
             for aln in alignments:
-                aln.rStart, aln.rEnd = convert2CoorOnReverseStrand(aln)
+                aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         else:
             # print to stderr
             for aln in alignments:
