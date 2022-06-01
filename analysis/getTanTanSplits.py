@@ -25,29 +25,18 @@ def getTandemRepeatData(tantanFile):
     return tandemRepeatData_sorted
 
 
-def isOverlapped(trRow, aln, EndOrBegin):
-    if EndOrBegin == 'End':
-        if (trRow[0], trRow[1]) < (aln.gChr, aln.gEnd) and (aln.gChr, aln.gEnd) <= (trRow[0], trRow[2]):
-            return True
-        else:
-            return False
-    else:  # 'Begin'
-        if (trRow[0], trRow[1]) < (aln.gChr, aln.gStart) and (aln.gChr, aln.gStart) <= (trRow[0], trRow[2]):
-            return True
-        else:
-            return False
-
-
 def getTan(trData, aln, EndOrBegin):
     if EndOrBegin == 'End':
         for trRow in trData:
-            if isOverlapped(trRow, aln, 'End'):
+            if (trRow[0] == aln.gChr
+                    and trRow[1] < aln.gEnd and aln.gEnd <= trRow[2]):
                 return trRow
         else:
             return None
     else:  # 'Begin'
         for trRow in trData:
-            if isOverlapped(trRow, aln, 'Begin'):
+            if (trRow[0] == aln.gChr
+                    and trRow[1] < aln.gStart and aln.gStart <= trRow[2]):
                 return trRow
         else:
             return None
