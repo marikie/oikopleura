@@ -12,6 +12,8 @@ Output:
 import argparse
 import csv
 from getAlignmentObjs import getMultiMAFEntries
+from getSplicingSignalsDistOfExactSplicings import convert2CoorOnOppositeStrand
+import sys
 
 
 def getTandemRepeatData(tantanFile):
@@ -47,9 +49,16 @@ def getTan(trData, aln, EndOrBegin):
 def printTantanSplits(trData, alignmentFile):
     print("--- Searching tan-tan-splits")
     for readID, alignments in getMultiMAFEntries(alignmentFile):
-        # sort alignments
-        alignments_sorted = sorted(alignments,
-                                   key=lambda a: (a.gChr, a.gStart, a.gEnd))
+        # adjust all reads' coordinates to + strand's coordinates
+        for aln in alignments:
+            if aln.rStrand == '+':
+                pass
+            else:
+                aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+
+        # sort alignments according to reads's start position
+        alignments_sorted = sorted(alignments, key=lambda a: a.rStart)
+
         for aln1, aln2 in zip(alignments_sorted, alignments_sorted[1:]):
             tan1 = getTan(trData, aln1, 'End')
             tan2 = getTan(trData, aln2, 'Begin')
@@ -58,6 +67,7 @@ def printTantanSplits(trData, alignmentFile):
                 print(aln2)
                 print('\t'.join(tan1))
                 print('\t'.join(tan2))
+                print('\n\n')
 
 
 if __name__ == '__main__':
