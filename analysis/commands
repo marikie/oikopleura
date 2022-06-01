@@ -46,4 +46,10 @@ python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oi
 # May 31, 2022
 # ---- tandem repeats -----
 cd ~/data/oikopleura/tandemRepeats
-tantan -f 4 ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa > tandemrepeats_OKI2018_I69_1.0.removed_chrUn.txt
+tantan -f 4 ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa > tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv
+
+# June 1, 2022
+# ---- search tantan-splits ----
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/embryos_tantansplits.out
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/immatureAdults_tantansplits.out
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/maturedAdults_tantansplits.out
