@@ -57,7 +57,7 @@ def printTantanSplits(trData, alignmentFile):
             else:
                 aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         # sort alignments according to reads's start position
-        alignments.sorti(key=lambda a: a.rStart)
+        alignments.sort(key=lambda a: a.rStart)
 
         # get the order of alignments
         # if the first alignment has donor and doesn't have acceptor
