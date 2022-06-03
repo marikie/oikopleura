@@ -4,7 +4,7 @@ Input:
     - an alignment file (.maf file)
 Output:
     print out spliced region with tandem repeats
-    on both exon end and exon start
+    on both exon end and exon start (check only "Exact Splits")
     - maf entry
     - tantan row
     - tantan row
@@ -49,25 +49,48 @@ def getTan(trData, aln, EndOrBegin):
 def printTantanSplits(trData, alignmentFile):
     print("--- Searching tan-tan-splits")
     for readID, alignments in getMultiMAFEntries(alignmentFile):
+        # preparation: sort alignments
         # adjust all reads' coordinates to + strand's coordinates
         for aln in alignments:
             if aln.rStrand == '+':
                 pass
             else:
                 aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
-
         # sort alignments according to reads's start position
-        alignments_sorted = sorted(alignments, key=lambda a: a.rStart)
+        alignments.sorti(key=lambda a: a.rStart)
 
-        for aln1, aln2 in zip(alignments_sorted, alignments_sorted[1:]):
-            tan1 = getTan(trData, aln1, 'End')
-            tan2 = getTan(trData, aln2, 'Begin')
-            if tan1 and tan2:
-                print(aln1)
-                print(aln2)
-                print('\t'.join(tan1))
-                print('\t'.join(tan2))
-                print('\n\n')
+        # get the order of alignments
+        # if the first alignment has donor and doesn't have acceptor
+        # or the last alignment doesn't have donor and has acceptor
+        if (alignments[0].don and not alignments[0].acc)\
+                or (not alignments[-1].don and alignments[-1].acc):
+            # do nothing
+            pass
+        # if the last alignment has donor and doesn't have acceptor
+        # or the first alignment doesn't have donor and has acceptor
+        elif (alignments[-1].don and not alignments[-1].acc)\
+                or (not alignments[0].don and alignments[0].acc):
+            # reverse the alignments list
+            alignments.sort(reverse=True, key=lambda aln: aln.rStart)
+            # adjust all coordinates to - strand's coordinates
+            for aln in alignments:
+                aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+        else:
+            # go to next readID
+            continue
+
+        for aln1, aln2 in zip(alignments, alignments[1:]):
+            # check only "Exact Splits"
+            # if two separate alignments are continuous on the reaad
+            if aln2.rStart - aln1.rEnd == 0:
+                tan1 = getTan(trData, aln1, 'End')
+                tan2 = getTan(trData, aln2, 'Begin')
+                if tan1 and tan2:
+                    print(aln1)
+                    print(aln2)
+                    print('\t'.join(tan1))
+                    print('\t'.join(tan2))
+                    print('\n\n')
 
 
 if __name__ == '__main__':
