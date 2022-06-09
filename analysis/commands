@@ -53,3 +53,36 @@ tantan -f 4 ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_paramete
 python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/embryos_tantansplits.out
 python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/immatureAdults_tantansplits.out
 python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/maturedAdults_tantansplits.out
+
+# -----------------------------------
+# check rna-seq data type
+# using RSeQC's infer_experiment.py
+# -----------------------------------
+# Download .fna and .gff files
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/209/535/GCA_000209535.1_ASM20953v1/GCA_000209535.1_ASM20953v1_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/209/535/GCA_000209535.1_ASM20953v1/GCA_000209535.1_ASM20953v1_genomic.gff.gz
+# Convert .gff to .bed using AGAT
+agat_convert_sp_gff2bed.pl --gff GCA_000209535.1_ASM20953v1_genomic.gff -o GCA_000209535.1_ASM20953v1_genomic_agat.bed
+# Convert .gff to .gtf using AGAT
+agat_convert_sp_gff2gtf.pl --gff GCA_000209535.1_ASM20953v1_genomic.gff -o GCA_000209535.1_ASM20953v1_genomic_agat.gtf
+# STAR: generate genome indexes
+STAR --runThreadN 3 --runMode genomeGenerate --genomeDir genome_index_ASM20953v1 --genomeFastaFiles ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic.fna --sjdbGTFfile ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.gtf --sjdbOverhang 99
+# STAR: alignment
+STAR --runThreadN 3 --genomeDir genome_index_ASM20953v1 --outFileNamePrefix embryos --readFilesIn ../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq ../rna-seq-data/embryos/ERR4570985_2_filtered_trimmed_sorted.fastq
+STAR --runThreadN 3 --genomeDir genome_index_ASM20953v1 --outFileNamePrefix immatureAdults --readFilesIn ../rna-seq-data/immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq ../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq
+STAR --runThreadN 3 --genomeDir genome_index_ASM20953v1 --outFileNamePrefix maturedAdults --readFilesIn ../rna-seq-data/maturedAdults/ERR4570987_1_filtered_trimmed_sorted.fastq ../rna-seq-data/maturedAdults/ERR4570987_2_filtered_trimmed_sorted.fastq
+# Convert .sam to .bam
+samtools view -b embryosAligned.out.sam > embryosAligned.out.bam
+samtools view -b immatureAdultsAligned.out.sam > immatureAdultsAligned.out.bam
+samtools view -b maturedAdultsAligned.out.sam > maturedAdultsAligned.out.bam
+# infer_experiment.py
+infer_experiment.py -r ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.bed -i embryosAligned.out.bam
+infer_experiment.py -r ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.bed -i immatureAdultsAligned.out.bam
+infer_experiment.py -r ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.bed -i maturedAdultsAligned.out.bam
+
+# June 9, 2022
+# Post-masking
+last-postmask lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf
+last-postmask lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf
+last-postmask lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf
+
