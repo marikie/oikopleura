@@ -27,49 +27,65 @@ def getTandemRepeatData(tantanFile):
     return tandemRepeatData_sorted
 
 
-def getTan(trData, aln, EndOrBegin):
-    if EndOrBegin == 'End':
-        for trRow in trData:
-            if (trRow[0] == aln.gChr
-                    and int(trRow[1]) < aln.gEnd
-                    and aln.gEnd <= int(trRow[2])):
-                return trRow
-        else:
-            return None
-    else:  # 'Begin'
-        for trRow in trData:
-            if (trRow[0] == aln.gChr
-                    and int(trRow[1]) < aln.gStart
-                    and aln.gStart <= int(trRow[2])):
-                return trRow
-        else:
-            return None
+def getIntronCoord(readStrand, aln1, aln2):
+    if (aln1.gStrand != '+' or aln2.gStrand != '+'):
+        print('gStrand = \"-\"', file=sys.stderr)
+        print(aln1, file=sys.stderr)
+        print(aln2, file=sys.stderr)
+        print('\n\n', file=sys.stderr)
+
+    # assuming aln.gStrand == '+'
+    if ((readStrand == '+' and aln1.rStrand == '+') or
+            (readStrand == '-' and aln1.rStrand == '-')):
+        intronStart = (aln1.gChr, aln1.gEnd, '+')
+    else:
+        # ((readStrand == '+' and aln1.rStrand == '-') or
+        #   (readStrand == '-' and aln1.rStrand == '+'))
+        intronStart = (aln1.gChr, aln1.gStart, '-')
+
+    if ((readStrand == '+' and aln2.rStrand == '+') or
+            (readStrand == '-' and aln2.rStrand == '-')):
+        intronEnd = (aln2.gChr, aln2.gStart, '+')
+    else:
+        # ((readStrand == '+' and aln1.rStrand == '-') or
+        #   (readStrand == '-' and aln1.rStrand == '+'))
+        intronEnd = (aln2.gChr, aln2.gEnd, '-')
+
+    return (intronStart, intronEnd)
+
+
+def getTan(trData, intronStartOrEnd):
+    for trRow in trData:
+        if (trRow[0] == intronStartOrEnd[0]
+                and int(trRow[1]) < intronStartOrEnd[1]
+                and intronStartOrEnd[1] <= int(trRow[2])):
+            return trRow
+    else:
+        return None
 
 
 def printTantanSplits(trData, alignmentFile):
     print("--- Searching tan-tan-splits")
+    count = 0
     for readID, alignments in getMultiMAFEntries(alignmentFile):
-        # preparation: sort alignments
-        # adjust all reads' coordinates to + strand's coordinates
-        for aln in alignments:
-            if aln.rStrand == '+':
-                pass
-            else:
-                aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
-        # sort alignments according to reads's start position
-        alignments.sort(key=lambda a: a.rStart)
+        # prerequisite:
+        # alignments are already sorted
+        # according to + strand's coordinates
 
+        readStrand = None
         # get the order of alignments
         # if the first alignment has donor and doesn't have acceptor
         # or the last alignment doesn't have donor and has acceptor
         if (alignments[0].don and not alignments[0].acc)\
                 or (not alignments[-1].don and alignments[-1].acc):
-            # do nothing
-            pass
+            # set readStrand to '+'
+            readStrand = '+'
         # if the last alignment has donor and doesn't have acceptor
         # or the first alignment doesn't have donor and has acceptor
         elif (alignments[-1].don and not alignments[-1].acc)\
                 or (not alignments[0].don and alignments[0].acc):
+            # set readStrand to '-'
+            readStrand = '-'
             # reverse the alignments list
             alignments.sort(reverse=True, key=lambda aln: aln.rStart)
             # adjust all coordinates to - strand's coordinates
@@ -83,9 +99,21 @@ def printTantanSplits(trData, alignmentFile):
             # check only "Exact Splits"
             # if two separate alignments are continuous on the reaad
             if aln2.rStart - aln1.rEnd == 0:
-                tan1 = getTan(trData, aln1, 'End')
-                tan2 = getTan(trData, aln2, 'Begin')
-                if tan1 and tan2:
+                intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
+                tan1 = getTan(trData, intronStart)
+                tan2 = getTan(trData, intronEnd)
+                if tan1 == tan2 and aln1.rStrand == aln2.rStrand:
+                    print('tandem expansion', file=sys.stderr)
+                    print('strand of read: {}'.format(readStrand))
+                    print(aln1)
+                    print(aln2)
+                    print('\t'.join(tan1))
+                    print('\t'.join(tan2))
+                    print('\n\n')
+                elif tan1 and tan2:
+                    ++count
+                    print(count)
+                    print('strand of read: {}'.format(readStrand))
                     print(aln1)
                     print(aln2)
                     print('\t'.join(tan1))
