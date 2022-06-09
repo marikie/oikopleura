@@ -16,6 +16,11 @@ samtools view -b embryosAligned.out.sam > embryosAligned.out.bam
 samtools view -b immatureAdultsAligned.out.sam > immatureAdultsAligned.out.bam
 samtools view -b maturedAdultsAligned.out.sam > maturedAdultsAligned.out.bam
 # June 3, 2022
+# samtools sort
 samtools sort -o embryosAligned.out_sorted.bam -T embryos_temp embryosAligned.out.bam
 samtools sort -o immatureAdultsAligned.out_sorted.bam -T immatureAdults_temp immatureAdultsAligned.out.bam
 samtools sort -o maturedAdultsAligned.out_sorted.bam -T maturedAdults_temp maturedAdultsAligned.out.bam
+# samtools index
+samtools index embryosAligned.out_sorted.bam
+samtools index immatureAdultsAligned.out_sorted.bam
+samtools index maturedAdultsAligned.out_sorted.bam
