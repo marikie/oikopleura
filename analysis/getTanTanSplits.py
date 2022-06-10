@@ -29,7 +29,7 @@ def getTandemRepeatData(tantanFile):
 
 def getIntronCoord(readStrand, aln1, aln2):
     if (aln1.gStrand != '+' or aln2.gStrand != '+'):
-        print('gStrand = \"-\"', file=sys.stderr)
+        print('< gStrand = \"-\" >', file=sys.stderr)
         print(aln1, file=sys.stderr)
         print(aln2, file=sys.stderr)
         print('\n\n', file=sys.stderr)
@@ -102,14 +102,16 @@ def printTantanSplits(trData, alignmentFile):
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
                 tan1 = getTan(trData, intronStart)
                 tan2 = getTan(trData, intronEnd)
-                if tan1 == tan2 and aln1.rStrand == aln2.rStrand:
-                    print('tandem expansion', file=sys.stderr)
-                    print('strand of read: {}'.format(readStrand))
-                    print(aln1)
-                    print(aln2)
-                    print('\t'.join(tan1))
-                    print('\t'.join(tan2))
-                    print('\n\n')
+                if (tan1 and tan2 and tan1 == tan2
+                        and aln1.rStrand == aln2.rStrand):
+                    print('< tandem expansion >', file=sys.stderr)
+                    print('strand of read: {}'.format(readStrand),
+                          file=sys.stderr)
+                    print(aln1, file=sys.stderr)
+                    print(aln2, file=sys.stderr)
+                    print('\t'.join(tan1), file=sys.stderr)
+                    print('\t'.join(tan2), file=sys.stderr)
+                    print('\n\n', file=sys.stderr)
                 elif tan1 and tan2:
                     ++count
                     print(count)
