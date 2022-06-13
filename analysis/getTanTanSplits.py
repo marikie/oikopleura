@@ -80,6 +80,10 @@ def printTantanSplits(trData, alignmentFile):
                 or (not alignments[-1].don and alignments[-1].acc):
             # set readStrand to '+'
             readStrand = '+'
+            # adjust all coordinates to + strand's coordinates
+            for aln in alignments:
+                if aln.rStrand == '-':
+                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         # if the last alignment has donor and doesn't have acceptor
         # or the first alignment doesn't have donor and has acceptor
         elif (alignments[-1].don and not alignments[-1].acc)\
@@ -87,10 +91,11 @@ def printTantanSplits(trData, alignmentFile):
             # set readStrand to '-'
             readStrand = '-'
             # reverse the alignments list
-            alignments.sort(reverse=True, key=lambda aln: aln.rStart)
+            alignments.reverse()
             # adjust all coordinates to - strand's coordinates
             for aln in alignments:
-                aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+                if aln.rStrand == '+':
+                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         else:
             # go to next readID
             continue
@@ -112,7 +117,9 @@ def printTantanSplits(trData, alignmentFile):
                     print('\t'.join(tan1), file=sys.stderr)
                     print('\t'.join(tan2), file=sys.stderr)
                     print('\n\n', file=sys.stderr)
-                elif tan1 and tan2:
+                elif (tan1 and tan2
+                        and aln1.don.upper() == 'GT'
+                        and aln2.acc.upper() == 'AG'):
                     print(count := count+1)
                     print('strand of read: {}'.format(readStrand))
                     print(aln1)
