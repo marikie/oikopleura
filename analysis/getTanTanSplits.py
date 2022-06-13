@@ -96,8 +96,8 @@ def printTantanSplits(trData, alignmentFile):
             continue
 
         for aln1, aln2 in zip(alignments, alignments[1:]):
-            # check only "Exact Splits"
             # if two separate alignments are continuous on the reaad
+            # (checking only "Exact Splits")
             if aln2.rStart - aln1.rEnd == 0:
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
                 tan1 = getTan(trData, intronStart)
@@ -113,8 +113,7 @@ def printTantanSplits(trData, alignmentFile):
                     print('\t'.join(tan2), file=sys.stderr)
                     print('\n\n', file=sys.stderr)
                 elif tan1 and tan2:
-                    ++count
-                    print(count)
+                    print(count := count+1)
                     print('strand of read: {}'.format(readStrand))
                     print(aln1)
                     print(aln2)
