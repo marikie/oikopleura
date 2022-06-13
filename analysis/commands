@@ -86,3 +86,6 @@ last-postmask lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > 
 last-postmask lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf
 last-postmask lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf
 
+# June 10, 2022
+# search tan-tan splits
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf > ~/data/oikopleura/tandemRepeats/embryos_postmask_tantansplits.out 2> ~/data/oikopleura/tandemRepeats/embryos_postmask_tandemexpansion_and_error.err 
