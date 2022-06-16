@@ -115,14 +115,14 @@ def getAlignmentData(alignmentFile):
 
 def beg(element):
     if isinstance(element, list):
-        return (element[0], element[1])
+        return (element[0], int(element[1]))
     else:
         return (element[1][0][0], element[1][0][1])
 
 
 def end(element):
     if isinstance(element, list):
-        return (element[0], element[2])
+        return (element[0], int(element[2]))
     else:
         return (element[1][1][0], element[1][1][1])
 
