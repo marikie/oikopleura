@@ -4,7 +4,8 @@ Input:
     - an alignment file (.maf file)
 Output:
     print out spliced region with tandem repeats
-    on both exon end and exon start (check only "Exact Splits")
+    on both exon end and exon start
+    (check only "Exact Splits" and 'GT-AG' introns)
     - maf entry
     - tantan row
     - tantan row
@@ -148,14 +149,18 @@ def printTantanSplits(trData, alignments_list, outputFile):
                     while (n < len(trData)
                            and beg(trData[n] < end(alignments_list[i]))):
                         tan2 = trData[n]
-                        print(count := count+1)
-                        print('strand of read: {}'.format(
-                            alignments_list[i][0][0]))
-                        print(alignments_list[i][0][1])
-                        print(alignments_list[i][0][2])
-                        print('\t'.join(tan1))
-                        print('\t'.join(tan2))
-                        print('\n\n')
+                        rStrand = alignments_list[i][0][0]
+                        aln1 = alignments_list[i][0][1]
+                        aln2 = alignments_list[i][0][2]
+                        if (aln1.don.upper() == 'GT'
+                                and aln2.acc.upper() == 'AG'):
+                            print(count := count+1)
+                            print('strand of read: {}'.format(rStrand))
+                            print(aln1)
+                            print(aln2)
+                            print('\t'.join(tan1))
+                            print('\t'.join(tan2))
+                            print('\n\n')
                         n += 1
                     k += 1
     except FileExistsError as e:
