@@ -100,9 +100,9 @@ def getAlignmentData(alignmentFile):
             # do NOT append alignments with inexact splits
             if aln2.rStart - aln1.rEnd == 0:
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
-            # alignments_list: list of list
-            alignments_list.append(((readStrand, aln1, aln2),
-                                    (intronStart, intronEnd)))
+                # alignments_list: list of list
+                alignments_list.append(((readStrand, aln1, aln2),
+                                        (intronStart, intronEnd)))
 
     # sort alignments_list according to
     # intronStart and intronEnd chromosom name and coord
@@ -129,43 +129,39 @@ def end(element):
 
 def printTantanSplits(trData, alignments_list, outputFile):
     print('--- Searching tan-tan-splits')
-    try:
-        with open(outputFile, mode='x'):
-            count = 0
-            j = 0
-            for i in range(len(alignments_list)):
-                while (j < len(trData)
-                        and end(trData[j]) < beg(alignments_list[i])):
-                    j += 1
-                k = j
-                while (k < len(trData)
-                        and beg(trData[k]) < beg(alignments_list[i])):
-                    tan1 = trData[k]
-                    m = k + 1
-                    while (m < len(trData)
-                           and end(trData[m]) < end(alignments_list[i])):
-                        m += 1
-                    n = m
-                    while (n < len(trData)
-                           and beg(trData[n] < end(alignments_list[i]))):
-                        tan2 = trData[n]
-                        rStrand = alignments_list[i][0][0]
-                        aln1 = alignments_list[i][0][1]
-                        aln2 = alignments_list[i][0][2]
-                        if (aln1.don.upper() == 'GT'
-                                and aln2.acc.upper() == 'AG'):
-                            print(count := count+1)
-                            print('strand of read: {}'.format(rStrand))
-                            print(aln1)
-                            print(aln2)
-                            print('\t'.join(tan1))
-                            print('\t'.join(tan2))
-                            print('\n\n')
-                        n += 1
-                    k += 1
-    except FileExistsError as e:
-        print(e)
-        sys.exit(1)
+    with open(outputFile, mode='w'):
+        count = 0
+        j = 0
+        for i in range(len(alignments_list)):
+            while (j < len(trData)
+                    and end(trData[j]) < beg(alignments_list[i])):
+                j += 1
+            k = j
+            while (k < len(trData)
+                    and beg(trData[k]) < beg(alignments_list[i])):
+                tan1 = trData[k]
+                m = k + 1
+                while (m < len(trData)
+                       and end(trData[m]) < end(alignments_list[i])):
+                    m += 1
+                n = m
+                while (n < len(trData)
+                       and beg(trData[n]) < end(alignments_list[i])):
+                    tan2 = trData[n]
+                    rStrand = alignments_list[i][0][0]
+                    aln1 = alignments_list[i][0][1]
+                    aln2 = alignments_list[i][0][2]
+                    if (aln1.don.upper() == 'GT'
+                            and aln2.acc.upper() == 'AG'):
+                        print(count := count+1)
+                        print('strand of read: {}'.format(rStrand))
+                        print(aln1)
+                        print(aln2)
+                        print('\t'.join(tan1))
+                        print('\t'.join(tan2))
+                        print('\n\n')
+                    n += 1
+                k += 1
 
 
 if __name__ == '__main__':
