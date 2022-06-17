@@ -64,11 +64,13 @@ def getIntronCoord(readStrand, aln1, aln2):
     Return intron start coordinates and intron end coodinates.
     The coordinates include strand info too.
     '''
-    if (aln1.gStrand != '+' or aln2.gStrand != '+'):
-        print('< gStrand = \"-\" >', file=sys.stderr)
-        print(aln1, file=sys.stderr)
-        print(aln2, file=sys.stderr)
-        print('\n\n', file=sys.stderr)
+    try:
+        if not (aln1.gStrand == '+' and aln2.gStrand == '+'):
+            raise Exception
+    except Exception:
+        print('< gStrand = \"-\" >')
+        print(aln1)
+        print(aln2)
 
     # assuming aln.gStrand == '+'
     if ((readStrand == '+' and aln1.rStrand == '+') or
@@ -88,3 +90,58 @@ def getIntronCoord(readStrand, aln1, aln2):
         intronEnd = (aln2.gChr, aln2.gEnd, '-')
 
     return (intronStart, intronEnd)
+
+
+def getAlignmentData(alignmentFile):
+    '''
+    return a list of ((readStrand, aln1, aln2), (intronStart, intronEnd))
+    return only 'Exact Splits' and alignments with don-acc pairs
+    '''
+    alignments_list = []
+    for readID, alignments in getMultiMAFEntries(alignmentFile):
+        # prerequisite:
+        # alignments are already sorted
+        # according to + strand's coordinates
+
+        readStrand = None
+        # get the order of alignments
+        # if the first alignment has donor and doesn't have acceptor
+        # or the last alignment doesn't have donor and has acceptor
+        if (alignments[0].don and not alignments[0].acc)\
+                or (not alignments[-1].don and alignments[-1].acc):
+            # set readStrand to '+'
+            readStrand = '+'
+            # adjust all coordinates to + strand's coordinates
+            for aln in alignments:
+                if aln.rStrand == '-':
+                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+        # if the last alignment has donor and doesn't have acceptor
+        # or the first alignment doesn't have donor and has acceptor
+        elif (alignments[-1].don and not alignments[-1].acc)\
+                or (not alignments[0].don and alignments[0].acc):
+            # set readStrand to '-'
+            readStrand = '-'
+            # reverse the alignments list
+            alignments.reverse()
+            # adjust all coordinates to - strand's coordinates
+            for aln in alignments:
+                if aln.rStrand == '+':
+                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+        else:
+            # go to next readID
+            # (do NOT append to alignments_list)
+            continue
+
+        for aln1, aln2 in zip(alignments, alignments[1:]):
+            # if two separate alignments are continuous on the reaad
+            # (checking only "Exact Splits")
+            # do NOT append alignments with inexact splits
+            if aln2.rStart - aln1.rEnd == 0:
+                intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
+                # alignments_list: list of list
+                alignments_list.append(((readStrand, aln1, aln2),
+                                        (intronStart, intronEnd)))
+
+    return alignments_list
+
+
