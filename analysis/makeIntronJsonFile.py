@@ -76,7 +76,7 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                 ss = (aln1.don, aln2.acc)
                 if ((aln1.don.upper(), aln2.acc.upper()) == (('GT', 'AG')
                                                              or ('CT', 'AC'))):
-                    print('Here {} {}'.format(aln1.don, aln2.acc))
+                    # print('Here {} {}'.format(aln1.don, aln2.acc))
                     if intronCoords_str not in intron_can_dict:
                         intron_can_dict[intronCoords_str] = \
                                 {'intronStart': {'chr': intronStart[0],
