@@ -95,3 +95,8 @@ python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_
 python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/embryos_postmask.out 2> ~/data/tandemRepeats/embryos_tandemexpansion_postmask.out 
 python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/immatureAdults_tantansplits.out 2> ~/data/tandemRepeats/immatureAdults_tandemexpansion.out
 python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/matureAdults_postmask.out 2> ~/data/tandemRepeats/matureAdults_tandemexpansion.out
+
+# make intron files
+python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/analysis/embryos/canonical_introns_embryos.json ~/data/analysis/embryos/non-canonical_introns_embryos.json
+python makeIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf ~/data/analysis/immatureAdults/canonical_introns_immatureAdults.json ~/data/analysis/immatureAdults/non-canonical_introns_immatureAdults.json
+python makeIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf ~/data/analysis/maturedAdults/canonical_introns_matureAdults.json ~/data/analysis/maturedAdults/non-canonical_introns_matureAdults.json
