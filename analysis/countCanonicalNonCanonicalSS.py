@@ -75,7 +75,8 @@ def main(alignmentFile):
         # count intron which has only 1 type of splicing signal
         if len(set(sslist_upper)) == 1:
             # canonical splicing signal
-            if sslist_upper[0] == ('GT', 'AG') or sslist[0] == ('CT', 'AC'):
+            if (sslist_upper[0] == ('GT', 'AG') or
+                    sslist_upper[0] == ('CT', 'AC')):
                 canonical += 1
             # non-canonical splicing signal
             else:
