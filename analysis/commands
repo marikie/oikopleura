@@ -89,3 +89,9 @@ last-postmask lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > 
 # June 10, 2022
 # search tan-tan splits
 python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf > ~/data/oikopleura/tandemRepeats/embryos_postmask_tantansplits.out 2> ~/data/oikopleura/tandemRepeats/embryos_postmask_tandemexpansion_and_error.err 
+
+# June 22, 2022
+# search tan-tan splits
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/embryos_postmask.out 2> ~/data/tandemRepeats/embryos_tandemexpansion_postmask.out 
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/immatureAdults_tantansplits.out 2> ~/data/tandemRepeats/immatureAdults_tandemexpansion.out
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/matureAdults_postmask.out 2> ~/data/tandemRepeats/matureAdults_tandemexpansion.out
