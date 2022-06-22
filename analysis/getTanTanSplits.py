@@ -76,36 +76,43 @@ def printTantanSplits(trData, alignmentFile, outputFile):
             # go to next readID
             continue
 
-        with open(outputFile, mode='w'):
-            for aln1, aln2 in zip(alignments, alignments[1:]):
-                # if two separate alignments are continuous on the reaad
-                # (checking only "Exact Splits")
-                if aln2.rStart - aln1.rEnd == 0:
-                    intronStart, intronEnd = getIntronCoord(readStrand,
-                                                            aln1, aln2)
-                    tan1 = getTan(trData, intronStart)
-                    tan2 = getTan(trData, intronEnd)
-                    if (tan1 and tan2 and tan1 == tan2
-                            and aln1.rStrand == aln2.rStrand):
-                        print('< tandem expansion >', file=sys.stderr)
-                        print(excount := excount+1, file=sys.stderr)
-                        print('strand of read: {}'.format(readStrand),
-                              file=sys.stderr)
-                        print(aln1, file=sys.stderr)
-                        print(aln2, file=sys.stderr)
-                        print('\t'.join(tan1), file=sys.stderr)
-                        print('\t'.join(tan2), file=sys.stderr)
-                        print('\n\n', file=sys.stderr)
-                    elif (tan1 and tan2
-                            and aln1.don.upper() == 'GT'
-                            and aln2.acc.upper() == 'AG'):
-                        print(count := count+1)
-                        print('strand of read: {}'.format(readStrand))
-                        print(aln1)
-                        print(aln2)
-                        print('\t'.join(tan1))
-                        print('\t'.join(tan2))
-                        print('\n\n')
+        for aln1, aln2 in zip(alignments, alignments[1:]):
+            # if two separate alignments are continuous on the reaad
+            # (checking only "Exact Splits")
+            if aln2.rStart - aln1.rEnd == 0:
+                # print('found exact split')
+                # print('strand of read {}'.format(readStrand))
+                # print(aln1)
+                # print(aln2)
+                intronStart, intronEnd = getIntronCoord(readStrand,
+                                                        aln1, aln2)
+                # print(intronStart)
+                # print(intronEnd)
+                tan1 = getTan(trData, intronStart)
+                tan2 = getTan(trData, intronEnd)
+                # print(tan1)
+                # print(tan2)
+                if (tan1 and tan2 and tan1 == tan2
+                        and aln1.rStrand == aln2.rStrand):
+                    print('< tandem expansion >', file=sys.stderr)
+                    print(excount := excount+1, file=sys.stderr)
+                    print('strand of read: {}'.format(readStrand),
+                          file=sys.stderr)
+                    print(aln1, file=sys.stderr)
+                    print(aln2, file=sys.stderr)
+                    print('\t'.join(tan1), file=sys.stderr)
+                    print('\t'.join(tan2), file=sys.stderr)
+                    print('\n\n', file=sys.stderr)
+                elif (tan1 and tan2):
+                    # print('FOUND!')
+                    with open(outputFile, 'a') as f:
+                        f.write(str(count := count+1)+'\n')
+                        f.write('strand of read: {}\n'.format(readStrand))
+                        f.write(str(aln1))
+                        f.write(str(aln2))
+                        f.write('\t'.join(tan1)+'\n')
+                        f.write('\t'.join(tan2)+'\n')
+                        f.write('\n\n')
 
 
 if __name__ == '__main__':
