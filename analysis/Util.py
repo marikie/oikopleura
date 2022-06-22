@@ -1,6 +1,5 @@
 from Alignment import Alignment
 from itertools import groupby
-import sys
 
 
 def filterComments(lines):
@@ -145,3 +144,16 @@ def getAlignmentData(alignmentFile):
     return alignments_list
 
 
+def toSTR(intronCoords):
+    '''
+    convert intronCoords into string
+    intronCoords == ((sChr(str), sPos(int), sStrand(str)),
+                     (eChr(str), ePos(int), eStrand(str))
+    -> sChr_sPos_sStrand_eChr_ePos_eStrand
+    '''
+    startCoord = '_'.join([intronCoords[0][0], str(intronCoords[0][1]),
+                           intronCoords[0][2]])
+    endCoord = '_'.join([intronCoords[1][0], str(intronCoords[1][1]),
+                        intronCoords[1][2]])
+    intronCoords_str = '_'.join([startCoord, endCoord])
+    return intronCoords_str
