@@ -29,6 +29,69 @@ import json
 from Util import toSTR
 
 
+def leftTuple(intron_dict):
+    return min((intron_dict['intronStart']['chr'],
+                intron_dict['intronStart']['pos'],
+                intron_dict['intronStart']['strand']),
+               (intron_dict['intronEnd']['chr'],
+                intron_dict['intronEnd']['pos'],
+                intron_dict['intronEnd']['strand']))
+
+
+def rightTuple(intron_dict):
+    return max((intron_dict['intronStart']['chr'],
+                intron_dict['intronStart']['pos'],
+                intron_dict['intronStart']['strand']),
+               (intron_dict['intronEnd']['chr'],
+                intron_dict['intronEnd']['pos'],
+                intron_dict['intronEnd']['strand']))
+
+
+def left(intron_dict):
+    '''
+    return leftmost (smallest) position
+    '''
+    leftmostPos = min(intron_dict['intronStart']['pos'],
+                      intron_dict['intronEnd']['pos'])
+    return leftmostPos
+
+
+def right(intron_dict):
+    '''
+    return rightmost (largest) position
+    '''
+    rightmostPos = max(intron_dict['intronStart']['pos'],
+                       intron_dict['intronEnd']['pos'])
+    return rightmostPos
+
+
+def toIntronCoord(intron_dict):
+    return ((intron_dict['intronStart']['chr'],
+             intron_dict['intronStart']['pos'],
+             intron_dict['intronStart']['strand']),
+            (intron_dict['intronEnd']['chr'],
+             intron_dict['intronEnd']['pos'],
+             intron_dict['intronEnd']['strand']))
+
+
+def simple(intron_dict):
+    '''
+    delete 'readIDs' and add 'reads',
+    which contains the number of reads supporting
+    the intron
+    '''
+    intron_dict['reads'] = len(intron_dict.pop('readIDs'))
+    return intron_dict
+
+
+def intronLen(intron_dict):
+    '''
+    return intron length
+    (assuming intron start and end are on the same chromosome)
+    '''
+    return right(intron_dict) - left(intron_dict)
+
+
 def main(intronJsonFile, outputJsonFile):
     # load JSON file
     print('--- loading the json file')
@@ -36,35 +99,59 @@ def main(intronJsonFile, outputJsonFile):
         introns = json.load(f)
     # store intron_dict into a list
     print('--- storing dict into a list')
-    intronList_plus = []
-    intronList_minus = []
+    intronList = []
     for intron_dict in introns.values():
+        # if trans-splicing
         if (intron_dict['intronStart']['strand'] !=
-            intron_dict['intronEnd']['strand']):
+            intron_dict['intronEnd']['strand'] or
+            intron_dict['intronStart']['chr'] !=
+                intron_dict['intronEnd']['chr']):
+            # do NOT add to the list
+            # go to next intron_dict
+            continue
+        # if intron is too long
+        elif (intronLen(intron_dict) > 100):
             # do NOT add to the list
             # go to next intron_dict
             continue
         else:
-            if intron_dict['intronStart']['strand'] == '+':
-                intronList_plus.append(intron_dict)
-            else:
-                intronList_minus.append(intron_dict)
+            intronList.append(intron_dict)
     # sort intronList
     print('--- sorting the intron lists')
-    intronList_plus.sort(key=lambda d: (d['intronStart']['chr'],
-                                        d['intronStart']['pos'],
-                                        d['intronEnd']['chr'],
-                                        d['intronEnd']['pos']))
-    intronList_minus.sort(key=lambda d: (d['intronStart']['chr'],
-                                         d['intronStart']['pos'],
-                                         d['intronEnd']['chr'],
-                                         d['intronEnd']['pos']))
-    # cluster overlapping introns on the plus strand of chromosome
-    overlapping_introns_plus = {}
+    intronList.sort(key=lambda d: (leftTuple(d), rightTuple(d)))
+    # print(intronList)
+
+    # cluster overlapping introns
+    print('--- clustering the introns')
+    overlapping_introns = {}
     k = 0
-    for i, intron in enumerate(intronList_plus):
-        while (intronList_plus[k]['intronStart']['pos'] <
-               intronList_plus[i]['intronEnd']['pos']):
+    for i, intron in enumerate(intronList):
+        if i != k:
+            # go to next i
+            continue
+        else:
+            k = i+1
+            # print(i)
+            # print(intronList[i])
+            # print(right(intronList[i]))
+            while (k < len(intronList)
+                    and intronList[k]['intronStart']['chr'] ==
+                   intronList[i]['intronStart']['chr']
+                    and left(intronList[k]) < right(intronList[i])):
+                # print(i, k)
+                # print(intronList[k])
+                # print(left(intronList[k]))
+                leftmostIntron = toSTR(toIntronCoord(intron))
+                if leftmostIntron not in overlapping_introns:
+                    overlapping_introns[leftmostIntron] = \
+                            [simple(intronList[i]), simple(intronList[k])]
+                else:
+                    overlapping_introns[leftmostIntron].append(
+                        simple(intronList[k]))
+                k += 1
+    # dump in the outputJsonFile
+    with open(outputJsonFile, 'w') as f:
+        json.dump(overlapping_introns, f, indent=2)
 
 
 if __name__ == '__main__':
