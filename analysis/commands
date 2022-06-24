@@ -100,3 +100,11 @@ python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.rem
 python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/analysis/embryos/canonical_introns_embryos.json ~/data/analysis/embryos/non-canonical_introns_embryos.json
 python makeIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf ~/data/analysis/immatureAdults/canonical_introns_immatureAdults.json ~/data/analysis/immatureAdults/non-canonical_introns_immatureAdults.json
 python makeIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf ~/data/analysis/maturedAdults/canonical_introns_matureAdults.json ~/data/analysis/maturedAdults/non-canonical_introns_matureAdults.json
+
+# June 23, 2022
+python getOverlappingIntrons.py ~/data/analysis/embryos/canonical_introns_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_embryos.json
+python getOverlappingIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults.json ~/data/analysis/immatureAdults/overlapping_introns_canonical_immatureAdults.json
+python getOverlappingIntrons.py ~/data/analysis/maturedAdults/canonical_introns_matureAdults.json ~/data/analysis/maturedAdults/overlapping_introns_canonical_maturedAdults.json
+
+# June 24, 2022
+python extractNoSharingIntrons.py ~/data/analysis/embryos/overlapping_introns_canonical_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_unique_embryos.json
