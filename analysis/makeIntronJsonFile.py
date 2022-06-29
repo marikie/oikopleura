@@ -1,9 +1,33 @@
 '''
 Make a Jason file about Introns.
+Only add alignments whose don and acc are known.
 Only add exact splicings.
 
 Input: an alignment file (MAF format)
-Output: a json file
+Output: two json files (canonical and non-canonical)
+{'intronCoords': {
+    'intronStart': {
+        'chr': str,
+        'pos': int,
+        'strand': str
+    },
+    'intronEnd':{
+        'chr': str,
+        'pos': int,
+        'strand': str
+    },
+    'splicingSignal': [
+        'GT',
+        'AG'
+    ],
+    'readIDs': [
+        ...
+    ],
+    alignments: [
+        [alignments],
+        [alignments]
+    ]
+ }, ... }
 '''
 import argparse
 from Util import getMultiMAFEntries
@@ -74,6 +98,7 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                 intronCoords = (intronStart, intronEnd)
                 intronCoords_str = toSTR(intronCoords)
                 ss = (aln1.don, aln2.acc)
+                # canonical introns
                 if ((aln1.don.upper(), aln2.acc.upper()) == (('GT', 'AG')
                                                              or ('CT', 'AC'))):
                     # print('Here {} {}'.format(aln1.don, aln2.acc))
@@ -86,11 +111,19 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                                                'pos': intronEnd[1],
                                                'strand': intronEnd[2]},
                                  'splicingSignal': ss,
-                                 'readIDs': [readID]}
+                                 'readIDs': [readID],
+                                 'alignments': [(aln1._MAF().split('\n')[:-1],
+                                                 aln2._MAF().split('\n')[:-1])]
+                                 }
                     else:
                         intron_can_dict[intronCoords_str]['readIDs'].append(
                             readID
                         )
+                        intron_can_dict[intronCoords_str]['alignments'].append(
+                            (aln1._MAF().split('\n')[:-1],
+                             aln2._MAF().split('\n')[:-1])
+                        )
+                # non-canonical introns
                 else:
                     if intronCoords_str not in intron_non_dict:
                         intron_non_dict[intronCoords_str] = \
@@ -101,10 +134,17 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                                                'pos': intronEnd[1],
                                                'strand': intronEnd[2]},
                                  'splicingSignal': ss,
-                                 'readIDs': [readID]}
+                                 'readIDs': [readID],
+                                 'alignments': [(aln1._MAF().split('\n')[:-1],
+                                                 aln2._MAF().split('\n')[:-1])]
+                                 }
                     else:
                         intron_non_dict[intronCoords_str]['readIDs'].append(
                             readID
+                        )
+                        intron_non_dict[intronCoords_str]['alignments'].append(
+                            (aln1._MAF().split('\n')[:-1],
+                             aln2._MAF().split('\n')[:-1])
                         )
     with open(canonical_out, 'w') as f:
         json.dump(intron_can_dict, f, indent=2)
