@@ -108,3 +108,20 @@ python getOverlappingIntrons.py ~/data/analysis/maturedAdults/canonical_introns_
 
 # June 24, 2022
 python extractNoSharingIntrons.py ~/data/analysis/embryos/overlapping_introns_canonical_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_unique_embryos.json
+python extractNoSharingIntrons.py ~/data/analysis/immatureAdults/overlapping_introns_canonical_immatureAdults.json ~/data/analysis/immatureAdults/overlapping_introns_canonical_unique_immatureAdults.json
+python extractNoSharingIntrons.py ~/data/analysis/maturedAdults/overlapping_introns_canonical_maturedAdults.json ~/data/analysis/maturedAdults/overlapping_introns_canonical_unique_maturedAdults.json
+
+# June 27, 2022
+python extractIntronsWithManyReads.py ~/data/analysis/embryos/overlapping_introns_canonical_unique_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_unique_ME_5_reads.json 5
+
+# June 29, 2022
+# To use IGV
+# samtools SAM -> BAM
+samtools view -bt ../OKI2018_I69_1.0.removed_chrUn.fa.fai lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.sam > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.bam
+# samtools sort
+samtools sort lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.bam -o lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_sorted.bam
+# samtools index
+samtools index lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_sorted.bam
+
+# re-make intron json files 'with alignments' info
+python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/analysis/embryos/canonical_introns_alignments_embryos.json ~/data/analysis/embryos/non-canonical_introns_alignments_embryos.json
