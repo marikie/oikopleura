@@ -98,6 +98,23 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                 intronCoords = (intronStart, intronEnd)
                 intronCoords_str = toSTR(intronCoords)
                 ss = (aln1.don, aln2.acc)
+                # convert to original MAF format
+                if readStrand == '+':
+                    # adjust - strand's coordinates to - strand's coordinates
+                    if aln1.rStrand == '-':
+                        aln1.rStart, aln1.rEnd = convert2CoorOnOppositeStrand(
+                            aln1)
+                    if aln2.rStrand == '-':
+                        aln2.rStart, aln2.rEnd = convert2CoorOnOppositeStrand(
+                            aln2)
+                if readStrand == '-':
+                    # adjust + strand's coordinates to + strand's coordinates
+                    if aln1.rStrand == '+':
+                        aln1.rStart, aln1.rEnd = convert2CoorOnOppositeStrand(
+                            aln1)
+                    if aln2.rStrand == '+':
+                        aln2.rStart, aln2.rEnd = convert2CoorOnOppositeStrand(
+                            aln2)
                 # canonical introns
                 if ((aln1.don.upper(), aln2.acc.upper()) == (('GT', 'AG')
                                                              or ('CT', 'AC'))):
