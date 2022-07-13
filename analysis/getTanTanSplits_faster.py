@@ -14,7 +14,6 @@ import argparse
 import csv
 from getAlignmentObjs import getMultiMAFEntries
 from getSplicingSignalsDistOfExactSplicings import convert2CoorOnOppositeStrand
-import sys
 
 
 def getTandemRepeatData(tantanFile):
@@ -24,11 +23,14 @@ def getTandemRepeatData(tantanFile):
     # sort according to chromosom name, start position, and end position
         print('--- Sorting tandemRepeatData')
     tandemRepeatData_sorted = sorted(tandemRepeatData,
-                                     key=lambda x: (x[0], x[1], x[2]))
+                                     key=lambda x: (x[0], int(x[1]),
+                                                    int(x[2])))
+    # print(tandemRepeatData_sorted)
     return tandemRepeatData_sorted
 
 
 def getIntronCoord(readStrand, aln1, aln2):
+    # assuming aln.gStrand == '+'
     try:
         if not (aln1.gStrand == '+' and aln2.gStrand == '+'):
             raise Exception
@@ -37,7 +39,6 @@ def getIntronCoord(readStrand, aln1, aln2):
         print(aln1)
         print(aln2)
 
-    # assuming aln.gStrand == '+'
     if ((readStrand == '+' and aln1.rStrand == '+') or
             (readStrand == '-' and aln1.rStrand == '-')):
         intronStart = (aln1.gChr, aln1.gEnd, '+')
@@ -100,15 +101,35 @@ def getAlignmentData(alignmentFile):
             # do NOT append alignments with inexact splits
             if aln2.rStart - aln1.rEnd == 0:
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
-                # alignments_list: list of list
+                # print('intronStart: ', intronStart[0],
+                #      str(intronStart[1]), intronStart[2])
+                # print('intronEnd: ', intronEnd[0],
+                #      str(intronEnd[1]), intronEnd[2])
+                intronLeft = min([intronStart, intronEnd],
+                                 key=lambda c: (c[0], c[1]))
+                intronRight = max([intronStart, intronEnd],
+                                  key=lambda c: (c[0], c[1]))
+                # print('intronLeft: ', intronLeft[0],
+                #      str(intronLeft[1]), intronLeft[2])
+                # print('intronRight: ', intronRight[0],
+                #      str(intronRight[1]), intronRight[2])
+                # alignments_list: list of tuple
                 alignments_list.append(((readStrand, aln1, aln2),
-                                        (intronStart, intronEnd)))
+                                        (intronLeft, intronRight)))
 
     # sort alignments_list according to
     # intronStart and intronEnd chromosom name and coord
     print('--- Sorting alignments')
     alignments_list.sort(key=lambda a_c: ((a_c[1][0][0], a_c[1][0][1]),
                                           (a_c[1][1][0], a_c[1][1][1])))
+    # print sorted alignments_list
+    # for alignments in alignments_list:
+    #    intronLeft = alignments[1][0]
+    #    intronRight = alignments[1][1]
+    #    print('intronLeft:', intronLeft[0],
+    #          str(intronLeft[1]), intronLeft[2])
+    #    print('intronRight:', intronRight[0],
+    #          str(intronRight[1]), intronRight[2])
 
     return alignments_list
 
@@ -128,17 +149,27 @@ def end(element):
 
 
 def printTantanSplits(trData, alignments_list, outputFile):
+    # refresh outputFile
+    with open(outputFile, 'w') as f:
+        pass
+
     print('--- Searching tan-tan-splits')
     count = 0
     j = 0
     for i in range(len(alignments_list)):
+        # intronLeft = ' '.join(map(str, alignments_list[i][1][0]))
+        # intronRight = ' '.join(map(str, alignments_list[i][1][1]))
         while (j < len(trData)
                 and end(trData[j]) < beg(alignments_list[i])):
             j += 1
         k = j
+        # print('intronLeft', intronLeft)
+        # print('intronRight', intronRight)
+        # print('\t'.join(trData[j]))
         while (k < len(trData)
                 and beg(trData[k]) < beg(alignments_list[i])):
             tan1 = trData[k]
+            # because tan1 != tan2, m starts from k+1
             m = k + 1
             while (m < len(trData)
                    and end(trData[m]) < end(alignments_list[i])):
@@ -152,7 +183,7 @@ def printTantanSplits(trData, alignments_list, outputFile):
                 aln2 = alignments_list[i][0][2]
                 # if (aln1.don.upper() == 'GT'
                 #        and aln2.acc.upper() == 'AG'):
-                with open(outputFile, 'w') as f:
+                with open(outputFile, 'a') as f:
                     f.write(str(count := count+1)+'\n')
                     f.write('strand of read: {}\n'.format(rStrand))
                     f.write(str(aln1))
@@ -160,6 +191,7 @@ def printTantanSplits(trData, alignments_list, outputFile):
                     f.write('\t'.join(tan1)+'\n')
                     f.write('\t'.join(tan2)+'\n')
                     f.write('\n\n')
+                    f.flush()
                 n += 1
             k += 1
 
