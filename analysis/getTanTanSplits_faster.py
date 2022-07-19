@@ -186,8 +186,8 @@ def printTantanSplits(trData, alignments_list, outputFile):
                 with open(outputFile, 'a') as f:
                     f.write(str(count := count+1)+'\n')
                     f.write('strand of read: {}\n'.format(rStrand))
-                    f.write(str(aln1))
-                    f.write(str(aln2))
+                    f.write(aln1._MAF())
+                    f.write(aln2._MAF())
                     f.write('\t'.join(tan1)+'\n')
                     f.write('\t'.join(tan2)+'\n')
                     f.write('\n\n')
