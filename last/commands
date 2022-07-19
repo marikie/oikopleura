@@ -55,3 +55,29 @@ lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/O
 lastal -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq > lastal_ERR4570985_1_filtered_trimmed_sorted.maf
 
 lastal -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > lastal_ERR4570985_filtered_trimmed_sorted.maf
+
+# July 15, 2022
+# lastdb 
+lastdb OKI2018_I69_1.0_whole.DB OKI2018_I69_1.0.fa
+# last-train
+#  - embryos
+last-train -Q0 ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_whole_ERR4570985.out
+#  - immatureAdults
+last-train -Q0 ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_whole_ERR4570986.out
+#  - maturedAdults
+last-train -Q0 ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_whole_ERR4570987.out
+# lastal
+#  - embryos
+lastal -D10  --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_*_filtered_trimmed_sorted.fastq > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted.maf
+
+# July 19, 2022
+# fastq-interleave -> lastal -> last-postmask
+#  - embryos
+fastq-interleave ../../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq ../../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq | lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB | last-postmask > ~/.data/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf
+fastq-interleave ERR4570985_1_filtered_trimmed_sorted.fastq ERR4570985_2_filtered_trimmed_sorted.fastq > ERR4570985_filtered_trimmed_sorted_interleaved.fastq
+#  - immatureAdults
+fastq-interleave ERR4570986_1_filtered_trimmed_sorted.fastq ERR4570986_2_filtered_trimmed_sorted.fastq > ERR4570986_filtered_trimmed_sorted_interleaved.fastq
+lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570986.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq | last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf
+#  - maturedAdults
+fastq-interleave ERR4570987_1_filtered_trimmed_sorted.fastq ERR4570987_2_filtered_trimmed_sorted.fastq > ERR4570987_filtered_trimmed_sorted_interleaved.fastq
+lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570987.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq | last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf
