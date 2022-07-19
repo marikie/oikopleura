@@ -62,7 +62,10 @@ def getIntronCoord(readStrand, aln1, aln2):
     Get which strand of read is aligned (readStrand) and its two alignments.
     Return intron start coordinates and intron end coodinates.
     The coordinates include strand info too.
+    # The order of [aln1, aln2] is based on the coordinates of the + strand
+    read.
     '''
+    # assuming aln.gStrand == '+'
     try:
         if not (aln1.gStrand == '+' and aln2.gStrand == '+'):
             raise Exception
@@ -70,8 +73,8 @@ def getIntronCoord(readStrand, aln1, aln2):
         print('< gStrand = \"-\" >')
         print(aln1)
         print(aln2)
-
-    # assuming aln.gStrand == '+'
+    # assuming the order of [aln1, aln2] is based on
+    # the coordinates of the + strand read
     if ((readStrand == '+' and aln1.rStrand == '+') or
             (readStrand == '-' and aln1.rStrand == '-')):
         intronStart = (aln1.gChr, aln1.gEnd, '+')
