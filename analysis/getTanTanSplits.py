@@ -40,6 +40,10 @@ def getTan(trData, intronStartOrEnd):
 
 
 def printTantanSplits(trData, alignmentFile, outputFile):
+    # refresh outputFile
+    with open(outputFile, 'w') as f:
+        pass
+
     print("--- Searching tan-tan-splits")
     excount = 0
     count = 0
@@ -108,8 +112,9 @@ def printTantanSplits(trData, alignmentFile, outputFile):
                     with open(outputFile, 'a') as f:
                         f.write(str(count := count+1)+'\n')
                         f.write('strand of read: {}\n'.format(readStrand))
-                        f.write(str(aln1))
-                        f.write(str(aln2))
+                        f.write(aln1._MAF())
+                        f.write(aln2._MAF())
+                        f.write('\n')
                         f.write('\t'.join(tan1)+'\n')
                         f.write('\t'.join(tan2)+'\n')
                         f.write('\n\n')
