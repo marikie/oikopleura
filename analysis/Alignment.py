@@ -190,9 +190,12 @@ class Alignment():
         toReturn = 'a '
         toReturn += ' '.join(['score='+str(self.score),
                               'mismap='+str(self.mismap),
-                              'sense='+str(self.sense),
-                              'don='+str(self.don), 'acc='+str(self.acc)])+'\n'
-
+                              'sense='+str(self.sense)])
+        if self.don:
+            toReturn += ' don='+self.don
+        if self.acc:
+            toReturn += ' acc='+self.acc
+        toReturn += '\n'
         maxLength_ID = len(max([self.gChr, self.rID], key=len))
         maxLength_start = len(max([str(self.gStart), str(self.rStart)],
                                   key=len))
