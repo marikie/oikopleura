@@ -129,7 +129,7 @@ python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR457
 # July 20, 2022
 # removeChr_onlysplits.py
 #  - embryos
-python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removeChrUn_onlysplits.maf
+python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
 #  - immatureAdults
 python removeChr_onlysplits.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
 #  - maturedAdults
