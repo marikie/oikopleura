@@ -125,3 +125,12 @@ samtools index lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postm
 
 # re-make intron json files 'with alignments' info
 python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/analysis/embryos/canonical_introns_alignments_embryos.json ~/data/analysis/embryos/non-canonical_introns_alignments_embryos.json
+
+# July 20, 2022
+# removeChr_onlysplits.py
+#  - embryos
+python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removeChrUn_onlysplits.maf
+#  - immatureAdults
+python removeChr_onlysplits.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+#  - maturedAdults
+python removeChr_onlysplits.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
