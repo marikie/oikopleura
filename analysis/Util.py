@@ -62,8 +62,8 @@ def getIntronCoord(readStrand, aln1, aln2):
     Get which strand of read is aligned (readStrand) and its two alignments.
     Return intron start coordinates and intron end coodinates.
     The coordinates include strand info too.
-    # The order of [aln1, aln2] is based on the coordinates of the + strand
-    read.
+    # aln1 is 5' side alignment (having donor),
+      aln2 is 3' side alignment (having acceptor).
     '''
     # assuming aln.gStrand == '+'
     try:
