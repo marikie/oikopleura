@@ -118,6 +118,7 @@ def printTantanSplits(trData, alignmentFile, outputFile):
                         f.write('\t'.join(tan1)+'\n')
                         f.write('\t'.join(tan2)+'\n')
                         f.write('\n\n')
+                        f.flush()
 
 
 if __name__ == '__main__':
