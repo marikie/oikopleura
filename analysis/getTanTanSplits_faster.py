@@ -75,9 +75,9 @@ def getAlignmentData(alignmentFile):
             # set readStrand to '+'
             readStrand = '+'
             # adjust all coordinates to + strand's coordinates
-            for aln in alignments:
-                if aln.rStrand == '-':
-                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+            # for aln in alignments:
+            #    if aln.rStrand == '-':
+            #        aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         # if the last alignment has donor and doesn't have acceptor
         # or the first alignment doesn't have donor and has acceptor
         elif (alignments[-1].don and not alignments[-1].acc)\
@@ -87,9 +87,9 @@ def getAlignmentData(alignmentFile):
             # reverse the alignments list
             alignments.reverse()
             # adjust all coordinates to - strand's coordinates
-            for aln in alignments:
-                if aln.rStrand == '+':
-                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
+            # for aln in alignments:
+            #    if aln.rStrand == '+':
+            #        aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         else:
             # go to next readID
             # (do NOT append to alignments_list)
