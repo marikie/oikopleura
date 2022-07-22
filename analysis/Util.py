@@ -2,6 +2,27 @@ from Alignment import Alignment
 from itertools import groupby
 
 
+def resetCoordToItsStrand(aln, readStrand):
+    '''
+    reset coordinates of the read to
+    + strand coordinates if its rStrand == '+',
+    - strand coordinates if its rStrand == '-'
+    '''
+    if readStrand == '+':
+        if aln.rStrand == '+':
+            pass
+        # aln.rStrand == '-'
+        else:
+            rStart, rEnd = convert2CoorOnOppositeStrand(aln)
+    # readStrand == '-'
+    else:
+        if aln.rStrand == '+':
+            rStart, rEnd = convert2CoorOnOppositeStrand(aln)
+        else:
+            pass
+    return rStart, rEnd
+
+
 def filterComments(lines):
     '''
     from Alignments.py in JSA. written by Anish Shrestha.
@@ -73,8 +94,9 @@ def getIntronCoord(readStrand, aln1, aln2):
         print('< gStrand = \"-\" >')
         print(aln1)
         print(aln2)
-    # assuming the order of [aln1, aln2] is based on
-    # the coordinates of the + strand read
+    # assuming the order of [aln1, aln2]:
+    # aln1: 5' side (having donor),
+    # aln2: 3' side (having acceptor)
     if ((readStrand == '+' and aln1.rStrand == '+') or
             (readStrand == '-' and aln1.rStrand == '-')):
         intronStart = (aln1.gChr, aln1.gEnd, '+')
