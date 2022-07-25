@@ -43,4 +43,3 @@ if __name__ == '__main__':
     M A I N
     '''
     main(args.alignmentFile, args.chromosomeName)
-
