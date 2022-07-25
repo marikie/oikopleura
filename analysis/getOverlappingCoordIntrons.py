@@ -18,15 +18,33 @@ Input:
         ],
         'readIDs': [
             str, ...
+        ],
+        'alignments': [
+         [
+          [
+           'a ...',
+           's ...',
+           's ...'
+          ],
+          [
+           'a ...',
+           's ...',
+           's ...'
+          ]
+         ], ...
         ]
     }, ...}
 Output:
     - a json file containing a list of clusters
-    - a cluster contains overlapping introns
+    - a cluster contains introns whose coords are overlapping with each other
+
+discard too long introns
 '''
 import argparse
 import json
 from Util import toSTR
+
+intronLengthThreshold = 100
 
 
 def leftTuple(intron_dict):
@@ -76,10 +94,13 @@ def toIntronCoord(intron_dict):
 
 def simple(intron_dict):
     '''
-    delete 'readIDs' and add 'reads',
-    which contains the number of reads supporting
-    the intron
+    - delete 'alignments'
+    - delete 'readIDs' and add 'reads',
+      which contains the number of reads supporting
+      the intron
     '''
+    del intron_dict['alignments']
+
     intron_dict['reads'] = len(intron_dict.pop('readIDs'))
     return intron_dict
 
@@ -110,7 +131,7 @@ def main(intronJsonFile, outputJsonFile):
             # go to next intron_dict
             continue
         # if intron is too long
-        elif (intronLen(intron_dict) > 100):
+        elif (intronLen(intron_dict) > intronLengthThreshold):
             # do NOT add to the list
             # go to next intron_dict
             continue
