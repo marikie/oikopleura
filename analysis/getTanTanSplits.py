@@ -13,7 +13,6 @@ Output:
 import argparse
 import csv
 from Util import getMultiMAFEntries
-from Util import convert2CoorOnOppositeStrand
 from Util import getIntronCoord
 import sys
 
@@ -112,6 +111,8 @@ def printTantanSplits(trData, alignmentFile, outputFile):
                     with open(outputFile, 'a') as f:
                         f.write(str(count := count+1)+'\n')
                         f.write('strand of read: {}\n'.format(readStrand))
+                        f.write('intronStart: {}\n'.format(intronStart))
+                        f.write('intronEnd: {}\n'.format(intronEnd))
                         f.write(aln1._MAF())
                         f.write(aln2._MAF())
                         f.write('\n')
