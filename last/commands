@@ -81,3 +81,9 @@ lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_w
 #  - maturedAdults
 fastq-interleave ERR4570987_1_filtered_trimmed_sorted.fastq ERR4570987_2_filtered_trimmed_sorted.fastq > ERR4570987_filtered_trimmed_sorted_interleaved.fastq
 lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570987.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq | last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf
+
+# July 22, 2022
+# re-make lastsplit alignment file of embryos
+# because the previous command was wrong
+# (reads of embryos and immatureAdults are mistakenly merged)
+lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq |last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf
