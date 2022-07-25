@@ -134,3 +134,58 @@ python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whol
 python removeChr_onlysplits.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
 #  - maturedAdults
 python removeChr_onlysplits.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+
+# July 25, 2022
+# removeChr_onlysplits.py
+python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+
+# makeIntronJsonFile.py
+#  - embryos
+python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/analysis/embryos/canonical_introns_embryos_20220725.json ~/data/analysis/embryos/non-canonical_introns_embryos_20220725.json
+#  - immatureAdults
+python makeIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/non-canonical_introns_immatureAults_20220725.json
+#  - maturedAdults
+python makeIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/non-canonical_introns_maturedAdults_20220725.json
+
+# getOverlappingChoordIntrons.py 
+#  - embryos
+python getOverlappingChoordIntrons.py ~/data/analysis/embryos/canonical_introns_embryos_20220725.json ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json
+#  - immatureAdults
+python getOverlappingChoordIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_coord_introns_canonical_immatureAdults_20220725.json
+#  - maturedAdults
+python getOverlappingChoordIntrons.py ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_coord_introns_canonical_maturedAdults_20220725.json
+
+# extractIntronsOnBothStrands.py
+#  - embryos
+python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json ~/data/analysis/embryos/overlapping_introns_canonical_both_strands_embryos_20220725.json
+#  - immature adults
+python extractIntronsOnBothStrands.py ~/data/analysis/immatureAdults/overlapping_coord_introns_canonical_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_introns_canonical_both_strands_immatureAdults_20220725.json
+
+# getOverlappingCoordIntrons.py
+#  - embryos
+python getOverlappingCoordIntrons.py ~/data/analysis/embryos/can
+onical_introns_embryos_20220725.json ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json
+#  - immature adults
+python getOverlappingCoordIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_coord_introns_canonical_immatureAdults_20220725.json
+#  - matured adults
+python getOverlappingCoordIntrons.py ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_coord_introns_canonical_maturedAdults_20220725.json
+
+# extractIntronsOnBothStrands.py
+#  - embryos
+python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json ~/data/analysis/embryos/overlapping_introns_canonical_both_strands_embryos_20220725.json
+
+# getOverlappingCoordIntrons.py
+#  - embryos
+python getOverlappingCoordIntrons.py ~/data/analysis/embryos/canonical_introns_embryos_20220725.json ~/data/analysis/embryos/overlapping_coord_introns_100_canonical_embryos_20220725.json
+#  - immature adults
+python getOverlappingCoordIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_coord_introns_100_canonical_immatureAdults_20220725.json
+#  - matured adults
+python getOverlappingCoordIntrons.py ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_coord_introns_100_canonical_maturedAdults_20220725.json
+
+# extractIntronsOnBothStrands.py
+#  - embryos
+python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_introns_100_canonical_embryos_20220725.json ~/data/analysis/embryos/overlapping_introns_100_both_strands_canonical_embryos_20220725.json
+#  - immature adults
+python extractIntronsOnBothStrands.py ~/data/analysis/immatureAdults/overlapping_coord_introns_100_canonical_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_introns_100_both_strands_canonical_immatureAdults_20220725.json
+#  - matured adults
+python extractIntronsOnBothStrands.py ~/data/analysis/maturedAdults/overlapping_coord_introns_100_canonical_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_introns_100_both_strands_canonical_maturedAdults_20220725.json
