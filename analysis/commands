@@ -189,3 +189,17 @@ python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_
 python extractIntronsOnBothStrands.py ~/data/analysis/immatureAdults/overlapping_coord_introns_100_canonical_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_introns_100_both_strands_canonical_immatureAdults_20220725.json
 #  - matured adults
 python extractIntronsOnBothStrands.py ~/data/analysis/maturedAdults/overlapping_coord_introns_100_canonical_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_introns_100_both_strands_canonical_maturedAdults_20220725.json
+
+# July 28, 2022
+# getTanTanSplits.py, getTanTanSplits_faster.py
+# immature adults
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/immatureAdults_whole_tan-tan_splits_20220728.out
+python getTanTanSplits_faster.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/immatureAdults_whole_tan-tan_splits_faster_20220728.out
+# matured adults
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/maturedAdults_whole_tan-tan_splits_20220728.out
+python getTanTanSplits_faster.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/maturedAdults_whole_tan-tan_splits_faster_20220728.out
+
+# August 1, 2022
+# get-cds-cds-splits
+# embryos 
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds-splits_faster_20220801.out
