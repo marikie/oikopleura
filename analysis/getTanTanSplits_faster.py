@@ -4,7 +4,7 @@ Input:
     - an alignment file (.maf file)
 Output:
     print out spliced region with tandem repeats
-    on both exon end and exon start
+    on both intron end and intron start
     (check only "Exact Splits" and 'GT-AG' introns)
     - maf entry
     - tantan row
