@@ -125,9 +125,14 @@ def end(element):
         return (element[1][1][0], element[1][1][1])
 
 
-def printCdsCdsSplits(cdsData, alignments_list, outputFile):
+def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
+    outputFile = outputFileName + '.out'
+    outputMAFfile = outputFileName + '.maf'
     # refresh outputFile
-    with open(outputFile, 'w') as f:
+    with open(outputFile, 'w'):
+        pass
+    # refresh outputMAFfile
+    with open(outputMAFfile, 'w'):
         pass
 
     print('--- Searching cds-cds-splits')
@@ -160,22 +165,29 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFile):
                 aln2 = alignments_list[i][0][2]
                 intronLeft = alignments_list[i][1][0]
                 intronRight = alignments_list[i][1][1]
-                # if (aln1.don.upper() == 'GT'
-                #        and aln2.acc.upper() == 'AG'):
-                with open(outputFile, 'a') as f:
-                    f.write(str(count := count+1)+'\n')
-                    f.write('strand of read: {}\n'.format(rStrand))
-                    f.write('intronLeft: {}\n'.format(intronLeft))
-                    f.write('intronRight: {}\n'.format(intronRight))
-                    f.write(aln1._MAF())
-                    f.write(aln2._MAF())
-                    f.write('\n')
-                    f.write('\t'.join(cds1)+'\n')
-                    f.write('\t'.join(cds2)+'\n')
-                    f.write('\n\n')
-                    f.flush()
+
+                mFile = open(outputMAFfile, 'a')
+                mFile.write(aln1._MAF())
+                mFile.write('\n')
+                mFile.write(aln2._MAF())
+                mFile.flush()
+
+                oFile = open(outputFile, 'a')
+                oFile.write(str(count := count+1)+'\n')
+                oFile.write('strand of read: {}\n'.format(rStrand))
+                oFile.write('intronLeft: {}\n'.format(intronLeft))
+                oFile.write('intronRight: {}\n'.format(intronRight))
+                oFile.write(aln1._MAF())
+                oFile.write(aln2._MAF())
+                oFile.write('\n')
+                oFile.write('\t'.join(cds1)+'\n')
+                oFile.write('\t'.join(cds2)+'\n')
+                oFile.write('\n\n')
+                oFile.flush()
                 n += 1
             k += 1
+    oFile.close()
+    mFile.close()
 
 
 if __name__ == '__main__':
@@ -187,8 +199,8 @@ if __name__ == '__main__':
                         help='a .gff file')
     parser.add_argument('alignmentFile',
                         help='a .maf file')
-    parser.add_argument('outputFile',
-                        help='output file name')
+    parser.add_argument('outputFileName',
+                        help='output-file-path/output-file-name')
     args = parser.parse_args()
     '''
     Read the cds file
@@ -201,4 +213,4 @@ if __name__ == '__main__':
     '''
     Get cds-cds splits
     '''
-    printCdsCdsSplits(cdsData, alignments_list, args.outputFile)
+    printCdsCdsSplits(cdsData, alignments_list, args.outputFileName)
