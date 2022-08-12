@@ -168,7 +168,6 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
 
                 mFile = open(outputMAFfile, 'a')
                 mFile.write(aln1._MAF())
-                mFile.write('\n')
                 mFile.write(aln2._MAF())
                 mFile.flush()
 
@@ -179,7 +178,6 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
                 oFile.write('intronRight: {}\n'.format(intronRight))
                 oFile.write(aln1._MAF())
                 oFile.write(aln2._MAF())
-                oFile.write('\n')
                 oFile.write('\t'.join(cds1)+'\n')
                 oFile.write('\t'.join(cds2)+'\n')
                 oFile.write('\n\n')
