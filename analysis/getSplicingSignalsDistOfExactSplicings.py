@@ -3,6 +3,8 @@ Input: an alignment file (MAF format)
 Output:
     Exact Splicing: reads that are spliced-aligned without unaligned
                     segments in the middle
+    Count by reads: if there are multiple reads crossing an intron, count
+                    its splicing signals multiple times.
     - print tsv: donor acceptor #splicing events with that donor-acceptor
      (only exact splicings)
 '''
