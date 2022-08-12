@@ -208,3 +208,12 @@ python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/la
 # get_cds_cds_splits_faster.py
 # embryos
 python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_splits_faster_20220802
+
+# August 12, 2022
+# count every type of splicing signal (count by sites)
+# embryos
+python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/embryos/splicingSignalDist_countedBySites.tsv
+# immature adults
+python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/immatureAdults/splicingSignalsDist_countedBySites.tsv
+# matured adults
+ python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/maturedAdults/splicingSignalDist_countedBySites.tsv
