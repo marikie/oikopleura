@@ -203,3 +203,8 @@ python getTanTanSplits_faster.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_
 # get-cds-cds-splits
 # embryos 
 python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds-splits_faster_20220801.out
+
+# August 2, 2022
+# get_cds_cds_splits_faster.py
+# embryos
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_splits_faster_20220802
