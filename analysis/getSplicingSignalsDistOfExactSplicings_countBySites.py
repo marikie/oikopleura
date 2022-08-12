@@ -10,7 +10,7 @@ Output:
 '''
 from Util import getMultiMAFEntries
 from Util import getIntronCoord
-from collections import namedtuple, defaultdict
+from collections import defaultdict
 import argparse
 import sys
 
@@ -69,7 +69,8 @@ def main(alignmentFile):
             print('{} {}'.format(intronCoord, ssList_upper), file=sys.stderr)
 
     print('donor\tacceptor\tcount')
-    for don_acc, count in don_acc_count_dict.items():
+    for don_acc, count in sorted(don_acc_count_dict.items(),
+                                 key=lambda x: x[1], reverse=True):
         print(f'{don_acc[0]}\t{don_acc[1]}\t{count}')
 
 
