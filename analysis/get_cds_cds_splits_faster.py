@@ -151,6 +151,8 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
         while (k < len(cdsData)
                 and beg(cdsData[k]) < beg(alignments_list[i])):
             cds1 = cdsData[k]
+            cds1_gene = '.'.join(cds1[-1].split(';')[1].split('=')[1].split(
+                        '.')[3:5])
             # because cds1 != cds2, m starts from k+1
             m = k + 1
             while (m < len(cdsData)
@@ -160,32 +162,33 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
             while (n < len(cdsData)
                    and beg(cdsData[n]) < end(alignments_list[i])):
                 cds2 = cdsData[n]
-                rStrand = alignments_list[i][0][0]
-                aln1 = alignments_list[i][0][1]
-                aln2 = alignments_list[i][0][2]
-                intronLeft = alignments_list[i][1][0]
-                intronRight = alignments_list[i][1][1]
+                cds2_gene = '.'.join(cds2[-1].split(';')[1].split('=')[
+                    1].split('.')[3:5])
+                if cds1_gene != cds2_gene:
+                    rStrand = alignments_list[i][0][0]
+                    aln1 = alignments_list[i][0][1]
+                    aln2 = alignments_list[i][0][2]
+                    intronLeft = alignments_list[i][1][0]
+                    intronRight = alignments_list[i][1][1]
 
-                mFile = open(outputMAFfile, 'a')
-                mFile.write(aln1._MAF())
-                mFile.write(aln2._MAF())
-                mFile.flush()
+                    with open(outputMAFfile, 'a') as mFile:
+                        mFile.write(aln1._MAF())
+                        mFile.write(aln2._MAF())
+                        mFile.flush()
 
-                oFile = open(outputFile, 'a')
-                oFile.write(str(count := count+1)+'\n')
-                oFile.write('strand of read: {}\n'.format(rStrand))
-                oFile.write('intronLeft: {}\n'.format(intronLeft))
-                oFile.write('intronRight: {}\n'.format(intronRight))
-                oFile.write(aln1._MAF())
-                oFile.write(aln2._MAF())
-                oFile.write('\t'.join(cds1)+'\n')
-                oFile.write('\t'.join(cds2)+'\n')
-                oFile.write('\n\n')
-                oFile.flush()
+                    with open(outputFile, 'a') as oFile:
+                        oFile.write(str(count := count+1)+'\n')
+                        oFile.write('strand of read: {}\n'.format(rStrand))
+                        oFile.write('intronLeft: {}\n'.format(intronLeft))
+                        oFile.write('intronRight: {}\n'.format(intronRight))
+                        oFile.write(aln1._MAF())
+                        oFile.write(aln2._MAF())
+                        oFile.write('\t'.join(cds1)+'\n')
+                        oFile.write('\t'.join(cds2)+'\n')
+                        oFile.write('\n\n')
+                        oFile.flush()
                 n += 1
             k += 1
-    oFile.close()
-    mFile.close()
 
 
 if __name__ == '__main__':
@@ -198,7 +201,8 @@ if __name__ == '__main__':
     parser.add_argument('alignmentFile',
                         help='a .maf file')
     parser.add_argument('outputFileName',
-                        help='output-file-path/output-file-name')
+                        help='output-file-path/output-file-name-without-\
+                        filename-extension')
     args = parser.parse_args()
     '''
     Read the cds file
