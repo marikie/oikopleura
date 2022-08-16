@@ -16,6 +16,7 @@ Output: two json files (canonical and non-canonical)
         'pos': int,
         'strand': str
     },
+    'intronLength': int,
     'splicingSignal': [
         'GT',
         'AG'
@@ -31,7 +32,6 @@ Output: two json files (canonical and non-canonical)
 '''
 import argparse
 from Util import getMultiMAFEntries
-from Util import convert2CoorOnOppositeStrand
 from Util import getIntronCoord
 import json
 
@@ -67,10 +67,6 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                 or (not alignments[-1].don and alignments[-1].acc):
             # set readStrand to '+'
             readStrand = '+'
-            # adjust all coordinates to + strand's coordinates
-            for aln in alignments:
-                if aln.rStrand == '-':
-                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         # if the last alignment has donor and doesn't have acceptor
         # or the first alignment doesn't have donor and has acceptor
         elif (alignments[-1].don and not alignments[-1].acc)\
@@ -79,10 +75,6 @@ def main(alignmentFile, canonical_out, noncanonical_out):
             readStrand = '-'
             # reverse the alignments list
             alignments.reverse()
-            # adjust all coordinates to - strand's coordinates
-            for aln in alignments:
-                if aln.rStrand == '+':
-                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         else:
             # go to next readID
             # (do NOT append to alignments_list)
@@ -98,23 +90,12 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                 intronCoords = (intronStart, intronEnd)
                 intronCoords_str = toSTR(intronCoords)
                 ss = (aln1.don, aln2.acc)
-                # convert to original MAF format
-                if readStrand == '+':
-                    # adjust - strand's coordinates to - strand's coordinates
-                    if aln1.rStrand == '-':
-                        aln1.rStart, aln1.rEnd = convert2CoorOnOppositeStrand(
-                            aln1)
-                    if aln2.rStrand == '-':
-                        aln2.rStart, aln2.rEnd = convert2CoorOnOppositeStrand(
-                            aln2)
-                if readStrand == '-':
-                    # adjust + strand's coordinates to + strand's coordinates
-                    if aln1.rStrand == '+':
-                        aln1.rStart, aln1.rEnd = convert2CoorOnOppositeStrand(
-                            aln1)
-                    if aln2.rStrand == '+':
-                        aln2.rStart, aln2.rEnd = convert2CoorOnOppositeStrand(
-                            aln2)
+                if (intronStart[0] == intronEnd[0] and
+                        intronStart[2] == intronEnd[2]):
+                    intronLength = intronEnd[1] - intronStart[1]
+                else:
+                    intronLength = None
+
                 # canonical introns
                 if ((aln1.don.upper(), aln2.acc.upper()) == (('GT', 'AG')
                                                              or ('CT', 'AC'))):
@@ -127,6 +108,7 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                                  'intronEnd': {'chr': intronEnd[0],
                                                'pos': intronEnd[1],
                                                'strand': intronEnd[2]},
+                                 'intronLength': intronLength,
                                  'splicingSignal': ss,
                                  'readIDs': [readID],
                                  'alignments': [(aln1._MAF().split('\n')[:-1],
@@ -150,6 +132,7 @@ def main(alignmentFile, canonical_out, noncanonical_out):
                                  'intronEnd': {'chr': intronEnd[0],
                                                'pos': intronEnd[1],
                                                'strand': intronEnd[2]},
+                                 'intronLength': intronLength,
                                  'splicingSignal': ss,
                                  'readIDs': [readID],
                                  'alignments': [(aln1._MAF().split('\n')[:-1],
