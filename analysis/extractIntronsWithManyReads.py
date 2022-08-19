@@ -63,7 +63,7 @@ if __name__ == '__main__':
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('intronJsonFile',
-                        help='a json file containing intron info')
+                        help='a json file containing clusters of introns')
     parser.add_argument('outputJsonFile',
                         help='an output json file')
     parser.add_argument('threshold',
