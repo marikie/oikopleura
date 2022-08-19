@@ -217,3 +217,8 @@ python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/embryo
 python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/immatureAdults/splicingSignalDist_countedBySites_immatureAdults.tsv
 # matured adults
 python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/maturedAdults/splicingSignalDist_countedBySites_maturedAdults.tsv
+
+# August 16, 2022
+# make intron file of cds-cds fusions
+# embryos
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_diff_gene_20220815.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_20220816.json

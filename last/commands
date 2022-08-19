@@ -87,3 +87,36 @@ lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_w
 # because the previous command was wrong
 # (reads of embryos and immatureAdults are mistakenly merged)
 lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq |last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf
+
+# August 17, 2022
+# make Transposable Element database
+
+# lastdb
+# -R: specify lowercase usage with two digits
+#     first digit:  0: Convert the input sequences to uppercase while reading them.
+#     second digit: 1: Convert simple repeats (e.g. cacacacacacacacac) to
+#                      lowercase.  This uses tantan, which reliably prevents
+#                      non-homologous alignments, unlike other repeat finders.
+lastdb -R01 Oikopleura.dioica_TEdb ../Data_S1_bank_dioica_tot.fa
+
+# last-train
+# --revsym: Force the substitution scores to have reverse-complement
+#           symmetry, e.g. score(A→G) = score(T→C).  This is often
+#           appropriate, if neither strand is "special".
+# -X1: How to score a match/mismatch involving N (for DNA) or X
+#      (otherwise). 1 means treat reference Ns/Xs as fully-ambiguous letters.
+# -m100: Maximum number of initial matches per query position.
+# -P: Number of parallel threads.
+last-train -P8 --revsym -X1 -m100 Oikopleura.dioica_TEdb ../OKI2018_I69_1.0.fa > last-train_Okipleura.dioica_TE.mat
+
+# lastal
+# -i3G: Process the query sequences in batches, of at most this many
+#       bytes.  If a single sequence exceeds this amount, however, it is
+#       not split.  You can use suffixes K, M, and G to specify KibiBytes,
+#       MebiBytes, and GibiBytes.  This option makes -P less
+#       efficient, because each batch is separately multi-threaded, but it
+#       fixes the output order to be the same as the input.
+# -m100: Maximum multiplicity for initial matches.  Each initial match is
+#        lengthened until it occurs at most this many times in the reference. 
+# -D1e7: Report alignments that are expected by chance at most once per LENGTH query letters. 
+
