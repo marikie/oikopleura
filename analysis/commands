@@ -222,3 +222,8 @@ python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/mature
 # make intron file of cds-cds fusions
 # embryos
 python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_diff_gene_20220815.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_20220816.json
+
+# August 19, 2022
+# extract introns with many reads 
+# embryos
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_20220816.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_ME_10_reads_20180819.json 10
