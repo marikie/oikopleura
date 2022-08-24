@@ -3,11 +3,14 @@ Input:
     - a .gff file (annotation)
     - a .maf file (alignment)
 Output:
-    Find splits that have CDS sequences on both intron start
-    and intron end positions, and
-    print out MAF entries with CDS rows
-    - MAF entries from .maf file
-    - CDS rows from .gff file
+    - output.out
+        Find splits that have CDS sequences on both intron start
+        and intron end positions, and
+        print out MAF entries with CDS rows
+            - MAF entries from .maf file
+            - CDS rows from .gff file
+    - output.maf
+        MAF entries of such splits as above
 '''
 import argparse
 import csv
