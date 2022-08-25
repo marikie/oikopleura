@@ -23,17 +23,41 @@ def skipFirstTwoRows(repeatMaskerFile):
             yield row
 
 
-def getRepeatData(repeatMaskerFile):
-    repeatData = []
+def isTE(line):
+    if (line[10] != 'Normally_Non-integrating_Virus' and
+            line[10] != 'Artifact' and
+            line[10] != 'Low_complexity' and
+            line[10] != 'Other' and
+            line[10] != 'Segmental_Duplication' and
+            line[10] != 'rRNA' and
+            line[10] != 'scRNA' and
+            line[10] != 'snRNA' and
+            line[10] != 'tRNA' and
+            line[10] != 'Centromeric' and
+            line[10] != 'Acromeric' and
+            line[10] != 'Macro' and
+            line[10] != 'Subtelomeric' and
+            line[10] != 'W-chromosomal' and
+            line[10] != 'Y-chromosomal' and
+            line[10] != 'Simple_repeat' and
+            line[10] != 'Unknown'):
+        return True
+    else:
+        return False
+
+
+def getTEData(repeatMaskerFile):
+    teData = []
     with open(repeatMaskerFile, 'r') as f:
         print('--- Reading RepeatMasker File')
         for row in csv.reader(skipFirstTwoRows(f), delimiter='\t'):
-            repeatData.append(row)
+            if isTE(row):
+                teData.append(row)
     # sort according to chromosome name, start position, and end position
     print('--- Sorting repeatData')
-    repeatData_sorted = sorted(repeatData,
-                               key=lambda r: (r[4], int(r[5]), int(r[6])))
-    return repeatData_sorted
+    teData_sorted = sorted(repeatData,
+                           key=lambda r: (r[4], int(r[5]), int(r[6])))
+    return teData_sorted
 
 
 def getAlignmentData(alignmentFile):
@@ -88,8 +112,83 @@ def getAlignmentData(alignmentFile):
     return alignments_list
 
 
-def getTE_TESplits(repeatData, alignments_list, outputFileName):
-    pass
+def beg(element):
+    # element = te row
+    if isinstance(element, list):
+        return (element[4], int(element[5]))
+    # element = alignment tuple
+    else:
+        return (element[1][0][0], element[1][0][1])
+
+
+def end(element):
+    # element = te row
+    if isinstance(element, list):
+        return (element[4], int(element[6]))
+    # element = alignment tuple
+    else:
+        return (element[1][1][0], element[1][1][1])
+
+
+def getTE_TESplits(teData, alignments_list, outputFileName):
+    outputFile = outputFileName + '.out'
+    outputMAFfile = outputFileName + '.maf'
+    # refresh outputFile
+    with open(outputFile, 'w'):
+        pass
+    # refresh outputMAFfile
+    with open(outputMAFfile, 'w'):
+        pass
+
+    print('--- Searching TE-TE splits')
+    count = 0
+    j = 0
+    for i in range(len(alignments_list)):
+        # intronLeft = ' '.join(map(str, alignments_list[i][1][0]))
+        # intronRight = ' '.join(map(str, alignments_list[i][1][1]))
+        while (j < len(teData)
+                and end(teData[j]) < beg(alignments_list[i])):
+            j += 1
+        k = j
+        # print('intronLeft', intronLeft)
+        # print('intronRight', intronRight)
+        # print('\t'.join(teData[j]))
+        while (k < len(teData)
+                and beg(teData[k]) < beg(alignments_list[i])):
+            te1 = teData[k]
+            # because te1 != te2, m starts from k+1
+            m = k + 1
+            while (m < len(teData)
+                   and end(teData[m]) < end(alignments_list[i])):
+                m += 1
+            n = m
+            while (n < len(teData)
+                   and beg(teData[n]) < end(alignments_list[i])):
+                te2 = teData[n]
+                rStrand = alignments_list[i][0][0]
+                aln1 = alignments_list[i][0][1]
+                aln2 = alignments_list[i][0][2]
+                intronLeft = alignments_list[i][1][0]
+                intronRight = alignments_list[i][1][1]
+
+                with open(outputMAFfile, 'a') as mFile:
+                    mFile.write(aln1._MAF())
+                    mFile.write(aln2._MAF())
+                    mFile.flush()
+
+                with open(outputFile, 'a') as oFile:
+                    oFile.write(str(count := count+1)+'\n')
+                    oFile.write('strand of read: {}\n'.format(rStrand))
+                    oFile.write('intronLeft: {}\n'.format(intronLeft))
+                    oFile.write('intronRight: {}\n'.format(intronRight))
+                    oFile.write(aln1._MAF())
+                    oFile.write(aln2._MAF())
+                    oFile.write('\t'.join(te1)+'\n')
+                    oFile.write('\t'.join(te2)+'\n')
+                    oFile.write('\n\n')
+                    oFile.flush()
+                n += 1
+            k += 1
 
 
 if __name__ == '__main__':
@@ -108,7 +207,7 @@ if __name__ == '__main__':
     '''
     Read the cds file
     '''
-    repeatData = getRepeatData(args.repeatMaskerFile)
+    teData = getTEData(args.repeatMaskerFile)
     '''
     Read the alignment file
     '''
@@ -116,4 +215,4 @@ if __name__ == '__main__':
     '''
     Get TE-TE splits
     '''
-    getTE_TESplits(repeatData, alignments_list, args.outputFileName)
+    getTE_TESplits(teData, alignments_list, args.outputFileName)
