@@ -51,11 +51,14 @@ def getTEData(repeatMaskerFile):
     with open(repeatMaskerFile, 'r') as f:
         print('--- Reading RepeatMasker File')
         for row in csv.reader(skipFirstTwoRows(f), delimiter='\t'):
-            if isTE(row):
-                teData.append(row)
+            # print(row)
+            row_list = [c.split() for c in row][0]
+            # print(row_list)
+            if isTE(row_list):
+                teData.append(row_list)
     # sort according to chromosome name, start position, and end position
     print('--- Sorting repeatData')
-    teData_sorted = sorted(repeatData,
+    teData_sorted = sorted(teData,
                            key=lambda r: (r[4], int(r[5]), int(r[6])))
     return teData_sorted
 
