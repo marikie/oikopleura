@@ -49,6 +49,24 @@ def getMAFBlock(mafLines):
             yield mafBlock
 
 
+def getMultiMAFEntries_all(alignmentFile):
+    '''
+    from Alignments.py in JSA. written by Anish Shrestha.
+    takes in mafEntries in list of strings (line) form.
+    If a query has multiple entries:
+    constructs Alignment objects, and yields them.
+    '''
+    alnFileHandle = open(alignmentFile, 'r')
+    # alignments must be in MAF format.
+    for rid, mafEntries in groupby(getMAFBlock(alnFileHandle),
+                                   lambda x: x[2].split()[1]):
+        mafEntries = list(mafEntries)
+        alnObjectList = []
+        for mafEntry in mafEntries:
+            alnObjectList.append(Alignment.fromMAFEntry(mafEntry))
+        yield (rid, alnObjectList)
+
+
 def getMultiMAFEntries(alignmentFile):
     '''
     from Alignments.py in JSA. written by Anish Shrestha.
