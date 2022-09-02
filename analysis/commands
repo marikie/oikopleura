@@ -227,3 +227,46 @@ python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_di
 # extract introns with many reads 
 # embryos
 python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_20220816.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_ME_10_reads_20180819.json 10
+
+# August 26, 2022
+# TE-TE fusions
+# embryos
+python get_TE_TE_splits_faster.py ~/data/last/OKI2018_I69.RepMask.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-te-splits/embryos_te_te_fusions_20220826
+# immature adults
+python get_TE_TE_splits_faster.py ~/data/last/OKI2018_I69.RepMask.out ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-te-splits/immatureAdults_te_te_fusions_20220826
+# matured adults
+python get_TE_TE_splits_faster.py ~/data/last/OKI2018_I69.RepMask.out ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-te-splits/maturedAdults_te_te_fusions_20220826
+
+# make intron files for TE-TE fusions
+# embryos
+python makeOneIntronJsonFile.py ~/data/te-te-splits/embryos_te_te_fusions_20220826.maf ~/data/te-te-splits/intronFile_embryos_te-te_fusions_20220826.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/te-te-splits/immatureAdults_te_te_fusions_20220826.maf ~/data/te-te-splits/intronFile_immatureAdults_te_te_fusions_20220826.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/te-te-splits/maturedAdults_te_te_fusions_20220826.maf ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_20220826.json
+
+# extract TE-TE fusions with many reads
+# embryos
+python extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_embryos_te-te_fusions_20220826.json ~/data/te-te-splits/intronFile_embryos_te-te_fusions_ME_10_20220826.json 10
+# immature adults
+python extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_immatureAdults_te_te_fusions_20220826.json ~/data/te-te-splits/intronFile_immatureAdults_te_te_fusions_ME_10_20220826.json 10
+# matured adults
+python extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_20220826.json ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_ME_10_20220826.json 10
+
+# cds-cds fusions
+# immature adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220826
+# matured adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220826
+
+# make intron files for cds-cds fusions
+# immature adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220826.maf ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220826.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220826.maf ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220826.json
+
+# extract cds-cds fusions with many reads
+# immature adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220826.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_20220826.json 10
+# matured adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220826.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_20220826.json 10
