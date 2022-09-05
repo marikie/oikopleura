@@ -35,10 +35,12 @@ def getCDSdata(gffFile):
                 cdsData.append(row)
             else:
                 pass
-        # sort according to chromosome name, start position, and end position
+        # sort according to chromosome name, start position, end position,
+        # and strand
         print('--- Sorting cdsData')
         cdsData_sorted = sorted(cdsData,
-                                key=lambda r: (r[0], int(r[3]), int(r[4])))
+                                key=lambda r: (r[0], int(r[3]), int(r[4]),
+                                               r[6]))
         return cdsData_sorted
 
 
@@ -82,16 +84,17 @@ def getAlignmentData(alignmentFile):
                 # print('intronEnd: ', intronEnd[0],
                 #      str(intronEnd[1]), intronEnd[2])
                 intronLeft = min([intronStart, intronEnd],
-                                 key=lambda c: (c[0], c[1]))
+                                 key=lambda c: (c[0], c[1], c[2]))
                 intronRight = max([intronStart, intronEnd],
-                                  key=lambda c: (c[0], c[1]))
+                                  key=lambda c: (c[0], c[1], c[2]))
                 # print('intronLeft: ', intronLeft[0],
                 #      str(intronLeft[1]), intronLeft[2])
                 # print('intronRight: ', intronRight[0],
                 #      str(intronRight[1]), intronRight[2])
                 # alignments_list: list of tuple
                 alignments_list.append(((readStrand, aln1, aln2),
-                                        (intronLeft, intronRight)))
+                                        (intronLeft, intronRight),
+                                        (intronStart, intronEnd)))
 
     # sort alignments_list according to
     # intronLeft and intronRight chromosom name and coord
@@ -144,52 +147,68 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
     for i in range(len(alignments_list)):
         # intronLeft = ' '.join(map(str, alignments_list[i][1][0]))
         # intronRight = ' '.join(map(str, alignments_list[i][1][1]))
+
+        # do not include end(CDS) == beg(intron)
         while (j < len(cdsData)
-                and end(cdsData[j]) < beg(alignments_list[i])):
+                and end(cdsData[j]) <= beg(alignments_list[i])):
             j += 1
         k = j
         # print('intronLeft', intronLeft)
         # print('intronRight', intronRight)
         # print('\t'.join(cdsData[j]))
+
+        # consider as cds1 when beg(CDS) == beg(intron)
         while (k < len(cdsData)
-                and beg(cdsData[k]) < beg(alignments_list[i])):
-            cds1 = cdsData[k]
-            cds1_gene = '.'.join(cds1[-1].split(';')[1].split('=')[1].split(
-                        '.')[3:5])
+                and beg(cdsData[k]) <= beg(alignments_list[i])):
+            # check if strand of CDS == strand of beg(intron)
+            if cdsData[k][6] == alignments_list[i][1][0][2]:
+                cds1 = cdsData[k]
+                cds1_gene = '.'.join(cds1[-1].split(';')[1].split(
+                            '=')[1].split('.')[3:5])
+            else:
+                cds1 = None
             # because cds1 != cds2, m starts from k+1
             m = k + 1
+            # do not include as cds2 when end(CDS) == end(intron)
             while (m < len(cdsData)
-                   and end(cdsData[m]) < end(alignments_list[i])):
+                   and end(cdsData[m]) <= end(alignments_list[i])):
                 m += 1
             n = m
+            # include as cds2 when beg(CDS) == end(intron)
             while (n < len(cdsData)
-                   and beg(cdsData[n]) < end(alignments_list[i])):
-                cds2 = cdsData[n]
-                cds2_gene = '.'.join(cds2[-1].split(';')[1].split('=')[
-                    1].split('.')[3:5])
-                if cds1_gene != cds2_gene:
-                    rStrand = alignments_list[i][0][0]
-                    aln1 = alignments_list[i][0][1]
-                    aln2 = alignments_list[i][0][2]
-                    intronLeft = alignments_list[i][1][0]
-                    intronRight = alignments_list[i][1][1]
+                   and beg(cdsData[n]) <= end(alignments_list[i])):
+                # check if strand of CDS == strand of end(intron)
+                if cdsData[n][6] == alignments_list[i][1][1][2]:
+                    cds2 = cdsData[n]
+                    cds2_gene = '.'.join(cds2[-1].split(';')[1].split(
+                        '=')[1].split('.')[3:5])
+                else:
+                    cds2 = None
+                if cds1 and cds2:
+                    if cds1_gene != cds2_gene:
+                        rStrand = alignments_list[i][0][0]
+                        aln1 = alignments_list[i][0][1]
+                        aln2 = alignments_list[i][0][2]
+                        intronLeft = alignments_list[i][1][0]
+                        intronRight = alignments_list[i][1][1]
 
-                    with open(outputMAFfile, 'a') as mFile:
-                        mFile.write(aln1._MAF())
-                        mFile.write(aln2._MAF())
-                        mFile.flush()
+                        with open(outputMAFfile, 'a') as mFile:
+                            mFile.write(aln1._MAF())
+                            mFile.write(aln2._MAF())
+                            mFile.flush()
 
-                    with open(outputFile, 'a') as oFile:
-                        oFile.write(str(count := count+1)+'\n')
-                        oFile.write('strand of read: {}\n'.format(rStrand))
-                        oFile.write('intronLeft: {}\n'.format(intronLeft))
-                        oFile.write('intronRight: {}\n'.format(intronRight))
-                        oFile.write(aln1._MAF())
-                        oFile.write(aln2._MAF())
-                        oFile.write('\t'.join(cds1)+'\n')
-                        oFile.write('\t'.join(cds2)+'\n')
-                        oFile.write('\n\n')
-                        oFile.flush()
+                        with open(outputFile, 'a') as oFile:
+                            oFile.write(str(count := count+1)+'\n')
+                            oFile.write('strand of read: {}\n'.format(rStrand))
+                            oFile.write('intronLeft:  {}\n'.format(intronLeft))
+                            oFile.write('intronRight: {}\n'.format(
+                                                                intronRight))
+                            oFile.write(aln1._MAF())
+                            oFile.write(aln2._MAF())
+                            oFile.write('\t'.join(cds1)+'\n')
+                            oFile.write('\t'.join(cds2)+'\n')
+                            oFile.write('\n\n')
+                            oFile.flush()
                 n += 1
             k += 1
 
