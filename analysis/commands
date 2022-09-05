@@ -270,3 +270,12 @@ python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusi
 python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220826.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_20220826.json 10
 # matured adults
 python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220826.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_20220826.json 10
+
+# Sep 2, 2022
+# remove_chrUn.py
+# embryos
+python removeChr.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+# immature adults
+python removeChr.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+# matured adults
+python removeChr.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
