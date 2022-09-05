@@ -219,6 +219,6 @@ class Alignment():
         toReturn += str(self.rEnd-self.rStart).rjust(maxLength_end, ' ')+' '
         toReturn += self.rStrand+' '
         toReturn += str(self.rLength).rjust(maxLength_length, ' ')+' '
-        toReturn += self.rSeq+'\n\n'
+        toReturn += self.rSeq+'\n'
 
         return toReturn
