@@ -125,7 +125,8 @@ def beg(element):
 def end(element):
     # element = cds row
     if isinstance(element, list):
-        return (element[0], int(element[4]))
+        # convert to in-between coordinate
+        return (element[0], int(element[4])+1)
     # element = alignment tuple
     else:
         return (element[1][1][0], element[1][1][1])
@@ -148,18 +149,18 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
         # intronLeft = ' '.join(map(str, alignments_list[i][1][0]))
         # intronRight = ' '.join(map(str, alignments_list[i][1][1]))
 
-        # do not include end(CDS) == beg(intron)
+        # include as cds1 when end(CDS) == beg(intron)
         while (j < len(cdsData)
-                and end(cdsData[j]) <= beg(alignments_list[i])):
+                and end(cdsData[j]) < beg(alignments_list[i])):
             j += 1
         k = j
         # print('intronLeft', intronLeft)
         # print('intronRight', intronRight)
         # print('\t'.join(cdsData[j]))
 
-        # consider as cds1 when beg(CDS) == beg(intron)
+        # do not include as cds1 when beg(CDS) == beg(intron)
         while (k < len(cdsData)
-                and beg(cdsData[k]) <= beg(alignments_list[i])):
+                and beg(cdsData[k]) < beg(alignments_list[i])):
             # check if strand of CDS == strand of beg(intron)
             if cdsData[k][6] == alignments_list[i][1][0][2]:
                 cds1 = cdsData[k]
@@ -189,6 +190,8 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
                         rStrand = alignments_list[i][0][0]
                         aln1 = alignments_list[i][0][1]
                         aln2 = alignments_list[i][0][2]
+                        intronStart = alignments_list[i][2][0]
+                        intronEnd = alignments_list[i][2][1]
                         intronLeft = alignments_list[i][1][0]
                         intronRight = alignments_list[i][1][1]
 
@@ -200,11 +203,15 @@ def printCdsCdsSplits(cdsData, alignments_list, outputFileName):
                         with open(outputFile, 'a') as oFile:
                             oFile.write(str(count := count+1)+'\n')
                             oFile.write('strand of read: {}\n'.format(rStrand))
+                            oFile.write('intronStart: {}\n'.format(
+                                                                intronStart))
+                            oFile.write('intronEnd:   {}\n'.format(intronEnd))
                             oFile.write('intronLeft:  {}\n'.format(intronLeft))
                             oFile.write('intronRight: {}\n'.format(
                                                                 intronRight))
                             oFile.write(aln1._MAF())
                             oFile.write(aln2._MAF())
+                            oFile.write('\n')
                             oFile.write('\t'.join(cds1)+'\n')
                             oFile.write('\t'.join(cds2)+'\n')
                             oFile.write('\n\n')
