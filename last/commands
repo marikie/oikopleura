@@ -120,3 +120,10 @@ last-train -P8 --revsym -X1 -m100 Oikopleura.dioica_TEdb ../OKI2018_I69_1.0.fa >
 #        lengthened until it occurs at most this many times in the reference. 
 # -D1e7: Report alignments that are expected by chance at most once per LENGTH query letters. 
 
+# Sep 6, 2022
+# To use IGV
+# embryos
+# MAF -> SAM
+
+# samtools SAM -> BAM
+
