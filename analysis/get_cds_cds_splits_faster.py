@@ -1,6 +1,6 @@
 '''
 Input:
-    - a .gff file (annotation)
+    - a .gff file (annotation) coordinates are 1-based
     - a .maf file (alignment)
 Output:
     - output.out
@@ -116,7 +116,8 @@ def getAlignmentData(alignmentFile):
 def beg(element):
     # element = cds row
     if isinstance(element, list):
-        return (element[0], int(element[3]))
+        # convert 1-based to in-between coordinate
+        return (element[0], int(element[3])-1)
     # element = alignment tuple
     else:
         return (element[1][0][0], element[1][0][1])
@@ -125,8 +126,7 @@ def beg(element):
 def end(element):
     # element = cds row
     if isinstance(element, list):
-        # convert to in-between coordinate
-        return (element[0], int(element[4])+1)
+        return (element[0], int(element[4]))
     # element = alignment tuple
     else:
         return (element[1][1][0], element[1][1][1])
