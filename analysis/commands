@@ -293,3 +293,38 @@ python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/la
 python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220908
 # mature adults
 python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220908
+
+# makeOneIntronJsonFile.py
+# embryos
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220908.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_20220908.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220908.maf ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220908.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220908.maf ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220908.json
+
+# Sep 13, 2022
+# get_cds_cds_splits_faster.py (modified Alignments.py)
+# embryos
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220913
+# immature adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220913
+# matured adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220913
+
+# Sep 14, 2022
+# makeOneIntronJsonFile.py
+# embryos
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220913.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_20220914.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220913.maf ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220914.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220913.maf ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220914.json
+
+# Sep 15, 2022
+# extractIntronsWithManyReads.py
+# embryos
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_20220914.json 10
+# immature adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_20220914.json 10
+# matured adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_20220914.json 10
