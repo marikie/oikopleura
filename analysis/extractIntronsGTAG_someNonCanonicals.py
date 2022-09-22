@@ -36,6 +36,10 @@ def isGTAG_GAAG(splicingSingalList):
     if ((splicingSingalList[0].upper() == 'GT' and
          splicingSingalList[1].upper() == 'AG') or
         (splicingSingalList[0].upper() == 'GA' and
+         splicingSingalList[1].upper() == 'AG') or
+        (splicingSingalList[0].upper() == 'GC' and
+         splicingSingalList[1].upper() == 'AG') or
+        (splicingSingalList[0].upper() == 'GG' and
          splicingSingalList[1].upper() == 'AG')):
         return True
     else:
