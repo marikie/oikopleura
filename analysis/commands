@@ -328,3 +328,11 @@ python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_embryos_c
 python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_20220914.json 10
 # matured adults
 python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_20220914.json 10
+
+# extractIntronsGTAG_someNonCanonicals.py
+# embryos
+python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_20220914.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+# immature adults
+python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_20220914.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+# matured adults
+python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_20220914.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
