@@ -1,6 +1,8 @@
 '''
 Input:
     - an output file of RepeatMasker
+      (Not sure if the coordinates are 1-base or 0-base.
+       Let's assume it's 0-base.)
     - a .maf file (alignment)
 Output:
     - output.out
@@ -104,7 +106,8 @@ def getAlignmentData(alignmentFile):
                                   key=lambda c: (c[0], c[1]))
                 # alignments_list: list of tuple
                 alignments_list.append(((readStrand, aln1, aln2),
-                                        (intronLeft, intronRight)))
+                                        (intronLeft, intronRight),
+                                        (intronStart, intronEnd)))
 
     # sort alignments_list according to
     # intronLeft and intronRight chromosom name and coord
@@ -127,7 +130,8 @@ def beg(element):
 def end(element):
     # element = te row
     if isinstance(element, list):
-        return (element[4], int(element[6]))
+        # convert 0-base to in-between coordinate
+        return (element[4], int(element[6])+1)
     # element = alignment tuple
     else:
         return (element[1][1][0], element[1][1][1])
@@ -149,6 +153,8 @@ def getTE_TESplits(teData, alignments_list, outputFileName):
     for i in range(len(alignments_list)):
         # intronLeft = ' '.join(map(str, alignments_list[i][1][0]))
         # intronRight = ' '.join(map(str, alignments_list[i][1][1]))
+
+        # include as te1 when end(te)==beg(intron)
         while (j < len(teData)
                 and end(teData[j]) < beg(alignments_list[i])):
             j += 1
@@ -156,40 +162,61 @@ def getTE_TESplits(teData, alignments_list, outputFileName):
         # print('intronLeft', intronLeft)
         # print('intronRight', intronRight)
         # print('\t'.join(teData[j]))
+
+        # do not include as te1 when beg(te)==beg(intron)
         while (k < len(teData)
                 and beg(teData[k]) < beg(alignments_list[i])):
-            te1 = teData[k]
+            # check if strand of te == strand of beg(intron)
+            if (teData[k][8] == alignments_list[i][1][0][2] or
+               (teData[k][8], alignments_list[i][1][0][2]) == ('C', '-')):
+                te1 = teData[k]
+            else:
+                te1 = None
             # because te1 != te2, m starts from k+1
             m = k + 1
+            # do not include as te2 when end(te)==end(intron)
             while (m < len(teData)
-                   and end(teData[m]) < end(alignments_list[i])):
+                   and end(teData[m]) <= end(alignments_list[i])):
                 m += 1
             n = m
+            # include as te2 when beg(te)==end(intron)
             while (n < len(teData)
-                   and beg(teData[n]) < end(alignments_list[i])):
-                te2 = teData[n]
-                rStrand = alignments_list[i][0][0]
-                aln1 = alignments_list[i][0][1]
-                aln2 = alignments_list[i][0][2]
-                intronLeft = alignments_list[i][1][0]
-                intronRight = alignments_list[i][1][1]
+                   and beg(teData[n]) <= end(alignments_list[i])):
+                # check if strand of te == strand of end(intron)
+                if (teData[n][8] == alignments_list[i][1][1][2] or
+                   (teData[n][8], alignments_list[i][1][1][2]) == ('C', '-')):
+                    te2 = teData[n]
+                else:
+                    te2 = None
 
-                with open(outputMAFfile, 'a') as mFile:
-                    mFile.write(aln1._MAF())
-                    mFile.write(aln2._MAF())
-                    mFile.flush()
+                if te1 and te2:
+                    rStrand = alignments_list[i][0][0]
+                    aln1 = alignments_list[i][0][1]
+                    aln2 = alignments_list[i][0][2]
+                    intronStart = alignments_list[i][2][0]
+                    intronEnd = alignments_list[i][2][1]
+                    intronLeft = alignments_list[i][1][0]
+                    intronRight = alignments_list[i][1][1]
 
-                with open(outputFile, 'a') as oFile:
-                    oFile.write(str(count := count+1)+'\n')
-                    oFile.write('strand of read: {}\n'.format(rStrand))
-                    oFile.write('intronLeft: {}\n'.format(intronLeft))
-                    oFile.write('intronRight: {}\n'.format(intronRight))
-                    oFile.write(aln1._MAF())
-                    oFile.write(aln2._MAF())
-                    oFile.write('\t'.join(te1)+'\n')
-                    oFile.write('\t'.join(te2)+'\n')
-                    oFile.write('\n\n')
-                    oFile.flush()
+                    with open(outputMAFfile, 'a') as mFile:
+                        mFile.write(aln1._MAF())
+                        mFile.write(aln2._MAF())
+                        mFile.flush()
+
+                    with open(outputFile, 'a') as oFile:
+                        oFile.write(str(count := count+1)+'\n')
+                        oFile.write('strand of read: {}\n'.format(rStrand))
+                        oFile.write('intronStart: {}\n'.format(intronStart))
+                        oFile.write('intronEnd:   {}\n'.format(intronEnd))
+                        oFile.write('intronLeft:  {}\n'.format(intronLeft))
+                        oFile.write('intronRight: {}\n'.format(intronRight))
+                        oFile.write(aln1._MAF())
+                        oFile.write(aln2._MAF())
+                        oFile.write('\n')
+                        oFile.write('\t'.join(te1)+'\n')
+                        oFile.write('\t'.join(te2)+'\n')
+                        oFile.write('\n\n')
+                        oFile.flush()
                 n += 1
             k += 1
 
