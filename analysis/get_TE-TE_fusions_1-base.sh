@@ -51,7 +51,7 @@ fi
 
 if [ ! -e "intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD""_reads_majorSS_$DATE.json" ]; then
         echo "immature adults: extracting introns with major splicing signals"
-        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json intronFile_immatureAdults_te-te_fusions_1-base__ME_$THRESHOLD\_reads_majorSS_$DATE.json
+        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_majorSS_$DATE.json
 fi
 
 # ---- matured adults ----
