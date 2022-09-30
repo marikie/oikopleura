@@ -20,17 +20,17 @@ fi
 
 if [ ! -e "intronFile_embryos_te-te_fusions_1-base_$DATE.json" ]; then
         echo "embryos: making intronFile"
-        python ~/oikopleura/analysis/makeOneIntronJsonFile.py ~/data/te-te-splits/embryos_te-te_fusions_$DATE.maf ~/data/te-te-splits/intronFile_embryos_te-te_fusions_1-base_$DATE.json
+        python ~/oikopleura/analysis/makeOneIntronJsonFile.py ~/data/te-te-splits/embryos_te-te_fusions_1-base_$DATE.maf ~/data/te-te-splits/intronFile_embryos_te-te_fusions_1-base_$DATE.json
 fi
 
 if [ ! -e "intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD""_reads_$DATE.json" ]; then
         echo "embryos: extracting introns with more than $THRESHOLD reads"
-        python ~/oikopleura/analysis/extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_embryos_te-te_fusions_$DATE.json ~/data/te-te-splits/intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json $THRESHOLD
+        python ~/oikopleura/analysis/extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_embryos_te-te_fusions_1-base_$DATE.json ~/data/te-te-splits/intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json $THRESHOLD
 fi
 
 if [ ! -e "intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD""_reads_majorSS_$DATE.json" ]; then
         echo "embryos: extracting introns with major splicing signals"
-        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_embryos_te-te_fusions_ME_$THRESHOLD\_reads_$DATE.json intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD\_reads_majorSS_$DATE.json
+        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json intronFile_embryos_te-te_fusions_1-base_ME_$THRESHOLD\_reads_majorSS_$DATE.json
 fi
 
 # ---- immature adults -----
@@ -41,17 +41,17 @@ fi
 
 if [ ! -e "intronFile_immatureAdults_te-te_fusions_1-base_$DATE.json" ]; then
         echo "immature adults: making intronFile"
-        python ~/oikopleura/analysis/makeOneIntronJsonFile.py ~/data/te-te-splits/immatureAdults_te-te_fusions_$DATE.maf ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_$DATE.json
+        python ~/oikopleura/analysis/makeOneIntronJsonFile.py ~/data/te-te-splits/immatureAdults_te-te_fusions_1-base_$DATE.maf ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_$DATE.json
 fi
 
 if [ ! -e "intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD""_reads_$DATE.json" ]; then
         echo "immature adults: extracting introns with more than $THRESHOLD reads"
-        python ~/oikopleura/analysis/extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_$DATE.json ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json $THRESHOLD
+        python ~/oikopleura/analysis/extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_$DATE.json ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json $THRESHOLD
 fi
 
 if [ ! -e "intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD""_reads_majorSS_$DATE.json" ]; then
         echo "immature adults: extracting introns with major splicing signals"
-        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_ME_$THRESHOLD\_reads_$DATE.json intronFile_immatureAdults_te-te_fusions_1-base__ME_$THRESHOLD\_reads_majorSS_$DATE.json
+        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_immatureAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json intronFile_immatureAdults_te-te_fusions_1-base__ME_$THRESHOLD\_reads_majorSS_$DATE.json
 fi
 
 # ---- matured adults ----
@@ -62,15 +62,15 @@ fi
 
 if [ ! -e "intronFile_maturedAdults_te-te_fusions_1-base_$DATE.json" ]; then 
         echo "matured adults: making intronFile"
-        python ~/oikopleura/analysis/makeOneIntronJsonFile.py ~/data/te-te-splits/maturedAdults_te-te_fusions_$DATE.maf ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_1-base_$DATE.json
+        python ~/oikopleura/analysis/makeOneIntronJsonFile.py ~/data/te-te-splits/maturedAdults_te-te_fusions_1-base_$DATE.maf ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_1-base_$DATE.json
 fi
 
 if [ ! -e "intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD""_reads_$DATE.json" ]; then
         echo "matured adults: extracting introns with more than $THRESHOLD reads"
-        python ~/oikopleura/analysis/extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_$DATE.json ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json $THRESHOLD
+        python ~/oikopleura/analysis/extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_1-base_$DATE.json ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json $THRESHOLD
 fi
 
 if [ ! -e "intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD""_reads_majorSS_$DATE.json" ]; then
         echo "matured adults: extracting introns with major splicing signals"
-        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_ME_$THRESHOLD\_reads_$DATE.json intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_majorSS_$DATE.json
+        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_$DATE.json intronFile_maturedAdults_te-te_fusions_1-base_ME_$THRESHOLD\_reads_majorSS_$DATE.json
 fi
