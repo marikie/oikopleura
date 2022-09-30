@@ -340,3 +340,10 @@ python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_
 # Sep 27, 2022
 # search TE-TE fusions
 ./get_TE-TE_fusions.sh 10 20220927
+
+# Sep 28, 2022
+./get_TE-TE_fusions.sh 5 20220927
+
+# Sep 29, 2022
+# search TE-TE fusions assuming RepMask.out coordinates are 1-based
+./get_TE-TE_fusions_1-base.sh 5 20220929
