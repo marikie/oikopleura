@@ -8,6 +8,14 @@ Output:
 import argparse
 import csv
 
+
+def decomment(csvFile):
+    for row in csvFile:
+        not_comment_line = row.split('#')[0].strip()
+        if not_comment_line:
+            yield not_comment_line
+
+
 def getCDSdata(gffFile):
     cdsData = []
     with open(gffFile, 'r') as f:
