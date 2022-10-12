@@ -347,3 +347,11 @@ python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_
 # Sep 29, 2022
 # search TE-TE fusions assuming RepMask.out coordinates are 1-based
 ./get_TE-TE_fusions_1-base.sh 5 20220929
+
+# Oct 12, 2022
+# search TE-CDS fusions
+python get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/te-cds_fusions_embryos_20221012
+
+# CDS-CDS fusions: linear and trans
+python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
