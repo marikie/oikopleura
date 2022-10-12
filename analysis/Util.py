@@ -134,11 +134,35 @@ def getIntronCoord(readStrand, aln1, aln2):
     return (intronStart, intronEnd)
 
 
+def toSTR(intronCoords):
+    '''
+    convert intronCoords into string
+    intronCoords == ((sChr(str), sPos(int), sStrand(str)),
+                     (eChr(str), ePos(int), eStrand(str))
+    -> sChr_sPos_sStrand_eChr_ePos_eStrand
+    '''
+    startCoord = '_'.join([intronCoords[0][0], str(intronCoords[0][1]),
+                           intronCoords[0][2]])
+    endCoord = '_'.join([intronCoords[1][0], str(intronCoords[1][1]),
+                        intronCoords[1][2]])
+    intronCoords_str = '_'.join([startCoord, endCoord])
+    return intronCoords_str
+
+
 def getAlignmentData(alignmentFile):
     '''
-    return a list of ((readStrand, aln1, aln2), (intronStart, intronEnd))
-    return only 'Exact Splits' and alignments with don-acc pairs
+    Input: an alignment .maf file
+    Output:
+        return only 'Exact Splits' and
+        alignments with don-acc pairs
+        return a list of ((readStrand, aln1, aln2),
+                          (intronLeft, intronRight),
+                          (intronStart, intronEnd))
+        readStrand: '+'/'-'
+        aln: Alignment()
+        intron: (aln.gChr, aln.gStart/aln.gEnd, '+'/'-')
     '''
+    print('--- Reading alignmentFile')
     alignments_list = []
     for readID, alignments in getMultiMAFEntries(alignmentFile):
         # prerequisite:
@@ -153,10 +177,6 @@ def getAlignmentData(alignmentFile):
                 or (not alignments[-1].don and alignments[-1].acc):
             # set readStrand to '+'
             readStrand = '+'
-            # adjust all coordinates to + strand's coordinates
-            for aln in alignments:
-                if aln.rStrand == '-':
-                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         # if the last alignment has donor and doesn't have acceptor
         # or the first alignment doesn't have donor and has acceptor
         elif (alignments[-1].don and not alignments[-1].acc)\
@@ -165,10 +185,6 @@ def getAlignmentData(alignmentFile):
             readStrand = '-'
             # reverse the alignments list
             alignments.reverse()
-            # adjust all coordinates to - strand's coordinates
-            for aln in alignments:
-                if aln.rStrand == '+':
-                    aln.rStart, aln.rEnd = convert2CoorOnOppositeStrand(aln)
         else:
             # go to next readID
             # (do NOT append to alignments_list)
@@ -180,23 +196,35 @@ def getAlignmentData(alignmentFile):
             # do NOT append alignments with inexact splits
             if aln2.rStart - aln1.rEnd == 0:
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
-                # alignments_list: list of list
+                # print('intronStart: ', intronStart[0],
+                #      str(intronStart[1]), intronStart[2])
+                # print('intronEnd: ', intronEnd[0],
+                #      str(intronEnd[1]), intronEnd[2])
+                intronLeft = min([intronStart, intronEnd],
+                                 key=lambda c: (c[0], c[1], c[2]))
+                intronRight = max([intronStart, intronEnd],
+                                  key=lambda c: (c[0], c[1], c[2]))
+                # print('intronLeft: ', intronLeft[0],
+                #      str(intronLeft[1]), intronLeft[2])
+                # print('intronRight: ', intronRight[0],
+                #      str(intronRight[1]), intronRight[2])
+                # alignments_list: list of tuple
                 alignments_list.append(((readStrand, aln1, aln2),
+                                        (intronLeft, intronRight),
                                         (intronStart, intronEnd)))
 
+    # sort alignments_list according to
+    # intronLeft and intronRight chromosom name and coord
+    print('--- Sorting alignments')
+    alignments_list.sort(key=lambda a_c: ((a_c[1][0][0], a_c[1][0][1]),
+                                          (a_c[1][1][0], a_c[1][1][1])))
+    # print sorted alignments_list
+    # for alignments in alignments_list:
+    #    intronLeft = alignments[1][0]
+    #    intronRight = alignments[1][1]
+    #    print('intronLeft:', intronLeft[0],
+    #          str(intronLeft[1]), intronLeft[2])
+    #    print('intronRight:', intronRight[0],
+    #          str(intronRight[1]), intronRight[2])
+
     return alignments_list
-
-
-def toSTR(intronCoords):
-    '''
-    convert intronCoords into string
-    intronCoords == ((sChr(str), sPos(int), sStrand(str)),
-                     (eChr(str), ePos(int), eStrand(str))
-    -> sChr_sPos_sStrand_eChr_ePos_eStrand
-    '''
-    startCoord = '_'.join([intronCoords[0][0], str(intronCoords[0][1]),
-                           intronCoords[0][2]])
-    endCoord = '_'.join([intronCoords[1][0], str(intronCoords[1][1]),
-                        intronCoords[1][2]])
-    intronCoords_str = '_'.join([startCoord, endCoord])
-    return intronCoords_str
