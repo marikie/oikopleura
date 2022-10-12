@@ -77,7 +77,7 @@ def getTE_CDSsplits(te_cds_Data, alignments_list, outputFileName):
         while (k < len(te_cds_Data)
                 and beg(te_cds_Data[k]) < beg(alignments_list[i])):
             # check if strand of CDS == strand of beg(intron)
-            if te_cds_Data[k][6] == alignments_list[i][1][0][2]:
+            if te_cds_Data[k][4] == alignments_list[i][1][0][2]:
                 te_cds1 = te_cds_Data[k]
                 print('te_cds1: ', te_cds1)
             else:
@@ -93,7 +93,7 @@ def getTE_CDSsplits(te_cds_Data, alignments_list, outputFileName):
             while (n < len(te_cds_Data)
                    and beg(te_cds_Data[n]) <= end(alignments_list[i])):
                 # check if strand of TE/CDS == strand of end(intron)
-                if te_cds_Data[n][6] == alignments_list[i][1][1][2]:
+                if te_cds_Data[n][4] == alignments_list[i][1][1][2]:
                     te_cds2 = te_cds_Data[n]
                     print('te_cds2: ', te_cds2)
                 else:
