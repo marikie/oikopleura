@@ -99,7 +99,7 @@ def getTE_CDSsplits(te_cds_Data, alignments_list, outputFileName):
                 else:
                     te_cds2 = None
                 if (te_cds1 and te_cds2 and
-                     te_cds1[0] != te_cds2[0]):
+                        te_cds1[0] != te_cds2[0]):
                     rStrand = alignments_list[i][0][0]
                     aln1 = alignments_list[i][0][1]
                     aln2 = alignments_list[i][0][2]
