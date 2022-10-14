@@ -18,7 +18,7 @@ IntronFile_Embryos="intronFile_embryos_te-cds_fusions_$DATE.json"
 IntronFile_Embryos_ME_Threshold="intronFile_embryos_te-cds_fusions_ME_$THRESHOLD""_reads_$DATE.json"
 IntronFile_Embryos_ME_Threshold_MajorSS="intronFile_embryos_te-cds_fusions_ME_$THRESHOLD""_reads_majorSS_$DATE.json"
 
-if [ ! -e "$Embryos_TE_CDS_Fusions.out" ]; then
+if [ ! -e $Embryos_TE_CDS_Fusions.out ]; then
         echo "embryos: getting TE-CDS fusions"
         python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$Embryos_TE_CDS_Fusions
 fi
@@ -43,14 +43,16 @@ python ~/oikopleura/analysis/divideIntoLinearANDTransSplicings.py $IntronFile_Em
 
 # ---- immature adults ----
 ImmatureAdults_TE_CDS_Fusions="immatureAdults_te-cds_fusions_$DATE"
-IntronFile_ImmatureAdults="IntronFile_immatureAdults_te-cds_fusions_$DATE.json"
+IntronFile_ImmatureAdults="intronFile_immatureAdults_te-cds_fusions_$DATE.json"
 IntronFile_ImmatureAdults_ME_Threshold="intronFile_immatureAdults_te-cds_fusions_ME_$THRESHOLD""_reads_$DATE.json"
 IntronFile_ImmatureAdults_ME_Threshold_MajorSS="intronFile_immatureAdults_te-cds_fusions_ME_$THRESHOLD""_reads_majorSS_$DATE.json"
 
-if [ ! -e "$ImmatureAdults_TE_CDS_Fusions.out" ]; then
+if [ ! -e $ImmatureAdults_TE_CDS_Fusions.out ]; then
         echo "immature adults: getting TE-CDS fusions"
-        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$ImmatureAdults_TE_CDS_Fusions
+        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$ImmatureAdults_TE_CDS_Fusions
 fi
+
+echo $IntronFile_ImmatureAdults
 
 if [ ! -e $IntronFile_ImmatureAdults ]; then
         echo "immature adults: making intronFile"
@@ -76,9 +78,9 @@ IntronFile_MaturedAdults="intronFile_maturedAdults_te-cds_fusions_$DATE.json"
 IntronFile_MaturedAdults_ME_Threshold="intronFile_maturedAdults_te-cds_fusions_ME_$THRESHOLD""_reads_$DATE.json"
 IntronFile_MaturedAdults_ME_Threshold_MajorSS="intronFile_maturedAdults_te-cds_fusions_ME_$THRESHOLD""_reads_majorSS_$DATE.json"
 
-if [ ! -e "$MaturedAdults_TE_CDS_Fusions.out" ]; then
+if [ ! -e $MaturedAdults_TE_CDS_Fusions.out ]; then
         echo "matured adults: getting TE-CDS fusions"
-        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$MaturedAdults_TE_CDS_Fusions
+        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$MaturedAdults_TE_CDS_Fusions
 fi
 
 if [ ! -e $IntronFile_MaturedAdults ]; then
