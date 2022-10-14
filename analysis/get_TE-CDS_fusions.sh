@@ -20,7 +20,7 @@ IntronFile_Embryos_ME_Threshold_MajorSS="intronFile_embryos_te-cds_fusions_ME_$T
 
 if [ ! -e "$Embryos_TE_CDS_Fusions.out" ]; then
         echo "embryos: getting TE-CDS fusions"
-        python ~/oikopleura/analysis/get_TE-CDS_fusions.sh ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$Embryos_TE_CDS_Fusions
+        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$Embryos_TE_CDS_Fusions
 fi
 
 if [ ! -e $IntronFile_Embryos ]; then
@@ -38,6 +38,9 @@ if [ ! -e $IntronFile_Embryos_ME_Threshold_MajorSS ]; then
         python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-cds-splits/$IntronFile_Embryos_ME_Threshold ~/data/te-cds-splits/$IntronFile_Embryos_ME_Threshold_MajorSS
 fi
 
+echo "embryos: dividing into linear and trans splits"
+python ~/oikopleura/analysis/divideIntoLinearANDTransSplicings.py $IntronFile_Embryos_ME_Threshold_MajorSS
+
 # ---- immature adults ----
 ImmatureAdults_TE_CDS_Fusions="immatureAdults_te-cds_fusions_$DATE"
 IntronFile_ImmatureAdults="IntronFile_immatureAdults_te-cds_fusions_$DATE.json"
@@ -46,7 +49,7 @@ IntronFile_ImmatureAdults_ME_Threshold_MajorSS="intronFile_immatureAdults_te-cds
 
 if [ ! -e "$ImmatureAdults_TE_CDS_Fusions.out" ]; then
         echo "immature adults: getting TE-CDS fusions"
-        python ~/oikopleura/analysis/get_TE-CDS_fusions.sh ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$ImmatureAdults_TE_CDS_Fusions
+        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$ImmatureAdults_TE_CDS_Fusions
 fi
 
 if [ ! -e $IntronFile_ImmatureAdults ]; then
@@ -64,6 +67,9 @@ if [ ! -e $IntronFile_ImmatureAdults_ME_Threshold_MajorSS ]; then
         python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-cds-splits/$IntronFile_ImmatureAdults_ME_Threshold ~/data/te-cds-splits/$IntronFile_ImmatureAdults_ME_Threshold_MajorSS
 fi
 
+echo "immature adults: dividing into linear and trans splits"
+python ~/oikopleura/analysis/divideIntoLinearANDTransSplicings.py $IntronFile_ImmatureAdults_ME_Threshold_MajorSS
+
 # ---- matured adults ----
 MaturedAdults_TE_CDS_Fusions="maturedAdults_te-cds_fusions_$DATE"
 IntronFile_MaturedAdults="intronFile_maturedAdults_te-cds_fusions_$DATE.json"
@@ -72,7 +78,7 @@ IntronFile_MaturedAdults_ME_Threshold_MajorSS="intronFile_maturedAdults_te-cds_f
 
 if [ ! -e "$MaturedAdults_TE_CDS_Fusions.out" ]; then
         echo "matured adults: getting TE-CDS fusions"
-        python ~/oikopleura/analysis/get_TE-CDS_fusions.sh ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$MaturedAdults_TE_CDS_Fusions
+        python ~/oikopleura/analysis/get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/$MaturedAdults_TE_CDS_Fusions
 fi
 
 if [ ! -e $IntronFile_MaturedAdults ]; then
@@ -87,5 +93,8 @@ fi
 
 if [ ! -e $IntronFile_MaturedAdults_ME_Threshold_MajorSS ]; then
         echo "matured adults: extracting introns with major splicing signals"
-        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-cds-splits/$IntronFile_MaturedAdults_ME_Threshold ~/data/te-cds-splits/$IntronFile__ME_Threshold_MajorSS
+        python ~/oikopleura/analysis/extractIntronsGTAG_someNonCanonicals.py ~/data/te-cds-splits/$IntronFile_MaturedAdults_ME_Threshold ~/data/te-cds-splits/$IntronFile_MaturedAdults_ME_Threshold_MajorSS
 fi
+
+echo "matured adults: dividing into linear and trans splits"
+python ~/oikopleura/analysis/divideIntoLinearANDTransSplicings.py $IntronFile_MaturedAdults_ME_Threshold_MajorSS
