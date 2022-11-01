@@ -355,3 +355,7 @@ python get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.ou
 # CDS-CDS fusions: linear and trans
 python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
 python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+
+# Oct 26, 2022
+# TE-CDS fusions
+./get_TE-CDS_fusions.sh 10 20221026
