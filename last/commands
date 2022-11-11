@@ -138,3 +138,12 @@ maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_so
 # sort sam
 samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221027.sam > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221101.sort.sam
 
+# Nov 11, 2022
+# last-train OKI2018_I69_1.0.transcriptonme.fa
+# -P8:   "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
+#         this has no effect on the result"
+# -X1:   "tells it to treat Ns in the reference sequences as unknown bases"
+# -m100: Maximum multiplicity for initial matches.  Each initial match is
+#        lengthened until it occurs at most this many times in the reference. 
+#        "makes it more slow-and-sensitive than the default" 
+last-train -P8 --revsym -X1 -m100 OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB OKI2018_I69.transcriptome.fa > last_transcript.mat
