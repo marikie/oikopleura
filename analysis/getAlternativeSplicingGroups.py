@@ -78,9 +78,11 @@ def getIntronList(intronJsonFile):
     return intron_list
 
 
-def getAlignmentList(alignmentFile):
+def getAlignmentLists(alignmentFile):
     print('--- Reading alignmentFile')
-    alignment_list = []
+    nonSplit_alignment_list = []
+    split_alignment_list = []
+
     for readID, alnObjList in getMultiMAFEntries_all(alignmentFile):
         # prerequisite:
         # alnObjList is already sorted
@@ -91,14 +93,13 @@ def getAlignmentList(alignmentFile):
             aln = alnObjList[0]
             alnStart = (aln.gChr, aln.gStart)
             alnEnd = (aln.gChr, aln.gEnd)
-            alnLeft = min([alnStart, alnEnd],
+            leftCoor = min([alnStart, alnEnd],
                           key=lambda a: (a[0], a[1]))
-            alnRight = max([alnStart, alnEnd],
+            rightCoor = max([alnStart, alnEnd],
                           key=lambda a: (a[0], a[1]))
-            alignment_list.append((readID,
-                                   alnObjList,
-                                   (alnLeft, alnRight),
-                                   (None, None)))
+            nonSplit_alignment_list.append((readID,
+                                            aln,
+                                            (leftCoor, rightCoor)))
         # if the read is split
         else:
             '''
@@ -129,27 +130,42 @@ def getAlignmentList(alignmentFile):
                 # (checking only "Exact Splits")
                 # do NOT append alignments with inexact splits
                 if aln2.rStart - aln1.rEnd == 0:
-                    alnStart = (aln1.gChr, aln1.gStart)
-                    alnEnd = (aln2.gChr, aln2.gEnd)
-                    alnLeft = min([alnStart, alnEnd],
+                    aln1_start = (aln1.gChr, aln1.gStart)
+                    aln1_end = (aln1.gChr, aln1.gEnd)
+                    aln2_start = (aln2.gChr, aln2.gStart)
+                    aln2_end = (aln2.gChr, aln2.gEnd)
+                    leftPos = min([aln1_start, aln1_end, aln2_start, aln2_end],
                                   key=lambda a: (a[0], a[1]))
-                    alnRight = max([alnStart, alnEnd],
-                                  key=lambda a: (a[0], a[1]))
+                    if (leftPos == aln1_start or leftPos == aln1_end):
+                        alnLeft = aln1
+                        alnRight = aln2
+                    else:
+                        alnLeft = aln2
+                        alnRight = aln1
                     intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
-                    alignment_list.append((readID,
-                                           [aln1, aln2],
-                                           (alnLeft, alnRight),
-                                           (intronStart, intronEnd)))
-        print('--- Sorting alignment_list')
-        # sort alignment_list
-        alignment_list.sort(key=lambda x: ((x[2][0][0], x[2][0][1]),
-                                           (x[2][1][0], x[2][1][1])))
+                    split_alignment_list.append((readID,
+                                                (aln1, aln2),
+                                                (alnLeft, alnRight),
+                                                (intronStart, intronEnd)))
+        print('--- Sorting nonSplit_alignment_list')
+        # sort nonSplit_alignment_list
+        nonSplit_alignment_list.sort(key=lambda x: (x[2][0], x[2][1]))
+        print('--- Sorting split_alignment_list')
+        # sort split_alignment_list
+        split_alignment_list.sort(key=lambda x: ((x[2][0].gChr, min(x[2][0].gStart, x[2][0].gEnd)),
+                                                 (x[2][1].gChr, min(x[2][1].gStart, x[2][1].gEnd))))
 
-        return alignment_list
+        return nonSplit_alignment_list, split_alignment_list
 
 
-def getAlternativeSpilcingGroups(intron_list, alignment_list, ourputFile):
-    print('--- Making alternative alignment info')
+def getAlternativeSpilcingGroups(intron_list, nonSplit_alignment_list, split_alignment_list, outputFile):
+    '''
+    nonSplit_alignment_list: a list of (readID, alnObj, (leftCoor, rightCoor))
+    split_alignment_list: a list of (readID, (aln1, aln2), (alnLeft, alnRight), (intronStart, intronEnd))
+    '''
+    print('--- Processing non-split alignments')
+
+    print('--- Processing split alignments')
 
     j = 0
     for i in range(len(intron_list)):
@@ -177,9 +193,9 @@ if __name__ == '__main__':
     '''
     Load alignmentFile and sort the alignment data
     '''
-    alignment_list = getAlignmentList(args.alignmentFile)
+    nonSplit_alignment_list, split_alignment_list = getAlignmentLists(args.alignmentFile)
 
     '''
     Get alternative splicing info
     '''
-    getAlternativeSpilcingGroups(intron_list, alignment_list, args.outputFile)
+    getAlternativeSpilcingGroups(intron_list, nonSplit_alignment_list, split_alignment_list, args.outputFile)
