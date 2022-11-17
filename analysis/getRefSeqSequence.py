@@ -24,8 +24,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('fastaFile', help='a fasta file of a reference genome')
     parser.add_argument('chrName', help='chromesome name')
-    parser.add_argument('start', type=int, help='starting position')
-    parser.add_argument('end', type=int, help='ending position')
+    parser.add_argument('start', type=int, help='starting position\
+                        (inbetween coord)')
+    parser.add_argument('end', type=int, help='ending position\
+                        (inbetween coord)')
 
     args = parser.parse_args()
     '''
