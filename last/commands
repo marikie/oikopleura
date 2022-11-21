@@ -165,3 +165,15 @@ samtools view -b transcript-to-genome.sam > transcript-to-genome.bam
 
 # BAM -> BED
 bedtools bamtobed -i transcript-to-genome.bam > transcript-to-genome.bed
+
+# Nov 17, 2022
+# MAF -> SAM
+maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam
+# sort sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
+
+# Nov 21, 2022
+# MAF -> SAM
+maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam
+# sort sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
