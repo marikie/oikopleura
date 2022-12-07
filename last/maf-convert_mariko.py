@@ -587,13 +587,74 @@ def getMultiMAFEntries(opts, lines):
     Modified getMultiMAFEntries() in Alignments.py of JSA,
     which was written by Anish Shrestha.
     Takes in opts and raw lines of a mafFile.
-    Yields a list of one or multiple mafEntries.
+    Yields a list of one or multiple mafEntrie(s).
+    i.e. [['a ...', ['s ...', 's...'], ['q ...'], ['p ...']],
+          ['a ...', ['s ...', 's...'], ['q ...'], ['p ...']],
+          . . .]
     '''
     # group mafBlocks by queryID
     for queryID, mafEntries in groupby(getMAFBlock(opts, lines),
-                                      lambda x: x[2][0].split()[1]):
-        mafEntries = list(mafEntries)
-        yield mafEntries
+                                       lambda x: x[2][0].split()[1]):
+        yield list(mafEntries)
+
+def isLinearOrChimeric(maf1, maf2):
+    '''
+    Added by Mariko.
+    Returns 1 if maf1 and maf2 are linear,
+    returns 0 if maf1 and maf2 are on different chromosomes.
+    '''
+    maf1Chr = maf1[1][0].split()[1]
+    maf2Chr = maf2[1][0].split()[1]
+    if maf1Chr == maf2Chr:
+        return 1
+    else:
+        return 0
+
+def getLinkList(mafEntries):
+    '''
+    Added by Mariko.
+    For every pair of mafEntries that are next to each other,
+    append 1 if they are linear, and append 0 if they are chimeric.
+    e.g. If linear groups are [[A, B, C], [D, E], [F]],
+    linkList: [1, 1, 0, 1, 0, 1]
+    '''
+    linkList = []
+    for mafEntry1, mafEntry2 in pairwise(mafEntries):
+        link = isLinearOrChimeric(mafEntry1, mafEntry2)
+        linkList.append(link)
+    else:
+        # append 1 at the end
+        linkList.append(1)
+    return linkList
+
+
+def splitIntoLinearGroups(mafEntries):
+    '''
+    Added by Mariko.
+    Split the list of mafEntries into nested list of
+    linear mafEntries.
+    e.g.
+    mafEntries: [A, B, C, D, E, F]
+    -> linearGroups: [[A, B, C], [D, E], [F]]
+    each list inside represents linear split/spliced-alignments.
+    '''
+    linkList = getLinkList(mafEntries)
+
+    # (index of 0) + 1
+    # [1, 1, 0, 1, 0, 1] -> [3, 5]
+    slicePosList = [i+1 for i, link in enumerate(linkList) if link == 0]
+    # add 0 as the first element
+    # [3, 5] -> [0, 3, 5]
+    slicePosList.insert(0, 0)
+    # add len(linkList) as the last element
+    # [0, 3, 5] -> [0, 3, 5, 6]
+    slicePosList.append(len(linkList))
+    # splice mafEntries according to slicePosList
+    linearGroups = []
+    for pos1, pos2 in pairwise(slicePosList):
+        linearGroups.append(mafEntries[pos1:pos2])
+
+    return linearGroups
 
 def readGroupId(readGroupItems):
     for i in readGroupItems:
@@ -705,7 +766,8 @@ def cigarParts(beg, alignmentColumns, end):
 
     if end: yield str(end) + "H"
 
-def writeSam(readGroup, maf):
+def writeSam(readGroup, mafEntries):
+    linearGroups = splitIntoLinearGroups(mafEntries)
     aLine, sLines, qLines, pLines = maf
     fieldsA, fieldsB = pairOrDie(sLines, "SAM")
     seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA = fieldsA
@@ -774,8 +836,8 @@ def mafConvertToSam(opts, lines):
     readGroup = ""
     if opts.readgroup:
         readGroup = "RG:Z:" + readGroupId(opts.readgroup.split())
-    for maf in mafInput(opts, lines):
-        writeSam(readGroup, maf)
+    for mafEntries in getMultiMAFEntries(opts, lines):
+        writeSam(readGroup, mafEntries)
 
 ##### Routines for converting to BLAST-like format: #####
 
