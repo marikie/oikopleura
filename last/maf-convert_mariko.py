@@ -537,7 +537,7 @@ def processComments(opts, lines):
     for line in lines:
         if line.startswith('#'):
             '''
-            Copied from mafInput(opts, lines)
+            Copied from mafInput(opts, lines) written by M. C. Frith.
             '''
             fields = line.split()
             updateEvalueParameters(opts, fields)
@@ -561,23 +561,41 @@ def getMAFBlock(opts, lines):
     which was written by Anish Shrestha.
     Takes in opts and raw lines from a mafFile, processes comment lines,
     and yields a list containing lines of a maf block.
-    i.e. ['a ...', ['s ...', 's ...'], ['q ...'], ['p ...']]
+    i.e. ['a ...',
+          [(seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA),
+           (seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB)],
+          ['q ...'], ['p ...']]
     '''
     # group lines by empty line
     for k, groupedLines in groupby(processComments(opts, lines), str.isspace):
         if not k:
-            aLine = ''
+            aLine = ""
             sLines = []
             qLines = []
             pLines = []
             for line in groupedLines:
-                if line.startswith('a'):
+                if line.startswith("a"):
                     aLine = line
-                elif line.startswith('s'):
-                    sLines.append(line)
-                elif line.startswith('q'):
+                elif line.startswith("s"):
+                    '''
+                    Copied from mafInput(opts, lines) written by M. C. Frith.
+                    '''
+                    junk, seqName, beg, span, strand, seqLen, row = line.split()
+                    beg = int(beg)
+                    span = int(span)
+                    seqLen = int(seqLen)
+                    rowLetters = len(row) - row.count("-")
+                    if "\\" in row or "/" in row or rowLetters < span:
+                        letterSize = 3
+                    elif rowLetters > span:
+                        letterSize = 0  # xxx means 3-letter codes like AlaCysAsp
+                    else:
+                        letterSize = 1
+                    fields = seqName, seqLen, strand, letterSize, beg, beg + span, row
+                    sLines.append(fields)
+                elif line.startswith("q"):
                     qLines.append(line)
-                else: # line.startswith('p')
+                else: # line.startswith("p")
                     pLines.append(line)
             yield [aLine, sLines, qLines, pLines]
 
@@ -588,8 +606,16 @@ def getMultiMAFEntries(opts, lines):
     which was written by Anish Shrestha.
     Takes in opts and raw lines of a mafFile.
     Yields a list of one or multiple mafEntrie(s).
-    i.e. [['a ...', ['s ...', 's...'], ['q ...'], ['p ...']],
-          ['a ...', ['s ...', 's...'], ['q ...'], ['p ...']],
+    i.e. [['a ...',
+          [(seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA),
+           (seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB)],
+          ['q ...'], ['p ...']],
+
+          ['a ...',
+          [(seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA),
+           (seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB)],
+          ['q ...'], ['p ...']],
+
           . . .]
     '''
     # group mafBlocks by queryID
@@ -634,10 +660,11 @@ def splitIntoLinearGroups(mafEntries):
     Split the list of mafEntries into nested list of
     linear mafEntries.
     e.g.
-    mafEntries: [A, B, C, D, E, F]
+    mafEntries: [A, B, C, D, E, F] (each letter is a mafBlock)
     -> linearGroups: [[A, B, C], [D, E], [F]]
     each list inside represents linear split/spliced-alignments.
     '''
+    # [1, 1, 0, 1, 0, 1]
     linkList = getLinkList(mafEntries)
 
     # (index of 0) + 1
@@ -767,70 +794,84 @@ def cigarParts(beg, alignmentColumns, end):
     if end: yield str(end) + "H"
 
 def writeSam(readGroup, mafEntries):
-    linearGroups = splitIntoLinearGroups(mafEntries)
-    aLine, sLines, qLines, pLines = maf
-    fieldsA, fieldsB = pairOrDie(sLines, "SAM")
-    seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA = fieldsA
-    seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB = fieldsB
+    '''
+    Modified by Mariko
+    '''
+    linearGroupList = splitIntoLinearGroups(mafEntries)
+    for gIndex, linearGroup in linearGroupList:
+        # Just modify cigar, seq, qual, flag, and editDistance
+        # Use the first element of linearGroup for the rest of values
+        score = None
+        evalue = None
+        mapq = mapqMissing
+        cigar = ""
+        seq = ""
+        for mafIndex, maf in enumerate(linearGroup):
+            aLine, sLines, qLines, pLines = maf
+            fieldsA, fieldsB = pairOrDie(sLines, "SAM")
+            seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA = fieldsA
+            seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB = fieldsB
 
-    if letterSizeA > 1 or letterSizeB > 1:
-        raise Exception("this looks like translated DNA - can't convert to SAM format")
+            if letterSizeA > 1 or letterSizeB > 1:
+                raise Exception("this looks like translated DNA - can't convert to SAM format")
 
-    if strandA != "+":
-        raise Exception("for SAM, the 1st strand in each alignment must be +")
+            if strandA != "+":
+                raise Exception("for SAM, the 1st strand in each alignment must be +")
 
-    score = None
-    evalue = None
-    mapq = mapqMissing
-    for i in aLine.split():
-        if i.startswith("score="):
-            v = i[6:]
-            if v.isdigit(): score = "AS:i:" + v  # it must be an integer
-        elif i.startswith("E="):
-            evalue = "EV:Z:" + i[2:]
-        elif i.startswith("mismap="):
-            mapq = mapqFromProb(i[7:])
+            # Use the first element for score, evalue, mapq, pos
+            if mafIndex == 0:
+                for i in aLine.split():
+                    if i.startswith("score="):
+                        v = i[6:]
+                        if v.isdigit(): score = "AS:i:" + v  # it must be an integer
+                    elif i.startswith("E="):
+                        evalue = "EV:Z:" + i[2:]
+                    elif i.startswith("mismap="):
+                        mapq = mapqFromProb(i[7:])
 
-    pos = str(begA + 1)  # convert to 1-based coordinate
+                pos = str(begA + 1)  # convert to 1-based coordinate
 
-    alignmentColumns = list(zip(rowA.upper(), rowB.upper()))
+            # It's hard to get all the pair info, so this is very
+            # incomplete, but hopefully good enough.
+            # I'm not sure whether to add 2 and/or 8 to flag.
+            if seqNameB.endswith("/1"):
+                seqNameB = seqNameB[:-2]
+                if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
+                else:              flag = "83"  # 1 + 2 + 16 + 64
+            elif seqNameB.endswith("/2"):
+                seqNameB = seqNameB[:-2]
+                if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
+                else:              flag = "147"  # 1 + 2 + 16 + 128
+            else:
+                if strandB == "+": flag = "0"
+                else:              flag = "16"
 
-    revBegB = seqLenB - endB
-    cigar = "".join(cigarParts(begB, iter(alignmentColumns), revBegB))
+            # Combine all mafs info in one linearGroup
+            # for cigar, seq, qual, editDistance
+            alignmentColumns = list(zip(rowA.upper(), rowB.upper()))
 
-    seq = rowB.replace("-", "")
+            revBegB = seqLenB - endB
+            cigar = "".join(cigarParts(begB, iter(alignmentColumns), revBegB))
 
-    qual = "*"
-    if qLines:
-        qFields = qLines[-1].split()
-        if qFields[1] == seqNameB:
-            qual = ''.join(j for i, j in zip(rowB, qFields[2]) if i != "-")
+            seq = rowB.replace("-", "")
 
-    # It's hard to get all the pair info, so this is very
-    # incomplete, but hopefully good enough.
-    # I'm not sure whether to add 2 and/or 8 to flag.
-    if seqNameB.endswith("/1"):
-        seqNameB = seqNameB[:-2]
-        if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
-        else:              flag = "83"  # 1 + 2 + 16 + 64
-    elif seqNameB.endswith("/2"):
-        seqNameB = seqNameB[:-2]
-        if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
-        else:              flag = "147"  # 1 + 2 + 16 + 128
-    else:
-        if strandB == "+": flag = "0"
-        else:              flag = "16"
+            qual = "*"
+            if qLines:
+                qFields = qLines[-1].split()
+                if qFields[1] == seqNameB:
+                    qual = ''.join(j for i, j in zip(rowB, qFields[2]) if i != "-")
 
-    editDistance = sum(x != y for x, y in alignmentColumns)
-    # no special treatment of ambiguous bases: might be a minor bug
-    editDistance = "NM:i:" + str(editDistance)
 
-    out = [seqNameB, flag, seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
-    out.append(editDistance)
-    if score: out.append(score)
-    if evalue: out.append(evalue)
-    if readGroup: out.append(readGroup)
-    print("\t".join(out))
+            editDistance = sum(x != y for x, y in alignmentColumns)
+            # no special treatment of ambiguous bases: might be a minor bug
+            editDistance = "NM:i:" + str(editDistance)
+
+            out = [seqNameB, flag, seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
+            out.append(editDistance)
+            if score: out.append(score)
+            if evalue: out.append(evalue)
+            if readGroup: out.append(readGroup)
+            print("\t".join(out))
 
 def mafConvertToSam(opts, lines):
     readGroup = ""
