@@ -806,6 +806,8 @@ def writeSam(readGroup, mafEntries):
         mapq = mapqMissing
         cigar = ""
         seq = ""
+        qual = "*"
+        editDistanceNum = 0
         for mafIndex, maf in enumerate(linearGroup):
             aLine, sLines, qLines, pLines = maf
             fieldsA, fieldsB = pairOrDie(sLines, "SAM")
@@ -819,6 +821,7 @@ def writeSam(readGroup, mafEntries):
                 raise Exception("for SAM, the 1st strand in each alignment must be +")
 
             # Use the first element for score, evalue, mapq, pos
+            # (TEMPORARILY for flag)
             if mafIndex == 0:
                 for i in aLine.split():
                     if i.startswith("score="):
@@ -831,41 +834,56 @@ def writeSam(readGroup, mafEntries):
 
                 pos = str(begA + 1)  # convert to 1-based coordinate
 
-            # It's hard to get all the pair info, so this is very
-            # incomplete, but hopefully good enough.
-            # I'm not sure whether to add 2 and/or 8 to flag.
-            if seqNameB.endswith("/1"):
-                seqNameB = seqNameB[:-2]
-                if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
-                else:              flag = "83"  # 1 + 2 + 16 + 64
-            elif seqNameB.endswith("/2"):
-                seqNameB = seqNameB[:-2]
-                if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
-                else:              flag = "147"  # 1 + 2 + 16 + 128
-            else:
-                if strandB == "+": flag = "0"
-                else:              flag = "16"
+                # NEED TO BE MODIFIED
+                # Need to consider whether it's chmiric
+                # It's hard to get all the pair info, so this is very
+                # incomplete, but hopefully good enough.
+                # I'm not sure whether to add 2 and/or 8 to flag.
+                if seqNameB.endswith("/1"):
+                    seqNameB = seqNameB[:-2]
+                    if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
+                    else:              flag = "83"  # 1 + 2 + 16 + 64
+                elif seqNameB.endswith("/2"):
+                    seqNameB = seqNameB[:-2]
+                    if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
+                    else:              flag = "147"  # 1 + 2 + 16 + 128
+                else:
+                    if strandB == "+": flag = "0"
+                    else:              flag = "16"
 
             # Combine all mafs info in one linearGroup
             # for cigar, seq, qual, editDistance
             alignmentColumns = list(zip(rowA.upper(), rowB.upper()))
 
+            # cigar
             revBegB = seqLenB - endB
-            cigar = "".join(cigarParts(begB, iter(alignmentColumns), revBegB))
+            thisCigar = "".join(cigarParts(begB, iter(alignmentColumns), revBegB))
+            if mafIndex == 0:
+                cigar += thisCigar
+            else:
+                skippedLen = begA - lineaerGroup[mafIndex-1][1][5] - 1
+                cigar += str(skippedLen) + "N" + thisCigar
 
-            seq = rowB.replace("-", "")
+            # seq
+            thisSeq = rowB.replace("-", "")
+            seq += thisSeq
 
-            qual = "*"
+            # qual
+            # assuming it's either all the mafEntires have the qLines or
+            # all the mafEntries do not have the qLines
             if qLines:
                 qFields = qLines[-1].split()
                 if qFields[1] == seqNameB:
-                    qual = ''.join(j for i, j in zip(rowB, qFields[2]) if i != "-")
+                    thisQual = ''.join(j for i, j in zip(rowB, qFields[2]) if i != "-")
+                    qual += thisQual
 
-
-            editDistance = sum(x != y for x, y in alignmentColumns)
-            # no special treatment of ambiguous bases: might be a minor bug
-            editDistance = "NM:i:" + str(editDistance)
-
+            # editDistance
+            thisEditDistance = sum(x != y for x, y in alignmentColumns)
+            editDistanceNum += thisEditDistance
+            if mafIndex == len(linearGroup)-1:
+                # no special treatment of ambiguous bases: might be a minor bug
+                editDistance = "NM:i:" + str(editDistanceNum)
+        else:
             out = [seqNameB, flag, seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
             out.append(editDistance)
             if score: out.append(score)
