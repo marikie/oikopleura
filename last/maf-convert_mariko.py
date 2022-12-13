@@ -597,6 +597,7 @@ def getMAFBlock(opts, lines):
                     qLines.append(line)
                 else: # line.startswith("p")
                     pLines.append(line)
+            # print(aLine, sLines, qLines, pLines)
             yield [aLine, sLines, qLines, pLines]
 
 def getMultiMAFEntries(opts, lines):
@@ -620,23 +621,42 @@ def getMultiMAFEntries(opts, lines):
     '''
     # group mafBlocks by queryID
     for queryID, mafEntries in groupby(getMAFBlock(opts, lines),
-                                       lambda x: x[2][0].split()[1]):
+                                       lambda x: x[1][1][0]):
+        # if len(mafEntries) > 1
+        # order the mafEntries
         yield list(mafEntries)
 
 def isLinearOrChimeric(maf1, maf2):
     '''
     Added by Mariko.
-    Returns 1 if maf1 and maf2 are linear,
-    returns 0 if maf1 and maf2 are on different chromosomes.
+    Returns 1 if maf1 and maf2 are on the same chromosome and strand,
+    returns 0 if maf1 and maf2 are on different chromosomes or strands.
     '''
-    maf1Chr = maf1[1][0].split()[1]
-    maf2Chr = maf2[1][0].split()[1]
-    if maf1Chr == maf2Chr:
+    # seqNameA
+    maf1Chr = maf1[1][0][0]
+    maf2Chr = maf2[1][0][0]
+    # strandB
+    maf1Strand = maf1[1][1][2]
+    maf2Strand = maf2[1][1][2]
+    # print('maf1Chr: ', maf1Chr)
+    # print('maf2Chr: ', maf2Chr)
+    if (maf1Chr == maf2Chr and maf1Strand == maf2Strand):
+        # print('LINEAR')
         return 1
     else:
+        # print('CHIMERIC')
         return 0
 
-def getLinkList(mafEntries):
+def isExactsplitOrInexactsplit(maf1, maf2):
+    '''
+    Added by Mariko.
+    Returns 1 if maf1 and maf2 are exact split (no overlapped
+    aligned region on the read)
+    Otherwise returns 0.
+    '''
+    # assert maf1 < maf2
+
+def getLinkList(isOneOrZero, mafEntries):
     '''
     Added by Mariko.
     For every pair of mafEntries that are next to each other,
@@ -646,7 +666,7 @@ def getLinkList(mafEntries):
     '''
     linkList = []
     for mafEntry1, mafEntry2 in pairwise(mafEntries):
-        link = isLinearOrChimeric(mafEntry1, mafEntry2)
+        link = isOneOrZero(mafEntry1, mafEntry2)
         linkList.append(link)
     else:
         # append 1 at the end
@@ -665,7 +685,7 @@ def splitIntoLinearGroups(mafEntries):
     each list inside represents linear split/spliced-alignments.
     '''
     # [1, 1, 0, 1, 0, 1]
-    linkList = getLinkList(mafEntries)
+    linkList = getLinkList(isLinearOrChimeric, mafEntries)
 
     # (index of 0) + 1
     # [1, 1, 0, 1, 0, 1] -> [3, 5]
@@ -798,7 +818,10 @@ def writeSam(readGroup, mafEntries):
     Modified by Mariko
     '''
     linearGroupList = splitIntoLinearGroups(mafEntries)
-    for gIndex, linearGroup in linearGroupList:
+    for gIndex, linearGroup in enumerate(linearGroupList):
+        # sort linearGroup by begA
+        linearGroup.sort(key=lambda x: x[1][0][4])
+
         # Just modify cigar, seq, qual, flag, and editDistance
         # Use the first element of linearGroup for the rest of values
         score = None
@@ -822,6 +845,7 @@ def writeSam(readGroup, mafEntries):
 
             # Use the first element for score, evalue, mapq, pos
             # (TEMPORARILY for flag)
+            # (MAYBE NEED TO MODIFY score, evalue, mapq?)
             if mafIndex == 0:
                 for i in aLine.split():
                     if i.startswith("score="):
@@ -835,6 +859,7 @@ def writeSam(readGroup, mafEntries):
                 pos = str(begA + 1)  # convert to 1-based coordinate
 
                 # NEED TO BE MODIFIED
+                # FLAG 2048 FOR CHIMERIC SUPPLEMENTARY ALIGNMENT
                 # Need to consider whether it's chmiric
                 # It's hard to get all the pair info, so this is very
                 # incomplete, but hopefully good enough.
@@ -861,7 +886,7 @@ def writeSam(readGroup, mafEntries):
             if mafIndex == 0:
                 cigar += thisCigar
             else:
-                skippedLen = begA - lineaerGroup[mafIndex-1][1][5] - 1
+                skippedLen = abs(begA - linearGroup[mafIndex-1][1][0][5] - 1)
                 cigar += str(skippedLen) + "N" + thisCigar
 
             # seq
@@ -1430,5 +1455,7 @@ if __name__ == "__main__":
 
     try: mafConvert(opts, args)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         prog = os.path.basename(sys.argv[0])
         sys.exit(prog + ": error: " + str(e))
