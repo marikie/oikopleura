@@ -622,9 +622,12 @@ def getMultiMAFEntries(opts, lines):
     # group mafBlocks by queryID
     for queryID, mafEntries in groupby(getMAFBlock(opts, lines),
                                        lambda x: x[1][1][0]):
+        mafEntries = list(mafEntries)
         # if len(mafEntries) > 1
-        # order the mafEntries
-        yield list(mafEntries)
+        # order the mafEntries by begA
+        if len(mafEntries) > 1:
+            mafEntries.sort(key=lambda x: x[1][0][4])
+        yield mafEntries
 
 def isLinearOrChimeric(maf1, maf2):
     '''
@@ -654,7 +657,13 @@ def isExactsplitOrInexactsplit(maf1, maf2):
     aligned region on the read)
     Otherwise returns 0.
     '''
-    # assert maf1 < maf2
+    # assert maf2.begA > maf1.begA
+    assert maf2[1][0][4] > maf1[1][0][4]
+    # maf2.begB - maf1.endB
+    if maf2[1][1][4]-maf1[1][1][5] == 0:
+        return 1
+    else:
+        return 0
 
 def getLinkList(isOneOrZero, mafEntries):
     '''
@@ -673,19 +682,15 @@ def getLinkList(isOneOrZero, mafEntries):
         linkList.append(1)
     return linkList
 
-
-def splitIntoLinearGroups(mafEntries):
+def splitByLinkList(linkList, inputList):
     '''
     Added by Mariko.
-    Split the list of mafEntries into nested list of
-    linear mafEntries.
-    e.g.
-    mafEntries: [A, B, C, D, E, F] (each letter is a mafBlock)
-    -> linearGroups: [[A, B, C], [D, E], [F]]
-    each list inside represents linear split/spliced-alignments.
+    Return a nested list.
+    Turn the unnested input list into a nested list
+    by slicing the input list at the link == 1 postions.
     '''
+    # linkList: 
     # [1, 1, 0, 1, 0, 1]
-    linkList = getLinkList(isLinearOrChimeric, mafEntries)
 
     # (index of 0) + 1
     # [1, 1, 0, 1, 0, 1] -> [3, 5]
@@ -697,11 +702,45 @@ def splitIntoLinearGroups(mafEntries):
     # [0, 3, 5] -> [0, 3, 5, 6]
     slicePosList.append(len(linkList))
     # splice mafEntries according to slicePosList
-    linearGroups = []
+    outputList = []
     for pos1, pos2 in pairwise(slicePosList):
-        linearGroups.append(mafEntries[pos1:pos2])
+        outputList.append(inputList[pos1:pos2])
+
+    return outputList
+
+def splitIntoLinearGroups(mafEntries):
+    '''
+    Added by Mariko.
+    Split the list of mafEntries into nested list of
+    linear mafEntries.
+    e.g.
+    mafEntries: [A, B, C, D, E, F] (each letter is a mafBlock)
+    -> linearGroups: [[A, B, C], [D, E], [F]]
+    each list inside represents linear split/spliced-alignments.
+    '''
+    linkList = getLinkList(isLinearOrChimeric, mafEntries)
+    linearGroups = splitByLinkList(linkList, mafEntries)
 
     return linearGroups
+
+def splitIntoExactSplitGroups(mafEntries):
+    '''
+    Added by Mariko.
+    Split linearGroups into further nested list of exact splits.
+    e.g.
+    linearGroups: [[A, B, C], [D, E], [F]]
+    -> [[[A, B], [C]], [[D, E]], [[F]]]
+    where (A, B) and (D, E) are exact splits,
+    (B, C) is inexact split.
+    '''
+    linearGroups = splitIntoLinearGroups(mafEntries)
+    finalList = []
+    for linearGroup in linearGroups:
+        linkList = getLinkList(isExactsplitOrInexactsplit, linearGroup)
+        exactSplitList = splitByLinkList(linkList, linearGroup)
+        finalList.append(exactSplitList)
+
+    return finalList
 
 def readGroupId(readGroupItems):
     for i in readGroupItems:
@@ -817,104 +856,115 @@ def writeSam(readGroup, mafEntries):
     '''
     Modified by Mariko
     '''
-    linearGroupList = splitIntoLinearGroups(mafEntries)
-    for gIndex, linearGroup in enumerate(linearGroupList):
-        # sort linearGroup by begA
-        linearGroup.sort(key=lambda x: x[1][0][4])
+    linearGroup_exactSplitGroupList = splitIntoExactSplitGroups(mafEntries)
+    for gIndex, linear_exactSplitGroup in enumerate(linearGroup_exactSplitGroupList):
+        for exactSplitGroup in linear_exactSplitGroup:
+            # Just modify cigar, seq, qual, flag, and editDistance
+            # Use the first element of exactSplitGroup for the rest of values
+            score = None
+            evalue = None
+            mapq = mapqMissing
+            cigar = ""
+            seq = ""
+            qual = "*"
+            editDistanceNum = 0
 
-        # Just modify cigar, seq, qual, flag, and editDistance
-        # Use the first element of linearGroup for the rest of values
-        score = None
-        evalue = None
-        mapq = mapqMissing
-        cigar = ""
-        seq = ""
-        qual = "*"
-        editDistanceNum = 0
-        for mafIndex, maf in enumerate(linearGroup):
-            aLine, sLines, qLines, pLines = maf
-            fieldsA, fieldsB = pairOrDie(sLines, "SAM")
-            seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA = fieldsA
-            seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB = fieldsB
+            for mafIndex, maf in enumerate(exactSplitGroup):
+                aLine, sLines, qLines, pLines = maf
+                fieldsA, fieldsB = pairOrDie(sLines, "SAM")
+                seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA = fieldsA
+                seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB = fieldsB
 
-            if letterSizeA > 1 or letterSizeB > 1:
-                raise Exception("this looks like translated DNA - can't convert to SAM format")
+                if letterSizeA > 1 or letterSizeB > 1:
+                    raise Exception("this looks like translated DNA - can't convert to SAM format")
 
-            if strandA != "+":
-                raise Exception("for SAM, the 1st strand in each alignment must be +")
+                if strandA != "+":
+                    raise Exception("for SAM, the 1st strand in each alignment must be +")
 
-            # Use the first element for score, evalue, mapq, pos
-            # (TEMPORARILY for flag)
-            # (MAYBE NEED TO MODIFY score, evalue, mapq?)
-            if mafIndex == 0:
-                for i in aLine.split():
-                    if i.startswith("score="):
-                        v = i[6:]
-                        if v.isdigit(): score = "AS:i:" + v  # it must be an integer
-                    elif i.startswith("E="):
-                        evalue = "EV:Z:" + i[2:]
-                    elif i.startswith("mismap="):
-                        mapq = mapqFromProb(i[7:])
+                # Use the first element for score, evalue, mapq, pos
+                # (TEMPORARILY for flag)
+                # (MAYBE NEED TO MODIFY score, evalue, mapq?)
+                if mafIndex == 0:
+                    for i in aLine.split():
+                        if i.startswith("score="):
+                            v = i[6:]
+                            if v.isdigit(): score = "AS:i:" + v  # it must be an integer
+                        elif i.startswith("E="):
+                            evalue = "EV:Z:" + i[2:]
+                        elif i.startswith("mismap="):
+                            mapq = mapqFromProb(i[7:])
 
-                pos = str(begA + 1)  # convert to 1-based coordinate
+                    pos = str(begA + 1)  # convert to 1-based coordinate
 
-                # NEED TO BE MODIFIED
-                # FLAG 2048 FOR CHIMERIC SUPPLEMENTARY ALIGNMENT
-                # Need to consider whether it's chmiric
-                # It's hard to get all the pair info, so this is very
-                # incomplete, but hopefully good enough.
-                # I'm not sure whether to add 2 and/or 8 to flag.
-                if seqNameB.endswith("/1"):
-                    seqNameB = seqNameB[:-2]
-                    if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
-                    else:              flag = "83"  # 1 + 2 + 16 + 64
-                elif seqNameB.endswith("/2"):
-                    seqNameB = seqNameB[:-2]
-                    if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
-                    else:              flag = "147"  # 1 + 2 + 16 + 128
+                    # NEED TO BE MODIFIED
+                    # FLAG 2048 FOR CHIMERIC SUPPLEMENTARY ALIGNMENT
+                    # Need to consider whether it's chmiric
+                    # It's hard to get all the pair info, so this is very
+                    # incomplete, but hopefully good enough.
+                    # I'm not sure whether to add 2 and/or 8 to flag.
+                    if seqNameB.endswith("/1"):
+                        seqNameB = seqNameB[:-2]
+                        if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
+                        else:              flag = "83"  # 1 + 2 + 16 + 64
+                    elif seqNameB.endswith("/2"):
+                        seqNameB = seqNameB[:-2]
+                        if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
+                        else:              flag = "147"  # 1 + 2 + 16 + 128
+                    else:
+                        if strandB == "+": flag = "0"
+                        else:              flag = "16"
+
+                # Combine all mafs info in one exactSplitGroup
+                # for cigar, seq, qual, editDistance
+                alignmentColumns = list(zip(rowA.upper(), rowB.upper()))
+
+                # cigar
+                if len(exactSplitGroup) == 1:
+                    beg = begB
+                    end = seqLenB - endB
+                elif mafIndex == 0:
+                    beg = begB
+                    end = 0
+                elif mafIndex != len(exactSplitGroup) - 1:
+                    beg = 0
+                    end = 0
                 else:
-                    if strandB == "+": flag = "0"
-                    else:              flag = "16"
+                    beg = 0
+                    end = seqLenB - endB
+                thisCigar = "".join(cigarParts(beg, iter(alignmentColumns), end))
+                if mafIndex == 0:
+                    cigar += thisCigar
+                else:
+                    skippedLen = abs(begA - exactSplitGroup[mafIndex-1][1][0][5] - 1)
+                    cigar += str(skippedLen) + "N" + thisCigar
 
-            # Combine all mafs info in one linearGroup
-            # for cigar, seq, qual, editDistance
-            alignmentColumns = list(zip(rowA.upper(), rowB.upper()))
+                # seq
+                thisSeq = rowB.replace("-", "")
+                seq += thisSeq
 
-            # cigar
-            revBegB = seqLenB - endB
-            thisCigar = "".join(cigarParts(begB, iter(alignmentColumns), revBegB))
-            if mafIndex == 0:
-                cigar += thisCigar
+                # qual
+                # assuming it's either all the mafEntires have the qLines or
+                # all the mafEntries do not have the qLines
+                if qLines:
+                    qFields = qLines[-1].split()
+                    if qFields[1] == seqNameB:
+                        thisQual = ''.join(j for i, j in zip(rowB, qFields[2]) if i != "-")
+                        qual += thisQual
+
+                # editDistance
+                thisEditDistance = sum(x != y for x, y in alignmentColumns)
+                editDistanceNum += thisEditDistance
+                if mafIndex == len(exactSplitGroup)-1:
+                    # no special treatment of ambiguous bases: might be a minor bug
+                    editDistance = "NM:i:" + str(editDistanceNum)
             else:
-                skippedLen = abs(begA - linearGroup[mafIndex-1][1][0][5] - 1)
-                cigar += str(skippedLen) + "N" + thisCigar
+                out = [seqNameB, flag, seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
+                out.append(editDistance)
+                if score: out.append(score)
+                if evalue: out.append(evalue)
+                if readGroup: out.append(readGroup)
+                print("\t".join(out))
 
-            # seq
-            thisSeq = rowB.replace("-", "")
-            seq += thisSeq
-
-            # qual
-            # assuming it's either all the mafEntires have the qLines or
-            # all the mafEntries do not have the qLines
-            if qLines:
-                qFields = qLines[-1].split()
-                if qFields[1] == seqNameB:
-                    thisQual = ''.join(j for i, j in zip(rowB, qFields[2]) if i != "-")
-                    qual += thisQual
-
-            # editDistance
-            thisEditDistance = sum(x != y for x, y in alignmentColumns)
-            editDistanceNum += thisEditDistance
-            if mafIndex == len(linearGroup)-1:
-                # no special treatment of ambiguous bases: might be a minor bug
-                editDistance = "NM:i:" + str(editDistanceNum)
-        else:
-            out = [seqNameB, flag, seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
-            out.append(editDistance)
-            if score: out.append(score)
-            if evalue: out.append(evalue)
-            if readGroup: out.append(readGroup)
-            print("\t".join(out))
 
 def mafConvertToSam(opts, lines):
     readGroup = ""
