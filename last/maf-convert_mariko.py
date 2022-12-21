@@ -624,9 +624,9 @@ def getMultiMAFEntries(opts, lines):
                                        lambda x: x[1][1][0]):
         mafEntries = list(mafEntries)
         # if len(mafEntries) > 1
-        # order the mafEntries by begA
+        # order the mafEntries by begB
         if len(mafEntries) > 1:
-            mafEntries.sort(key=lambda x: x[1][0][4])
+            mafEntries.sort(key=lambda x: x[1][1][4])
         yield mafEntries
 
 def isLinearOrChimeric(maf1, maf2):
@@ -641,9 +641,13 @@ def isLinearOrChimeric(maf1, maf2):
     # strandB
     maf1Strand = maf1[1][1][2]
     maf2Strand = maf2[1][1][2]
+    # endA, begA
+    maf1EndA = maf1[1][0][5]
+    maf2BegA = maf2[1][0][4]
     # print('maf1Chr: ', maf1Chr)
     # print('maf2Chr: ', maf2Chr)
-    if (maf1Chr == maf2Chr and maf1Strand == maf2Strand):
+    if (maf1Chr == maf2Chr and maf1Strand == maf2Strand
+       and maf1EndA < maf2BegA):
         # print('LINEAR')
         return 1
     else:
@@ -657,8 +661,6 @@ def isExactsplitOrInexactsplit(maf1, maf2):
     aligned region on the read)
     Otherwise returns 0.
     '''
-    # assert maf2.begA > maf1.begA
-    assert maf2[1][0][4] > maf1[1][0][4]
     # maf2.begB - maf1.endB
     if maf2[1][1][4]-maf1[1][1][5] == 0:
         return 1
@@ -726,9 +728,11 @@ def splitIntoLinearGroups(mafEntries):
 def splitIntoExactSplitGroups(mafEntries):
     '''
     Added by Mariko.
-    Split linearGroups into further nested list of exact splits.
+    Split mafEntries into linearGroups and then
+    linearGroups into further nested list of exact splits.
     e.g.
-    linearGroups: [[A, B, C], [D, E], [F]]
+    mafEntries: [A, B, C, D, E, F] (each letter is a mafBlock)
+    -> linearGroups: [[A, B, C], [D, E], [F]]
     -> [[[A, B], [C]], [[D, E]], [[F]]]
     where (A, B) and (D, E) are exact splits,
     (B, C) is inexact split.
