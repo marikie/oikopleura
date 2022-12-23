@@ -4,7 +4,8 @@ Only add alignments whose don and acc are known.
 Only add exact splicings.
 
 Input: an alignment file (MAF format)
-Output: two json files (canonical and non-canonical)
+Output: one json file
+        sorted by intronStart and intronEnd
 {'intronCoords': {
     'intronStart': {
         'chr': str,
@@ -117,6 +118,14 @@ def main(alignmentFile, outputFile):
                         (aln1._MAF().split('\n')[:-1],
                          aln2._MAF().split('\n')[:-1])
                     )
+    # sort by intronStart and intronEnd
+    intron_dict = dict(sorted(intron_dict.items(),
+                              key=lambda x: (x[1]['intronStart']['chr'],
+                                             x[1]['intronStart']['pos'],
+                                             x[1]['intronStart']['strand'],
+                                             x[1]['intronEnd']['chr'],
+                                             x[1]['intronEnd']['pos'],
+                                             x[1]['intronEnd']['strand'])))
     with open(outputFile, 'w') as f:
         json.dump(intron_dict, f, indent=2)
 
@@ -129,11 +138,11 @@ if __name__ == '__main__':
     parser.add_argument('alignmentFile',
                         help='spliced alignments of reads to\
                               reference in MAF format')
-    parser.add_argument('outputJsonFileName',
+    parser.add_argument('outputJsonFilePath',
                         help='an output file for introns \
                         in JSON format')
     args = parser.parse_args()
     '''
     MAIN
     '''
-    main(args.alignmentFile, args.outputJsonFileName)
+    main(args.alignmentFile, args.outputJsonFilePath)
