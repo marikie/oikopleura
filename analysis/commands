@@ -359,3 +359,20 @@ python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_imm
 # Oct 26, 2022
 # TE-CDS fusions
 ./get_TE-CDS_fusions.sh 10 20221026
+
+# Dec 23, 2022
+# makeOneIntronJsonFile sorted ver.
+# embryos
+python makeOneIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/all_introns_sorted_embryos.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/immatureAdults/all_introns_sorted_immatureAdults.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/all_introns_sorted_maturedAdults.json
+
+# makeChimericIntronJsonFile.py sorted
+# embryos
+python makeChimericIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/embryos/chimeric_introns_sorted_embryos_20221223.json
+# immature adults
+python makeChimericIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/chimeric_introns_sorted_immatureAdults_20221223.json
+# matured adults
+python makeChimericIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/chimeric_introns_sorted_maturedAdults_20221223.json
