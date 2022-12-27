@@ -871,13 +871,14 @@ def writeSam(readGroup, mafEntries):
             cigar = ""
             seq = ""
             qual = "*"
-            editDistanceNum = 0
-
+            editDistanceSum = 0
+            #print(exactSplitGroup)
             for mafIndex, maf in enumerate(exactSplitGroup):
                 aLine, sLines, qLines, pLines = maf
                 fieldsA, fieldsB = pairOrDie(sLines, "SAM")
                 seqNameA, seqLenA, strandA, letterSizeA, begA, endA, rowA = fieldsA
                 seqNameB, seqLenB, strandB, letterSizeB, begB, endB, rowB = fieldsB
+
 
                 if letterSizeA > 1 or letterSizeB > 1:
                     raise Exception("this looks like translated DNA - can't convert to SAM format")
@@ -886,7 +887,6 @@ def writeSam(readGroup, mafEntries):
                     raise Exception("for SAM, the 1st strand in each alignment must be +")
 
                 # Use the first element for score, evalue, mapq, pos
-                # (TEMPORARILY for flag)
                 # (MAYBE NEED TO MODIFY score, evalue, mapq?)
                 if mafIndex == 0:
                     for i in aLine.split():
@@ -900,23 +900,40 @@ def writeSam(readGroup, mafEntries):
 
                     pos = str(begA + 1)  # convert to 1-based coordinate
 
-                    # NEED TO BE MODIFIED
                     # FLAG 2048 FOR CHIMERIC SUPPLEMENTARY ALIGNMENT
                     # Need to consider whether it's chmiric
                     # It's hard to get all the pair info, so this is very
                     # incomplete, but hopefully good enough.
                     # I'm not sure whether to add 2 and/or 8 to flag.
                     if seqNameB.endswith("/1"):
-                        seqNameB = seqNameB[:-2]
-                        if strandB == "+": flag = "99"  # 1 + 2 + 32 + 64
-                        else:              flag = "83"  # 1 + 2 + 16 + 64
+                        if strandB == "+":
+                            flag = 99  # 1 + 2 + 32 + 64
+                        else:
+                            flag = 83  # 1 + 2 + 16 + 64
+                        if gIndex > 0:
+                            flag += 2048
                     elif seqNameB.endswith("/2"):
-                        seqNameB = seqNameB[:-2]
-                        if strandB == "+": flag = "163"  # 1 + 2 + 32 + 128
-                        else:              flag = "147"  # 1 + 2 + 16 + 128
+                        if strandB == "+":
+                            flag = 163  # 1 + 2 + 32 + 128
+                        else:
+                            flag = 147  # 1 + 2 + 16 + 128
+                        if gIndex > 0:
+                            flag += 2048
                     else:
-                        if strandB == "+": flag = "0"
-                        else:              flag = "16"
+                        if strandB == "+":
+                            flag = 0
+                        else:
+                            flag = 16
+                        if gIndex > 0:
+                            flag += 2048
+
+                # edit seqNameB
+                if seqNameB.endswith("/1"):
+                    seqNameB = seqNameB[:-2]
+                elif seqNameB.endswith("/2"):
+                    seqNameB = seqNameB[:-2]
+                else:
+                    pass
 
                 # Combine all mafs info in one exactSplitGroup
                 # for cigar, seq, qual, editDistance
@@ -957,12 +974,12 @@ def writeSam(readGroup, mafEntries):
 
                 # editDistance
                 thisEditDistance = sum(x != y for x, y in alignmentColumns)
-                editDistanceNum += thisEditDistance
+                editDistanceSum += thisEditDistance
                 if mafIndex == len(exactSplitGroup)-1:
                     # no special treatment of ambiguous bases: might be a minor bug
-                    editDistance = "NM:i:" + str(editDistanceNum)
+                    editDistance = "NM:i:" + str(editDistanceSum)
             else:
-                out = [seqNameB, flag, seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
+                out = [seqNameB, str(flag), seqNameA, pos, mapq, cigar, "*\t0\t0", seq, qual]
                 out.append(editDistance)
                 if score: out.append(score)
                 if evalue: out.append(evalue)
