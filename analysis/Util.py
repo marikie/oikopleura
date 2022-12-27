@@ -149,6 +149,51 @@ def toSTR(intronCoords):
     return intronCoords_str
 
 
+def isExactSplits(readStrand, aln1, aln2):
+    '''
+    Return True if the read is exactly spliced
+    and there is no unaligned bases between two aligned regions.
+    Otherwise return False.
+
+    transcript order is aln1 -> aln2
+    AlignmentObj: in-between coord
+    '''
+    # calculate with + strand coord
+    if readStrand == '+':
+        # calculate aln1End
+        if aln1.rStrand == '+':
+            aln1End = aln1.rEnd
+        else:
+            aln1End = aln1.rLength - aln1.rStart
+
+        # calculate aln2Start
+        if aln2.rStrand == '+':
+            aln2Start = aln2.rStart
+        else:
+            aln2Start = aln2.rLength - aln2.rEnd
+
+    # calculate with - strand coord
+    else:
+        # calculate aln1End
+        if aln1.rStrand == '-':
+            aln1End = aln1.rEnd
+        else:
+            aln1End = aln1.rLength - aln1.rStart
+
+        # calculate aln2Start
+        if aln2.rStrand == '-':
+            aln2Start = aln2.rStart
+        else:
+            aln2Start = aln2.rLength - aln2.rEnd
+
+    diff = aln2Start - aln1End
+
+    if diff == 0:
+        return True
+    else:
+        return False
+
+
 def getAlignmentData(alignmentFile):
     '''
     Input: an alignment .maf file
@@ -194,7 +239,7 @@ def getAlignmentData(alignmentFile):
             # if two separate alignments are continuous on the reaad
             # (checking only "Exact Splits")
             # do NOT append alignments with inexact splits
-            if aln2.rStart - aln1.rEnd == 0:
+            if isExactSplits(readStrand, aln1, aln2):
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
                 # print('intronStart: ', intronStart[0],
                 #      str(intronStart[1]), intronStart[2])
