@@ -149,7 +149,7 @@ def toSTR(intronCoords):
     return intronCoords_str
 
 
-def isExactSplits(readStrand, aln1, aln2):
+def isExactSplit(readStrand, aln1, aln2):
     '''
     Return True if the read is exactly spliced
     and there is no unaligned bases between two aligned regions.
@@ -239,7 +239,7 @@ def getAlignmentData(alignmentFile):
             # if two separate alignments are continuous on the reaad
             # (checking only "Exact Splits")
             # do NOT append alignments with inexact splits
-            if isExactSplits(readStrand, aln1, aln2):
+            if isExactSplit(readStrand, aln1, aln2):
                 intronStart, intronEnd = getIntronCoord(readStrand, aln1, aln2)
                 # print('intronStart: ', intronStart[0],
                 #      str(intronStart[1]), intronStart[2])
