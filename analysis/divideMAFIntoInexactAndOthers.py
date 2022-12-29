@@ -40,7 +40,7 @@ def main(alignmentFile):
     with open(out_othersFilePath, 'w'):
         pass
 
-    for readID, alnObjList in getMultiMAFEntries_all(alignmentFile):
+    for alnObjList in getMultiMAFEntries_all(alignmentFile):
         # PREREQUISITE:
         # alnObjList is already ordered according to + strand read's coord
         if len(alnObjList) == 1:
