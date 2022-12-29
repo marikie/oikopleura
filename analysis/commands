@@ -376,3 +376,8 @@ python makeChimericIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.
 python makeChimericIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/chimeric_introns_sorted_immatureAdults_20221223.json
 # matured adults
 python makeChimericIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/chimeric_introns_sorted_maturedAdults_20221223.json
+
+# Dec 29, 2022
+# divideMAFIntoInexactAndOthers.py
+# embryos
+python divideMAFIntoInexactAndOthers.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
