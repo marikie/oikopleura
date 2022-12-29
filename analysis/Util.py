@@ -64,7 +64,7 @@ def getMultiMAFEntries_all(alignmentFile):
         alnObjectList = []
         for mafEntry in mafEntries:
             alnObjectList.append(Alignment.fromMAFEntry(mafEntry))
-        yield (rid, alnObjectList)
+        yield alnObjectList
 
 
 def getMultiMAFEntries(alignmentFile):
@@ -83,7 +83,7 @@ def getMultiMAFEntries(alignmentFile):
         if len(mafEntries) > 1:
             for mafEntry in mafEntries:
                 alnObjectList.append(Alignment.fromMAFEntry(mafEntry))
-            yield (rid, alnObjectList)
+            yield alnObjectList
 
 
 def convert2CoorOnOppositeStrand(alnObj):
@@ -194,7 +194,7 @@ def isExactSplit(readStrand, aln1, aln2):
         return False
 
 
-def getAlignmentData(alignmentFile):
+def getSplitAlignmentData(alignmentFile):
     '''
     Input: an alignment .maf file
     Output:
@@ -209,7 +209,7 @@ def getAlignmentData(alignmentFile):
     '''
     print('--- Reading alignmentFile')
     alignments_list = []
-    for readID, alignments in getMultiMAFEntries(alignmentFile):
+    for alignments in getMultiMAFEntries(alignmentFile):
         # prerequisite:
         # alignments are already sorted
         # according to + strand's coordinates
