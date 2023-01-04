@@ -901,7 +901,6 @@ def writeSam(readGroup, mafEntries):
                     pos = str(begA + 1)  # convert to 1-based coordinate
 
                     # FLAG 2048 FOR CHIMERIC SUPPLEMENTARY ALIGNMENT
-                    # Need to consider whether it's chmiric
                     # It's hard to get all the pair info, so this is very
                     # incomplete, but hopefully good enough.
                     # I'm not sure whether to add 2 and/or 8 to flag.
