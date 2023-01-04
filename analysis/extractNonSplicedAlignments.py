@@ -11,14 +11,16 @@ from Util import getMultiMAFEntries_all
 
 def main(alignmentFile):
     non_spliced_list = []
+    print("adding to the list")
     for alnObjList in getMultiMAFEntries_all(alignmentFile):
         if len(alnObjList) == 1:
             non_spliced_list.append(alnObjList[0])
 
     # sort
-    non_spliced_list.sorted(key=lambda alnObj: (alnObj.gChr,
-                                                alnObj.gStart,
-                                                alnObj.gEnd))
+    print("sorting")
+    non_spliced_list.sort(key=lambda alnObj: (alnObj.gChr,
+                                              alnObj.gStart,
+                                              alnObj.gEnd))
 
     # write in outFile
     outFilePath = os.path.splitext(alignmentFile)[0]\
