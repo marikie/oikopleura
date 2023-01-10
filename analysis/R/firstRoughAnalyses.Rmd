@@ -58,6 +58,7 @@ I read output .MAF files of LAST-SPLIT, looked 'don' and 'acc' fields, and extra
 I discarded data whose donor-and-acceptor pairs are unknown. (When both ends of the read are unaligned, it's impossible to tell the donor-and-acceptor pairs from .MAF file). 
 
 ![discarded data e.g.: matured adults, readID:ERR4570987.7290](images/ScreenShotEgOfUnknownDonAccPairs.png)
+I also discarded data in which reads have inserted region between aligned regions.
 ```{r splicingSignals_FileReading, echo=FALSE}
 ss_embryos <- read.table(file='~/biohazard/data/oikopleura/analysis/embryos/splicingSignalsDistExactSplicings_embryos.tsv', sep='\t', header=T)
 ss_immature <- read.table(file='~/biohazard/data/oikopleura/analysis/immatureAdults/splicingSignalsDistOfExactSplicings_immature.tsv', sep='\t', header=T)
