@@ -42,3 +42,346 @@ python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oi
 
 cd ~/data/oikopleura/analysis/maturedAdults
 python ~/oikopleura/analysis/getSplicingSignalsDistOfExactSplicings.py ~/data/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > splicingSignalsDistExactSplicings_matured_filtered_trimmed_sorted.tsv 2> splicingSignalsDistExactSplicings_matured_filtered_trimmed_sorted.error
+
+# May 31, 2022
+# ---- tandem repeats -----
+cd ~/data/oikopleura/tandemRepeats
+tantan -f 4 ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa > tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv
+
+# June 1, 2022
+# ---- search tantan-splits ----
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/embryos_tantansplits.out
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/immatureAdults_tantansplits.out
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > ~/data/oikopleura/tandemRepeats/maturedAdults_tantansplits.out
+
+# -----------------------------------
+# check rna-seq data type
+# using RSeQC's infer_experiment.py
+# -----------------------------------
+# Download .fna and .gff files
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/209/535/GCA_000209535.1_ASM20953v1/GCA_000209535.1_ASM20953v1_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/209/535/GCA_000209535.1_ASM20953v1/GCA_000209535.1_ASM20953v1_genomic.gff.gz
+# Convert .gff to .bed using AGAT
+agat_convert_sp_gff2bed.pl --gff GCA_000209535.1_ASM20953v1_genomic.gff -o GCA_000209535.1_ASM20953v1_genomic_agat.bed
+# Convert .gff to .gtf using AGAT
+agat_convert_sp_gff2gtf.pl --gff GCA_000209535.1_ASM20953v1_genomic.gff -o GCA_000209535.1_ASM20953v1_genomic_agat.gtf
+# STAR: generate genome indexes
+STAR --runThreadN 3 --runMode genomeGenerate --genomeDir genome_index_ASM20953v1 --genomeFastaFiles ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic.fna --sjdbGTFfile ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.gtf --sjdbOverhang 99
+# STAR: alignment
+STAR --runThreadN 3 --genomeDir genome_index_ASM20953v1 --outFileNamePrefix embryos --readFilesIn ../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq ../rna-seq-data/embryos/ERR4570985_2_filtered_trimmed_sorted.fastq
+STAR --runThreadN 3 --genomeDir genome_index_ASM20953v1 --outFileNamePrefix immatureAdults --readFilesIn ../rna-seq-data/immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq ../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq
+STAR --runThreadN 3 --genomeDir genome_index_ASM20953v1 --outFileNamePrefix maturedAdults --readFilesIn ../rna-seq-data/maturedAdults/ERR4570987_1_filtered_trimmed_sorted.fastq ../rna-seq-data/maturedAdults/ERR4570987_2_filtered_trimmed_sorted.fastq
+# Convert .sam to .bam
+samtools view -b embryosAligned.out.sam > embryosAligned.out.bam
+samtools view -b immatureAdultsAligned.out.sam > immatureAdultsAligned.out.bam
+samtools view -b maturedAdultsAligned.out.sam > maturedAdultsAligned.out.bam
+# infer_experiment.py
+infer_experiment.py -r ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.bed -i embryosAligned.out.bam
+infer_experiment.py -r ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.bed -i immatureAdultsAligned.out.bam
+infer_experiment.py -r ../ASM20953v1/GCA_000209535.1_ASM20953v1_genomic_agat.bed -i maturedAdultsAligned.out.bam
+
+# June 9, 2022
+# Post-masking
+last-postmask lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf
+last-postmask lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf
+last-postmask lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf
+
+# June 10, 2022
+# search tan-tan splits
+python getTanTanSplits.py ~/data/oikopleura/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf > ~/data/oikopleura/tandemRepeats/embryos_postmask_tantansplits.out 2> ~/data/oikopleura/tandemRepeats/embryos_postmask_tandemexpansion_and_error.err 
+
+# June 22, 2022
+# search tan-tan splits
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/embryos_postmask.out 2> ~/data/tandemRepeats/embryos_tandemexpansion_postmask.out 
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/immatureAdults_tantansplits.out 2> ~/data/tandemRepeats/immatureAdults_tandemexpansion.out
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf ~/data/tandemRepeats/matureAdults_postmask.out 2> ~/data/tandemRepeats/matureAdults_tandemexpansion.out
+
+# make intron files
+python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/analysis/embryos/canonical_introns_embryos.json ~/data/analysis/embryos/non-canonical_introns_embryos.json
+python makeIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask.maf ~/data/analysis/immatureAdults/canonical_introns_immatureAdults.json ~/data/analysis/immatureAdults/non-canonical_introns_immatureAdults.json
+python makeIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask.maf ~/data/analysis/maturedAdults/canonical_introns_matureAdults.json ~/data/analysis/maturedAdults/non-canonical_introns_matureAdults.json
+
+# June 23, 2022
+python getOverlappingIntrons.py ~/data/analysis/embryos/canonical_introns_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_embryos.json
+python getOverlappingIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults.json ~/data/analysis/immatureAdults/overlapping_introns_canonical_immatureAdults.json
+python getOverlappingIntrons.py ~/data/analysis/maturedAdults/canonical_introns_matureAdults.json ~/data/analysis/maturedAdults/overlapping_introns_canonical_maturedAdults.json
+
+# June 24, 2022
+python extractNoSharingIntrons.py ~/data/analysis/embryos/overlapping_introns_canonical_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_unique_embryos.json
+python extractNoSharingIntrons.py ~/data/analysis/immatureAdults/overlapping_introns_canonical_immatureAdults.json ~/data/analysis/immatureAdults/overlapping_introns_canonical_unique_immatureAdults.json
+python extractNoSharingIntrons.py ~/data/analysis/maturedAdults/overlapping_introns_canonical_maturedAdults.json ~/data/analysis/maturedAdults/overlapping_introns_canonical_unique_maturedAdults.json
+
+# June 27, 2022
+python extractIntronsWithManyReads.py ~/data/analysis/embryos/overlapping_introns_canonical_unique_embryos.json ~/data/analysis/embryos/overlapping_introns_canonical_unique_ME_5_reads.json 5
+
+# June 29, 2022
+# To use IGV
+# samtools SAM -> BAM
+samtools view -bt ../OKI2018_I69_1.0.removed_chrUn.fa.fai lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.sam > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.bam
+# samtools sort
+samtools sort lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.bam -o lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_sorted.bam
+# samtools index
+samtools index lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_sorted.bam
+
+# re-make intron json files 'with alignments' info
+python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask.maf ~/data/analysis/embryos/canonical_introns_alignments_embryos.json ~/data/analysis/embryos/non-canonical_introns_alignments_embryos.json
+
+# July 20, 2022
+# removeChr_onlysplits.py
+#  - embryos
+python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+#  - immatureAdults
+python removeChr_onlysplits.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+#  - maturedAdults
+python removeChr_onlysplits.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+
+# July 25, 2022
+# removeChr_onlysplits.py
+python removeChr_onlysplits.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf
+
+# makeIntronJsonFile.py
+#  - embryos
+python makeIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/analysis/embryos/canonical_introns_embryos_20220725.json ~/data/analysis/embryos/non-canonical_introns_embryos_20220725.json
+#  - immatureAdults
+python makeIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/non-canonical_introns_immatureAults_20220725.json
+#  - maturedAdults
+python makeIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/non-canonical_introns_maturedAdults_20220725.json
+
+# getOverlappingChoordIntrons.py 
+#  - embryos
+python getOverlappingChoordIntrons.py ~/data/analysis/embryos/canonical_introns_embryos_20220725.json ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json
+#  - immatureAdults
+python getOverlappingChoordIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_coord_introns_canonical_immatureAdults_20220725.json
+#  - maturedAdults
+python getOverlappingChoordIntrons.py ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_coord_introns_canonical_maturedAdults_20220725.json
+
+# extractIntronsOnBothStrands.py
+#  - embryos
+python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json ~/data/analysis/embryos/overlapping_introns_canonical_both_strands_embryos_20220725.json
+#  - immature adults
+python extractIntronsOnBothStrands.py ~/data/analysis/immatureAdults/overlapping_coord_introns_canonical_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_introns_canonical_both_strands_immatureAdults_20220725.json
+
+# getOverlappingCoordIntrons.py
+#  - embryos
+python getOverlappingCoordIntrons.py ~/data/analysis/embryos/can
+onical_introns_embryos_20220725.json ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json
+#  - immature adults
+python getOverlappingCoordIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_coord_introns_canonical_immatureAdults_20220725.json
+#  - matured adults
+python getOverlappingCoordIntrons.py ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_coord_introns_canonical_maturedAdults_20220725.json
+
+# extractIntronsOnBothStrands.py
+#  - embryos
+python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_introns_canonical_embryos_20220725.json ~/data/analysis/embryos/overlapping_introns_canonical_both_strands_embryos_20220725.json
+
+# getOverlappingCoordIntrons.py
+#  - embryos
+python getOverlappingCoordIntrons.py ~/data/analysis/embryos/canonical_introns_embryos_20220725.json ~/data/analysis/embryos/overlapping_coord_introns_100_canonical_embryos_20220725.json
+#  - immature adults
+python getOverlappingCoordIntrons.py ~/data/analysis/immatureAdults/canonical_introns_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_coord_introns_100_canonical_immatureAdults_20220725.json
+#  - matured adults
+python getOverlappingCoordIntrons.py ~/data/analysis/maturedAdults/canonical_introns_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_coord_introns_100_canonical_maturedAdults_20220725.json
+
+# extractIntronsOnBothStrands.py
+#  - embryos
+python extractIntronsOnBothStrands.py ~/data/analysis/embryos/overlapping_coord_introns_100_canonical_embryos_20220725.json ~/data/analysis/embryos/overlapping_introns_100_both_strands_canonical_embryos_20220725.json
+#  - immature adults
+python extractIntronsOnBothStrands.py ~/data/analysis/immatureAdults/overlapping_coord_introns_100_canonical_immatureAdults_20220725.json ~/data/analysis/immatureAdults/overlapping_introns_100_both_strands_canonical_immatureAdults_20220725.json
+#  - matured adults
+python extractIntronsOnBothStrands.py ~/data/analysis/maturedAdults/overlapping_coord_introns_100_canonical_maturedAdults_20220725.json ~/data/analysis/maturedAdults/overlapping_introns_100_both_strands_canonical_maturedAdults_20220725.json
+
+# July 28, 2022
+# getTanTanSplits.py, getTanTanSplits_faster.py
+# immature adults
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/immatureAdults_whole_tan-tan_splits_20220728.out
+python getTanTanSplits_faster.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/immatureAdults_whole_tan-tan_splits_faster_20220728.out
+# matured adults
+python getTanTanSplits.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/maturedAdults_whole_tan-tan_splits_20220728.out
+python getTanTanSplits_faster.py ~/data/tandemRepeats/tandemrepeats_OKI2018_I69_1.0.removed_chrUn.tsv ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/tandemRepeats/maturedAdults_whole_tan-tan_splits_faster_20220728.out
+
+# August 1, 2022
+# get-cds-cds-splits
+# embryos 
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds-splits_faster_20220801.out
+
+# August 2, 2022
+# get_cds_cds_splits_faster.py
+# embryos
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_splits_faster_20220802
+
+# August 12, 2022
+# count every type of splicing signal (count by sites)
+# embryos
+python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/embryos/splicingSignalDist_countedBySites_embryos.tsv
+# immature adults
+python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/immatureAdults/splicingSignalDist_countedBySites_immatureAdults.tsv
+# matured adults
+python getSplicingSignalsDistOfExactSplicings_countBySites.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf > ~/data/analysis/maturedAdults/splicingSignalDist_countedBySites_maturedAdults.tsv
+
+# August 16, 2022
+# make intron file of cds-cds fusions
+# embryos
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_diff_gene_20220815.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_20220816.json
+
+# August 19, 2022
+# extract introns with many reads 
+# embryos
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_20220816.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusion_diff_gene_ME_10_reads_20180819.json 10
+
+# August 26, 2022
+# TE-TE fusions
+# embryos
+python get_TE_TE_splits_faster.py ~/data/last/OKI2018_I69.RepMask.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-te-splits/embryos_te_te_fusions_20220826
+# immature adults
+python get_TE_TE_splits_faster.py ~/data/last/OKI2018_I69.RepMask.out ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-te-splits/immatureAdults_te_te_fusions_20220826
+# matured adults
+python get_TE_TE_splits_faster.py ~/data/last/OKI2018_I69.RepMask.out ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-te-splits/maturedAdults_te_te_fusions_20220826
+
+# make intron files for TE-TE fusions
+# embryos
+python makeOneIntronJsonFile.py ~/data/te-te-splits/embryos_te_te_fusions_20220826.maf ~/data/te-te-splits/intronFile_embryos_te-te_fusions_20220826.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/te-te-splits/immatureAdults_te_te_fusions_20220826.maf ~/data/te-te-splits/intronFile_immatureAdults_te_te_fusions_20220826.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/te-te-splits/maturedAdults_te_te_fusions_20220826.maf ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_20220826.json
+
+# extract TE-TE fusions with many reads
+# embryos
+python extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_embryos_te-te_fusions_20220826.json ~/data/te-te-splits/intronFile_embryos_te-te_fusions_ME_10_20220826.json 10
+# immature adults
+python extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_immatureAdults_te_te_fusions_20220826.json ~/data/te-te-splits/intronFile_immatureAdults_te_te_fusions_ME_10_20220826.json 10
+# matured adults
+python extractIntronsWithManyReads.py ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_20220826.json ~/data/te-te-splits/intronFile_maturedAdults_te-te_fusions_ME_10_20220826.json 10
+
+# cds-cds fusions
+# immature adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220826
+# matured adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220826
+
+# make intron files for cds-cds fusions
+# immature adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220826.maf ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220826.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220826.maf ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220826.json
+
+# extract cds-cds fusions with many reads
+# immature adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220826.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_20220826.json 10
+# matured adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220826.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_20220826.json 10
+
+# Sep 2, 2022
+# remove_chrUn.py
+# embryos
+python removeChr.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+# immature adults
+python removeChr.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+# matured adults
+python removeChr.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf chrUn > ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+
+# Sep 6, 2022
+# get_cds_cds_splits_faster.py (include edge cases)
+# embryos
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220906
+
+# Sep 8, 2022
+# get_cds_cds_splits_faster.py (modified coordinates)
+# embryos
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220908
+# immature adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220908
+# mature adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220908
+
+# makeOneIntronJsonFile.py
+# embryos
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220908.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_20220908.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220908.maf ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220908.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220908.maf ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220908.json
+
+# Sep 13, 2022
+# get_cds_cds_splits_faster.py (modified Alignments.py)
+# embryos
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220913
+# immature adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220913
+# matured adults
+python get_cds_cds_splits_faster.py ~/data/last/OKI2018_I69_1.0.gm.gff ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220913
+
+# Sep 14, 2022
+# makeOneIntronJsonFile.py
+# embryos
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/embryos_cds-cds_fusions_20220913.maf ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_20220914.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/immatureAdults_cds-cds_fusions_20220913.maf ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220914.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/cds-cds-splits/maturedAdults_cds-cds_fusions_20220913.maf ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220914.json
+
+# Sep 15, 2022
+# extractIntronsWithManyReads.py
+# embryos
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_20220914.json 10
+# immature adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_20220914.json 10
+# matured adults
+python extractIntronsWithManyReads.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_20220914.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_20220914.json 10
+
+# extractIntronsGTAG_someNonCanonicals.py
+# embryos
+python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_20220914.json ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+# immature adults
+python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_20220914.json ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+# matured adults
+python extractIntronsGTAG_someNonCanonicals.py ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_20220914.json ~/data/cds-cds-splits/intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+
+# Sep 27, 2022
+# search TE-TE fusions
+./get_TE-TE_fusions.sh 10 20220927
+
+# Sep 28, 2022
+./get_TE-TE_fusions.sh 5 20220927
+
+# Sep 29, 2022
+# search TE-TE fusions assuming RepMask.out coordinates are 1-based
+./get_TE-TE_fusions_1-base.sh 5 20220929
+
+# Oct 12, 2022
+# search TE-CDS fusions
+python get_TE_cds_spilts_faster.py ~/data/te-cds-splits/te-cds-table_20221011.out ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_removed.chrUn_onlysplits.maf ~/data/te-cds-splits/te-cds_fusions_embryos_20221012
+
+# CDS-CDS fusions: linear and trans
+python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+python divideIntoLinearANDTransSplicings.py ~/data/cds-cds-splits/intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+
+# Oct 26, 2022
+# TE-CDS fusions
+./get_TE-CDS_fusions.sh 10 20221026
+
+# Dec 23, 2022
+# makeOneIntronJsonFile sorted ver.
+# embryos
+python makeOneIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/all_introns_sorted_embryos.json
+# immature adults
+python makeOneIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/immatureAdults/all_introns_sorted_immatureAdults.json
+# matured adults
+python makeOneIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/all_introns_sorted_maturedAdults.json
+
+# makeChimericIntronJsonFile.py sorted
+# embryos
+python makeChimericIntronJsonFile.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/embryos/chimeric_introns_sorted_embryos_20221223.json
+# immature adults
+python makeChimericIntronJsonFile.py ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/chimeric_introns_sorted_immatureAdults_20221223.json
+# matured adults
+python makeChimericIntronJsonFile.py ~/data/last/maturedAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf ~/data/analysis/maturedAdults/chimeric_introns_sorted_maturedAdults_20221223.json
+
+# Dec 29, 2022
+# divideMAFIntoInexactAndOthers.py
+# embryos
+python divideMAFIntoInexactAndOthers.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+
+# extractNonSplicedAlignments.py
+# embryos
+python extractNonSplicedAlignments.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
