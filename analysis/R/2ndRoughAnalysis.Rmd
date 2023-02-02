@@ -114,6 +114,9 @@ hist(newDeletionData_matured$V1, main = "Histgram of deletion length of matured 
 The graph of embryos and matured adults look almost identical. Somehow, there is a small peak in the graph of immature adults.
 
 ### Splicing Signals
+I discarded data whose donor and acceptor are unknown.
+
+I also discarded data in which reads have inserted sequence between aligned regions.
 ```{r ssFileReading, echo=FALSE}
 ss_embryos <- read.table(file='~/biohazard/data/oikopleura/analysis/embryos/splicingSignalsDistExactSplicings_embryos_filtered_trimmed_sorted.tsv', sep='\t', header=T)
 ss_immature <- read.table(file = "~/biohazard/data/oikopleura/analysis/immatureAdults/splicingSignalsDistExactSplicings_immature_filtered_trimmed_sorted.tsv", sep = "\t", header = T)
@@ -125,7 +128,7 @@ The number of splicing signals detected are
 - immature adults: `r nrow(ss_immature)`
 - matured adults: `r nrow(ss_matured)`
 
-I arbitrary extracted top 10 splicing signals. The orders of top 10 splicing signals are the same in embryos and matured adults.
+I extracted top 10 splicing signals. The orders of top 10 splicing signals are the same in embryos and matured adults.
 
 ```{r ssGraphs, fig.show='hold', out.width="30%", echo=FALSE}
 ss_embryos_ordered <- ss_embryos[order(ss_embryos$count, decreasing=TRUE),]
@@ -192,3 +195,8 @@ The percentage of non-canonical (non GT_AG, CT_AC) splicing signals
 - embryos:`r non_canonical_ss_embryos / all_ss_embryos * 100` %
 - immature adults: `r non_canonical_ss_immature / all_ss_embryos * 100` %
 - matured adults: `r non_canonical_ss_matured / all_ss_matured * 100` %
+
+↑ I counted
+
+- the same junction mutiple times (= the number of reads crossing the junction)
+- the a-little-bit-shifted junctions as different junctions
