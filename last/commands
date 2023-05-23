@@ -1,160 +1,138 @@
-# 16 March, 2022
-# maturedAdults
+# 16 March, 2022 maturedAdults
 lastdb OKI2018_I69_1.0db ~/data/oikopleura/OKI2018_I69_1.0_alignments_with_different_parameters/copy_of_the_genomes/OKI2018_I69_1.0.removed_chrUn.fa
 
 last-train -Q0 OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedOikopleuraAdults/ERR4570987.fastq > trainOKI2018_I69_1.0_ERR4570987.out
 
 lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987.out OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedOikopleuraAdults/ERR4570987.fastq | last-split -d2 -g OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987.out
 
-# 11 April, 2022
-# immatureAdults
+# 11 April, 2022 immatureAdults
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986.fastq > trainOKI2018_I69_1.0_ERR4570986.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986.fastq | last-split -d2 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986.out
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986.fastq | last-split -d2 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > 
+lastsplitOKI2018_I69_1.0_ERR4570986.out
 
 # embryos
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985.fastq > trainOKI2018_I69_1.0_ERR4570985.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985.fastq | last-split -d2 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985.out
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985.fastq | last-split -d2 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > 
+lastsplitOKI2018_I69_1.0_ERR4570985.out
 
-# 3 May, 2022
-# maturedAdults
+# 3 May, 2022 maturedAdults
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedAdults/ERR4570987_1_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570987_sorted.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g 
+../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf
 
 # immatureAdults
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570986_sorted.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g 
+../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf
 
 # embryos
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570985_sorted.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ~/data/oikopleura/rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g 
+../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
 
-# May 11, 2022
-# embryos
+# May 11, 2022 embryos
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570985_sorted.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g 
+../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted.maf
 
 # immature adults
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570986_sorted.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570986_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g 
+../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted.maf
 
 # matured adults
 last-train -Q0 ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_ERR4570987_sorted.out
 
-lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g ../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf
+lastal -D10 -p trainOKI2018_I69_1.0_ERR4570987_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq | last-split -d2 -M3.78 -S0.065 -g 
+../OKI2018_I69_1.0db/OKI2018_I69_1.0db > lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted.maf
 
-# May 30, 2022
-# To know strandedness of the RNA-seq data
-# embryos
+# May 30, 2022 To know strandedness of the RNA-seq data embryos
 lastal -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq > lastal_ERR4570985_1_filtered_trimmed_sorted.maf
 
 lastal -p trainOKI2018_I69_1.0_ERR4570985_sorted.out ../OKI2018_I69_1.0db/OKI2018_I69_1.0db ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > lastal_ERR4570985_filtered_trimmed_sorted.maf
 
-# July 15, 2022
-# lastdb 
+# July 15, 2022 lastdb
 lastdb OKI2018_I69_1.0_whole.DB OKI2018_I69_1.0.fa
-# last-train
-#  - embryos
+# last-train - embryos
 last-train -Q0 ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_whole_ERR4570985.out
 #  - immatureAdults
 last-train -Q0 ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_whole_ERR4570986.out
 #  - maturedAdults
 last-train -Q0 ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted.fastq > trainOKI2018_I69_1.0_whole_ERR4570987.out
-# lastal
-#  - embryos
-lastal -D10  --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_*_filtered_trimmed_sorted.fastq > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted.maf
+# lastal - embryos
+lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_*_filtered_trimmed_sorted.fastq > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted.maf
 
-# July 19, 2022
-# fastq-interleave -> lastal -> last-postmask
+# July 19, 2022 fastq-interleave -> lastal -> last-postmask
 #  - embryos
-fastq-interleave ../../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq ../../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq | lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB | last-postmask > ~/.data/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf
-fastq-interleave ERR4570985_1_filtered_trimmed_sorted.fastq ERR4570985_2_filtered_trimmed_sorted.fastq > ERR4570985_filtered_trimmed_sorted_interleaved.fastq
+fastq-interleave ../../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq ../../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq | lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p 
+trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB | last-postmask > ~/.data/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf fastq-interleave 
+ERR4570985_1_filtered_trimmed_sorted.fastq ERR4570985_2_filtered_trimmed_sorted.fastq > ERR4570985_filtered_trimmed_sorted_interleaved.fastq
 #  - immatureAdults
-fastq-interleave ERR4570986_1_filtered_trimmed_sorted.fastq ERR4570986_2_filtered_trimmed_sorted.fastq > ERR4570986_filtered_trimmed_sorted_interleaved.fastq
-lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570986.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq | last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf
+fastq-interleave ERR4570986_1_filtered_trimmed_sorted.fastq ERR4570986_2_filtered_trimmed_sorted.fastq > ERR4570986_filtered_trimmed_sorted_interleaved.fastq lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p 
+trainOKI2018_I69_1.0_whole_ERR4570986.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq | last-postmask > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask.maf
 #  - maturedAdults
-fastq-interleave ERR4570987_1_filtered_trimmed_sorted.fastq ERR4570987_2_filtered_trimmed_sorted.fastq > ERR4570987_filtered_trimmed_sorted_interleaved.fastq
-lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570987.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq | last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf
+fastq-interleave ERR4570987_1_filtered_trimmed_sorted.fastq ERR4570987_2_filtered_trimmed_sorted.fastq > ERR4570987_filtered_trimmed_sorted_interleaved.fastq lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p 
+trainOKI2018_I69_1.0_whole_ERR4570987.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq | last-postmask > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask.maf
 
-# July 22, 2022
-# re-make lastsplit alignment file of embryos
-# because the previous command was wrong
-# (reads of embryos and immatureAdults are mistakenly merged)
-lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB ../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq |last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf
+# July 22, 2022 re-make lastsplit alignment file of embryos because the previous command was wrong (reads of embryos and immatureAdults are mistakenly merged)
+lastal -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p trainOKI2018_I69_1.0_whole_ERR4570985.out ../OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB 
+../../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq |last-postmask > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask.maf
 
-# August 17, 2022
-# make Transposable Element database
+# August 17, 2022 make Transposable Element database
 
-# lastdb
-# -R: specify lowercase usage with two digits
-#     first digit:  0: Convert the input sequences to uppercase while reading them.
-#     second digit: 1: Convert simple repeats (e.g. cacacacacacacacac) to
-#                      lowercase.  This uses tantan, which reliably prevents
-#                      non-homologous alignments, unlike other repeat finders.
+# lastdb -R: specify lowercase usage with two digits
+#     first digit: 0: Convert the input sequences to uppercase while reading them. second digit: 1: Convert simple repeats (e.g. cacacacacacacacac) to
+#                      lowercase.  This uses tantan, which reliably prevents non-homologous alignments, unlike other repeat finders.
 lastdb -R01 Oikopleura.dioica_TEdb ../Data_S1_bank_dioica_tot.fa
 
-# last-train
-# --revsym: Force the substitution scores to have reverse-complement
-#           symmetry, e.g. score(A→G) = score(T→C).  This is often
-#           appropriate, if neither strand is "special".
-# -X1: How to score a match/mismatch involving N (for DNA) or X
-#      (otherwise). 1 means treat reference Ns/Xs as fully-ambiguous letters.
-# -m100: Maximum number of initial matches per query position.
-# -P: Number of parallel threads.
+# last-train --revsym: Force the substitution scores to have reverse-complement
+#           symmetry, e.g. score(A→G) = score(T→C).  This is often appropriate, if neither strand is "special".
+# -X1: How to score a match/mismatch involving N (for DNA) or X (otherwise). 1 means treat reference Ns/Xs as fully-ambiguous letters.
+# -m100: Maximum number of initial matches per query position. -P: Number of parallel threads.
 last-train -P8 --revsym -X1 -m100 Oikopleura.dioica_TEdb ../OKI2018_I69_1.0.fa > last-train_Okipleura.dioica_TE.mat
 
-# lastal
-# -i3G: Process the query sequences in batches, of at most this many
-#       bytes.  If a single sequence exceeds this amount, however, it is
-#       not split.  You can use suffixes K, M, and G to specify KibiBytes,
-#       MebiBytes, and GibiBytes.  This option makes -P less
-#       efficient, because each batch is separately multi-threaded, but it
-#       fixes the output order to be the same as the input.
-# -m100: Maximum multiplicity for initial matches.  Each initial match is
-#        lengthened until it occurs at most this many times in the reference. 
-# -D1e7: Report alignments that are expected by chance at most once per LENGTH query letters. 
+# lastal -i3G: Process the query sequences in batches, of at most this many
+#       bytes.  If a single sequence exceeds this amount, however, it is not split.  You can use suffixes K, M, and G to specify KibiBytes, MebiBytes, and GibiBytes.  This option makes -P less efficient, because each batch is 
+#       separately multi-threaded, but it fixes the output order to be the same as the input.
+# -m100: Maximum multiplicity for initial matches.  Each initial match is lengthened until it occurs at most this many times in the reference.
+# -D1e7: Report alignments that are expected by chance at most once per LENGTH query letters.
 #        "M. Frith sensei felt that the default produces too many false hits"
 
-# Sep 22, 2022
-# To use IGV
-# embryos
-# MAF -> BAM
+# Sep 22, 2022 To use IGV embryos MAF -> BAM
 convert2BAM.sh ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf 20220922
 
-# Oct 17, 2022
-# BAM -> BED
-bedtools bamtobed -i lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20220922.sort.bam > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20220922.sort.bam.bed
+# Oct 17, 2022 BAM -> BED
+bedtools bamtobed -i lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20220922.sort.bam > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20220922.sort.bam.bed
 
-# Oct 27, 2022
-# MAF -> SAM
-maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221027.sam
+# Oct 27, 2022 MAF -> SAM
+maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221027.sam
 
-# Nov 1, 2022
-# sort sam
-samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221027.sam > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221101.sort.sam
+# Nov 1, 2022 sort sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221027.sam > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221101.sort.sam
 
-# Nov 11, 2022
-# last-train OKI2018_I69.transcriptonme.fa
-# -P8:   "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
+# Nov 11, 2022 last-train OKI2018_I69.transcriptonme.fa -P8: "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
 #         this has no effect on the result"
-# -X1:   "tells it to treat Ns in the reference sequences as unknown bases"
-# -m100: Maximum multiplicity for initial matches.  Each initial match is
-#        lengthened until it occurs at most this many times in the reference. 
-#        "makes it more slow-and-sensitive than the default" 
+# -X1: "tells it to treat Ns in the reference sequences as unknown bases" -m100: Maximum multiplicity for initial matches.  Each initial match is
+#        lengthened until it occurs at most this many times in the reference. "makes it more slow-and-sensitive than the default"
 last-train -P8 --revsym -X1 -m100 OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB OKI2018_I69.transcriptome.fa > last_transcript.mat
 
-# lastal --split OKI2018_I69.transcriptonme.fa
-# -D10: Report alignments that are expected by chance at most once per LENGTH query letters.
+# lastal --split OKI2018_I69.transcriptonme.fa -D10: Report alignments that are expected by chance at most once per LENGTH query letters.
 lastal -P8 -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p last_transcript.mat OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB OKI2018_I69.transcriptome.fa | last-postmask > transcript-to-genome.maf
 
-# Nov 16, 2022
-# MAF -> SAM
+# Nov 16, 2022 MAF -> SAM
 maf-convert -d sam transcript-to-genome.maf > transcript-to-genome.sam
 
 # sort sam
@@ -166,14 +144,42 @@ samtools view -b transcript-to-genome.sam > transcript-to-genome.bam
 # BAM -> BED
 bedtools bamtobed -i transcript-to-genome.bam > transcript-to-genome.bed
 
-# Nov 17, 2022
-# MAF -> SAM
+# Nov 17, 2022 MAF -> SAM
 maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam
 # sort sam
-samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
 
-# Nov 21, 2022
-# MAF -> SAM
+# Nov 21, 2022 MAF -> SAM
 maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam
 # sort sam
-samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
+
+# Feb 1, 2023
+maf-convert -j1e6 -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_inexactSplitsRemoved.maf > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_inexactSplitsRemoved_maf-convert.sam
+
+# Feb 3, 2023
+maf-convert -j1e6 -d sam transcript-to-genome.maf > transcript-to-genome.sam
+
+# Feb 13, 2023
+lastdb -P8 -uNEAR $dbNAME ../OKI2018_I69_1.0.fa
+
+last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq > embryos/$train_emb
+
+last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq > immatureAdults/$train_imm
+
+last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq > maturedAdults/$train_mat
+
+lastal -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p embryos/$train_emb $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq | last-postmask > embryos/$al_emb1
+
+lastal -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p embryos/$train_emb $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_2_filtered_trimmed_sorted.fastq | last-postmask > embryos/$al_emb2
+
+lastal -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p immatureAdults/$train_imm $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq | last-postmask > immatureAdults/$al_imm1
+
+lastal -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p immatureAdults/$train_imm $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq | last-postmask > immatureAdults/$al_imm2
+
+lastal -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_1_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat1
+
+lastal -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_2_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat2

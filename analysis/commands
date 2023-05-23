@@ -385,3 +385,25 @@ python divideMAFIntoInexactAndOthers.py ~/data/last/embryos/lastsplitOKI2018_I69
 # extractNonSplicedAlignments.py
 # embryos
 python extractNonSplicedAlignments.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+
+# Jan 4, 2023
+# maf-convert
+# embryos
+python maf-convert_mariko.py sam ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_inexactSplitsRemoved.maf > ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_inexactSplitsRemoved.sam
+
+# extractNonSplicedAlignments.py
+# embryos
+python extractNonSplicedAlignments.py ~/data/last/embryos/lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf
+
+# Jan 25, 2023
+# printKeysFromJson.py
+python ~/oikopleura/analysis/printKeysFromJson.py intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.json > keys_intronFile_embryos_cds-cds_fusions_ME_10_reads_majorSS_20220914.out
+python ~/oikopleura/analysis/printKeysFromJson.py intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json > keys_intronFile_immatureAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+python ~/oikopleura/analysis/printKeysFromJson.py intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json > keys_intronFile_maturedAdults_cds-cds_fusions_ME_10_reads_majorSS_20220914.json
+
+# Feb 2, 2023
+# rename a file
+mv chimeric_introns_sorted_embryos_20221223.json trans_splicings_sorted_embryos_20221223.json
+
+# makeFilesForIgv.sh
+./makeFilesForIgv.sh ~/data/last/immatureAdults/lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf

@@ -83,6 +83,7 @@ def getMultiMAFEntries(alignmentFile):
         if len(mafEntries) > 1:
             for mafEntry in mafEntries:
                 alnObjectList.append(Alignment.fromMAFEntry(mafEntry))
+            print(type(alnObjectList))
             yield alnObjectList
 
 
