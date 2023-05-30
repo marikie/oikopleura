@@ -183,3 +183,30 @@ lastal -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p immature
 lastal -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_1_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat1
 
 lastal -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_2_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat2
+
+# May 30
+# lastdb
+lastdb -P8 -uNEAR $dbNAME ../OKI2018_I69_1.0.fa
+
+# last-train
+last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq > embryos/$train_emb
+last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq > immatureAdults/$train_imm
+last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq > maturedAdults/$train_mat
+
+# lastal embryos
+lastal -i1 -P8 -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p embryos/$train_emb $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_1_filtered_trimmed_sorted.fastq | last-postmask > embryos/$al_emb1
+lastal -i1 -P8 -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p embryos/$train_emb $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_2_filtered_trimmed_sorted.fastq | last-postmask > embryos/$al_emb2
+last-pair-probs -r embryos/$al_emb1 embryos/$al_emb2 > embryos/$al_emb_pairprob 
+maf-convert -j1e5 -d sam embryos/$al_emb_pairprob > embryos/$sam_emb 
+
+# lastal immature adults
+lastal -i1 -P8 -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p immatureAdults/$train_imm $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq | last-postmask > immatureAdults/$al_imm1
+lastal -i1 -P8 -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p immatureAdults/$train_imm $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq | last-postmask > immatureAdults/$al_imm2
+last-pair-probs -r immatureAdults/$al_imm1 immatureAdults/$al_imm2 > immatureAdults/$al_imm_pairprob 
+maf-convert -j1e5 -d sam immatureAdults/$al_imm_pairprob > immatureAdults/$sam_imm 
+
+# lastal matured adults
+lastal -i1 -P8 -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_1_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat1
+lastal -i1 -P8 -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_2_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat2
+last-pair-probs -r maturedAdults/$al_mat1 maturedAdults/$al_mat2 > maturedAdults/$al_mat_pairprob 
+maf-convert -j1e5 -d sam maturedAdults/$al_mat_pairprob > maturedAdults/$sam_mat 
