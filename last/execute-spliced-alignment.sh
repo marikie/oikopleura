@@ -21,9 +21,13 @@ al_imm_pairprob="lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_pos
 al_mat1="lastsplitOKI2018_I69_1.0_ERR4570987_1_filtered_trimmed_sorted_postmask_$DATE.maf"
 al_mat2="lastsplitOKI2018_I69_1.0_ERR4570987_2_filtered_trimmed_sorted_postmask_$DATE.maf"
 al_mat_pairprob="lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask_pairprob_$DATE.maf"
-sam_emb="lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_pairprob_$DATE.sam"
-sam_imm="lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_postmask_pairprob_$DATE.sam"
-sam_mat="lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_postmask_pairprob_$DATE.sam"
+sam_emb="${al_emb_pairprob:0:-4}.sam"
+sam_imm="${al_imm_pairprob:0:-4}.sam"
+sam_mat="${al_mat_pairprob:0:-4}.sam"
+fai_FILE="~/big_oiks/last/OKI2018_I69_1.0.removed_chrUn.fa.fai"
+SORT_BAM_emb="${sam_emb:0:-4}.sort.bam"
+SORT_BAM_imm="${sam_imm:0:-4}.sort.bam"
+SORT_BAM_mat="${sam_mat:0:-4}.sort.bam"
 
 cd ~/big_oiks/last
 echo "dbName: $dbNAME"
@@ -98,6 +102,15 @@ if [ ! -e embryos/$sam_emb ]; then
 else
         echo "embryos/$sam_emb already exists"
 fi
+# - convert SAM -> BAM, sort, index
+if [ ! -e embryos/$SORT_BAM_emb ]; then
+        echo "converting sam to bam and sort"
+        samtools view -bt $fai_FILE $sam_emb | samtools sort -o $SORT_BAM_emb  
+        echo "index $SORT_BAM_emb"
+        samtools index $SORT_BAM_emb
+else
+        echo "embryos/$SORT_BAM_emb already exists"
+fi
 
 # immature adults
 # - spliced alignment of Read1
@@ -119,7 +132,7 @@ if [ ! -e immatureAdults/$al_imm_pairprob ]; then
         echo "running last-pair-probs"
         last-pair-probs -r immatureAdults/$al_imm1 immatureAdults/$al_imm2 > immatureAdults/$al_imm_pairprob 
 else
-        echo "embryos/$al_imm_pairprob already exists"
+        echo "immatureAdults/$al_imm_pairprob already exists"
 fi
 # - maf-convert sam
 if [ ! -e immatureAdults/$sam_imm ]; then
@@ -127,6 +140,15 @@ if [ ! -e immatureAdults/$sam_imm ]; then
         maf-convert -j1e5 -d sam immatureAdults/$al_imm_pairprob > immatureAdults/$sam_imm 
 else
         echo "immatureAdults/$sam_imm already exists"
+fi
+# - convert SAM -> BAM, sort, index
+if [ ! -e immatureAdults/$SORT_BAM_imm ]; then
+        echo "converting sam to bam and sort"
+        samtools view -bt $fai_FILE $sam_imm | samtools sort -o $SORT_BAM_imm  
+        echo "index $SORT_BAM_imm"
+        samtools index $SORT_BAM_imm
+else
+        echo "immatureAdults/$SORT_BAM_imm already exists"
 fi
 
 # mature adults
@@ -157,4 +179,13 @@ if [ ! -e maturedAdults/$sam_mat ]; then
         maf-convert -j1e5 -d sam maturedAdults/$al_mat_pairprob > maturedAdults/$sam_mat 
 else
         echo "maturedAdults/$sam_mat already exists"
+fi
+# - convert SAM -> BAM, sort, index
+if [ ! -e maturedAdults/$SORT_BAM_mat ]; then
+        echo "converting sam to bam and sort"
+        samtools view -bt $fai_FILE $sam_mat| samtools sort -o $SORT_BAM_mat  
+        echo "index $SORT_BAM_mat"
+        samtools index $SORT_BAM_mat
+else
+        echo "maturedAdults/$SORT_BAM_mat already exists"
 fi
