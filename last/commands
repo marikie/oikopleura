@@ -210,3 +210,7 @@ lastal -i1 -P8 -D10 --split-d 0 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p 
 lastal -i1 -P8 -D10 --split-d 1 --split-M 3.78 --split-S 0.065 --split-m 0.5 -p maturedAdults/$train_mat $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_2_filtered_trimmed_sorted.fastq | last-postmask > maturedAdults/$al_mat2
 last-pair-probs -r maturedAdults/$al_mat1 maturedAdults/$al_mat2 > maturedAdults/$al_mat_pairprob 
 maf-convert -j1e5 -d sam maturedAdults/$al_mat_pairprob > maturedAdults/$sam_mat 
+
+
+# convert SAM -> BAM embryos
+samtools view -bt ../OKI2018_I69_1.0.removed_chrUn.fa.fai lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_pairprob_20230525.sam | samtools sort -o lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_pairprob_20230525.sort.bam
