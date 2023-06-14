@@ -123,13 +123,15 @@ lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_po
 samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221027.sam > 
 lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_20221101.sort.sam
 
-# Nov 11, 2022 last-train OKI2018_I69.transcriptonme.fa -P8: "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
+# Nov 11, 2022 last-train OKI2018_I69.transcriptonme.fa 
+# -P8: "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
 #         this has no effect on the result"
 # -X1: "tells it to treat Ns in the reference sequences as unknown bases" -m100: Maximum multiplicity for initial matches.  Each initial match is
 #        lengthened until it occurs at most this many times in the reference. "makes it more slow-and-sensitive than the default"
 last-train -P8 --revsym -X1 -m100 OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB OKI2018_I69.transcriptome.fa > last_transcript.mat
 
-# lastal --split OKI2018_I69.transcriptonme.fa -D10: Report alignments that are expected by chance at most once per LENGTH query letters.
+# lastal --split OKI2018_I69.transcriptonme.fa 
+# -D10: Report alignments that are expected by chance at most once per LENGTH query letters.
 lastal -P8 -D10 --split-d 2 --split-M 3.78 --split-S 0.065 -p last_transcript.mat OKI2018_I69_1.0_whole.DB/OKI2018_I69_1.0_whole.DB OKI2018_I69.transcriptome.fa | last-postmask > transcript-to-genome.maf
 
 # Nov 16, 2022 MAF -> SAM
@@ -214,3 +216,51 @@ maf-convert -j1e5 -d sam maturedAdults/$al_mat_pairprob > maturedAdults/$sam_mat
 
 # convert SAM -> BAM embryos
 samtools view -bt ../OKI2018_I69_1.0.removed_chrUn.fa.fai lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_pairprob_20230525.sam | samtools sort -o lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_pairprob_20230525.sort.bam
+
+
+# Nov 16, 2022 MAF -> SAM
+maf-convert -d sam transcript-to-genome.maf > transcript-to-genome.sam
+
+# sort sam
+samtools sort -O sam transcript-to-genome.sam > transcript-to-genome.sorted.sam
+
+# SAM -> BAM
+samtools view -b transcript-to-genome.sam > transcript-to-genome.bam
+
+# BAM -> BED
+bedtools bamtobed -i transcript-to-genome.bam > transcript-to-genome.bed
+
+# Nov 17, 2022 MAF -> SAM
+maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570986_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam
+# sort sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
+
+# Nov 21, 2022 MAF -> SAM
+maf-convert -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.maf > lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam
+# sort sam
+samtools sort -O sam lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sam > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570987_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed.sorted.sam
+
+# Feb 1, 2023
+maf-convert -j1e6 -d sam lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_inexactSplitsRemoved.maf > 
+lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_postmask_chrUn_removed_inexactSplitsRemoved_maf-convert.sam
+
+# Feb 3, 2023
+maf-convert -j1e6 -d sam transcript-to-genome.maf > transcript-to-genome.sam
+
+# 20230614
+#last-train B.floridae transcriptome 
+# -P8: "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
+#         this has no effect on the result"
+# -X1: "tells it to treat Ns in the reference sequences as unknown bases" -m100: Maximum multiplicity for initial matches.  Each initial match is
+#        lengthened until it occurs at most this many times in the reference. "makes it more slow-and-sensitive than the default"
+last-train -P8 --revsym -X1 -m100 F-Lanceletdb/F-Lanceletdb ../lancelets/transcriptome/GETA01.1.fsa_nt > b_floridae_transcript.train
+
+# lastal --split OKI2018_I69.transcriptonme.fa 
+# -D10: Report alignments that are expected by chance at most once per LENGTH query letters.
+# CAVEAT: unknown intron length distribution 
+lastal -P8 -D10 --split-d 2 -p b_floridae_transcript.train F-Lanceletdb/F-Lanceletdb ../lancelets/transcriptome/GETA01.1.fsa_nt | last-postmask > b_floridae_transcript_to_genome.maf
+
+# maf-convert
+maf-convert -j1e6 -d sam b_floridae_transcript_to_genome.maf > b_floridae_transcript_to_genome.sam 

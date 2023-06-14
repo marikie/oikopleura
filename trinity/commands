@@ -16,3 +16,35 @@ singularity exec -e $HOME/.local/src/trinityrnaseq.v2.15.1.simg  Trinity \
 --left $read1Path_emb --right $read2Path_emb --SS_lib_type $libType \
 --CPU 10 --min_contig_length 100 --max_memory 50G \
 --verbose
+
+# 2023-05-31
+DATE=$1
+libType='FR'
+alignmentBamFileDir="/big/mrk/oikopleura/last/embryos"
+alignmentBamFile="$alignmentBamFileDir/lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_postmask_pairprob_20230525.sort.bam"
+devStage_emb='embryos'
+outputDir="/big/mrk/oikopleura/trinity/trinity_gguided_${devStage_emb}_$DATE"
+
+if [ ! -d  $outputDir ]; then
+        echo "making output dir"
+        mkdir $outputDir
+else
+        echo "$outputDir already exists."
+fi
+
+export SINGULARITY_BIND="$alignmentBamFileDir:$alignmentBamFileDir,$outputDir:$outputDir"
+echo "$SINGULARITY_BIND"
+
+singularity exec -e $HOME/.local/src/trinityrnaseq.v2.15.1.simg  Trinity \
+        --genome_guided_bam $alignmentBamFile \
+        --genome_guided_max_intron 100000 \
+        --SS_lib_type $libType \
+        --max_memory 50G --CPU 10 \
+        --verbose \
+        --output $outputDir
+#---- Ended with ERROR ----
+Error, reads file listing: read_files.list is empty.  This tends to happen when there were too few reads to assemble.  at /usr/local/bin/util/support_scripts/write_partitioned_trinity_cmds.pl line 59.
+Error, cmd: /usr/local/bin/util/support_scripts/write_partitioned_trinity_cmds.pl --reads_list_file read_files.list --CPU 1 --max_memory 1G  --run_as_paired  --SS_lib_type F  --seqType fa --trinity_complete --full_cleanup  --verbose  > trinity_GG.cmds died with ret 65280 at /usr/local/bin/Trinity line 2919.
+main::process_cmd("/usr/local/bin/util/support_scripts/write_partitioned_trinity"...) called at /usr/local/bin/Trinity line 3730
+main::write_trinity_partitioned_cmds("read_files.list", "trinity_GG.cmds", "GENOME_GUIDED_MODE") called at /usr/local/bin/Trinity line 3600
+main::run_genome_guided_Trinity("/big/mrk/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR"..., undef) called at /usr/local/bin/Trinity line 1467
