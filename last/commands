@@ -249,7 +249,24 @@ lastsplitOKI2018_I69_1.0_whole_ERR4570985_filtered_trimmed_sorted_interleaved_po
 # Feb 3, 2023
 maf-convert -j1e6 -d sam transcript-to-genome.maf > transcript-to-genome.sam
 
-# 20230614
+# June 14, 2023
+# lanc_oik_alignment.sh
+# lastdb
+lastdb -P8 -uMAM8 $dbName ~/big_oiks/lancelets/genome_assemblies_branchiostoma_floridae/ncbi-genomes-2023-06-13/GCF_000003815.2_Bfl_VNyyK_genomic.fna 
+# last-train
+last-train -P8 --revsym -E0.05 $dbName/$dbName ~/big_oiks/last/OKI2018_I69_1.0.removed_chrUn.fa > $trainFile
+# alignment 1
+lastal -E0.05 --split-f=MAF+ -p $trainFile $dbName/$dbName ~/big_oiks/last/OKI2018_I69_1.0.removed_chrUn.fa > $maf1
+# alignment 2
+last-split -r -m1e-5 $maf1 | last-postmask > $maf2
+# maf-convert
+maf-convert -j1e5 -d sam $maf2 > $sam2
+# last-dotplot
+last-dotplot $maf2 $pngFile
+
+
+# June 15, 2023
+#
 #last-train B.floridae transcriptome 
 # -P8: "makes it faster by using 8 parallel threads: adjust as suitable for your computer.
 #         this has no effect on the result"

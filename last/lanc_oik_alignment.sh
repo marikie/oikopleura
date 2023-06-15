@@ -11,6 +11,7 @@ dbName="F-Lanceletdb"
 trainFile="FLancOik_$DATE.train"
 maf1="FLancOik1_$DATE.maf"
 maf2="FLancOik2_$DATE.maf"
+sam2="FLancOik2_$DATE.sam"
 pngFile="FLancOik2_$DATE.png"
 
 cd ~/big_oiks/lanc_oik_last
@@ -52,6 +53,14 @@ if [ ! -e $maf2 ]; then
         last-split -r -m1e-5 $maf1 | last-postmask > $maf2
 else
         echo "$maf2 already exists"
+fi
+
+# maf-convert sam
+if [ ! -e $sam2 ]; then
+        echo "converting maf to sam"
+        maf-convert -j1e5 -d sam $maf2 > $sam2
+else
+        echo "$sam2 already exists"
 fi
 
 # last-dotplot
