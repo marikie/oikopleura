@@ -283,5 +283,8 @@ lastal -P8 -D10 --split-d 2 -p b_floridae_transcript.train F-Lanceletdb/F-Lancel
 maf-convert -j1e6 -d sam b_floridae_transcript_to_genome.maf > b_floridae_transcript_to_genome.sam 
 
 # last-dotplot
+#################
+# DIDN'T WORK :(
+#################
 last-dotplot -1 NC_049979.1 ~/big_oiks/lanc_oik_last/FLancOik2_20230614.maf ~/big_oiks/lanc_oik_last/FLancOik2_20230614_NC_049979.1.png
 
