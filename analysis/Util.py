@@ -69,6 +69,7 @@ def getMultiMAFEntries_all(alignmentFile):
 
 def getMultiMAFEntries(alignmentFile):
     '''
+    ONLY SPLICED READS
     from Alignments.py in JSA. written by Anish Shrestha.
     takes in mafEntries in list of strings (line) form.
     If a query has multiple entries:
@@ -83,6 +84,7 @@ def getMultiMAFEntries(alignmentFile):
         if len(mafEntries) > 1:
             for mafEntry in mafEntries:
                 alnObjectList.append(Alignment.fromMAFEntry(mafEntry))
+            print(type(alnObjectList))
             yield alnObjectList
 
 

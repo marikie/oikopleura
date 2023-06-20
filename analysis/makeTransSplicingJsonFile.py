@@ -70,6 +70,7 @@ def main(alignmentFile, outputFile):
         # prerequisite:
         # alignments are already sorted
         # according to + strand's coordinates
+        print(type(alignments))
 
         readStrand = None
         # get the order of alignments
