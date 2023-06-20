@@ -12,11 +12,14 @@ from Alignment import Alignment
 def main(alignmentFile):
     alnFileHandle = open(alignmentFile)
     # get all the MAF entries
+    print('getting all alignments')
     mafEntries_all = []
     for mafEntry in getMAFBlock(alnFileHandle):
         mafEntries_all.append(Alignment.fromMAFEntry(mafEntry))
 
     # sort mafEntries_all by query's coordinate
+    print('sorting alignment entries')
+    mafEntries_all.sort(key=lambda x: (x.rID, x.rStart, x.rEnd))
 
 
 
