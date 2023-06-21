@@ -7,7 +7,7 @@ Output: .maf file
 import argparse
 from Util import getMAFBlock
 from Alignment import Alignment
-
+import os
 
 def main(alignmentFile):
     alnFileHandle = open(alignmentFile)
@@ -23,8 +23,7 @@ def main(alignmentFile):
    
     # write in outFile
     print('writing in the output file')
-    outFilePath = os.path.splittext(alignmentFile)[0]\
-            + '_sortedByQuery.maf'
+    outFilePath = os.path.splittext(alignmentFile)[0] + '_sortedByQuery.maf'
     with open(outFilePath, 'w') as f:
         for alnObj in mafEntries_all:
             f.write(alnObj._MAF())
