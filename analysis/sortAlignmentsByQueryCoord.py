@@ -20,8 +20,15 @@ def main(alignmentFile):
     # sort mafEntries_all by query's coordinate
     print('sorting alignment entries')
     mafEntries_all.sort(key=lambda x: (x.rID, x.rStart, x.rEnd))
-
-
+   
+    # write in outFile
+    print('writing in the output file')
+    outFilePath = os.path.splittext(alignmentFile)[0]\
+            + '_sortedByQuery.maf'
+    with open(outFilePath, 'w') as f:
+        for alnObj in mafEntries_all:
+            f.write(alnObj._MAF())
+            f.flush()
 
 
 if __name__ == '__main__':
