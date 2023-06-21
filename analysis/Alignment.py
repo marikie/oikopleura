@@ -109,7 +109,10 @@ class Alignment():
         namesAndValues = dictFromStrings(chain(*aLines))
         score = int(namesAndValues['score'])
         mismap = float(namesAndValues['mismap'])
-        sense = float(namesAndValues['sense'])
+        if 'sense' in namesAndValues:
+            sense = float(namesAndValues['sense'])
+        else:
+            sense = None
         if 'don' in namesAndValues:
             don = namesAndValues['don']
         else:
@@ -189,8 +192,9 @@ class Alignment():
         # 'a' line
         toReturn = 'a '
         toReturn += ' '.join(['score='+str(self.score),
-                              'mismap='+str(self.mismap),
-                              'sense='+str(self.sense)])
+                              'mismap='+str(self.mismap)])
+        if self.sense:
+            toReturn += ' sense='+str(self.sense)
         if self.don:
             toReturn += ' don='+self.don
         if self.acc:
