@@ -54,7 +54,7 @@ def getAlignmentObjsOneByOne(alignmentFile):
     takes an alignmentFile and yield Alignment objects one by one
     '''
     alnFileHandle = open(alignmentFile)
-    for mafEntry in getMAFBlock(alnFileHandle)
+    for mafEntry in getMAFBlock(alnFileHandle):
         yield Alignment.fromMAFEntry(mafEntry) 
 
 
@@ -64,7 +64,7 @@ def getAlignmentObjs(alignmentFile):
     '''
     alnFileHandle = open(alignmentFile)
     alnObjList = []
-    for mafEntry in getMAFBlock(alnFileHandle)
+    for mafEntry in getMAFBlock(alnFileHandle):
         alnObjList.append(Alignment.fromMAFEntry(mafEntry))  
     return alnObjList
 
