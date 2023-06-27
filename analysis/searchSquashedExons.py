@@ -6,6 +6,8 @@ Output: dotplot.png files
 import argparse
 from Util import getMAFBlock
 from Alignment import Alignment
+import subprocess
+import os
 
 
 def segmentOverlap(a1, b1, a2, b2):
@@ -65,14 +67,23 @@ def getOvlGroups(alignmentFile):
             pass
 
 
-def makeDotplotFiles(alignmentFile):
-    for ovlList in getOvlGroups(alignmentFile):
-        for i, aln in enumerate(ovlList):
-            if i == 0:
-                print('Group start:')
+def makeDotplotFiles(alignmentFile, outputDirPath):
+    # make a dir
+    subprocess.run(['mkdir', outputDirPath])
+    # change dir to outputDirPath
+    subprocess.run(['cd', outputDirPath])
+
+    for ovlGroup in getOvlGroups(alignmentFile):
+        outputFileName = ovlGroup[0].rID + '_' + str(ovlGroup[0].rStart) + '-'\
+                            + str(ovlGroup[-1].rEnd) + '.png'
+        with open(outputDirPath + '/temp.maf', 'a') as f:
+            for aln in ovlGroup:
+                f.write(aln._MAF())
             else:
-                pass
-            print(aln._MAF())
+                f.flush()
+                # cmd: last-dotplot temp.maf outputFileName
+                subprocess.run(['last-dotplot', 'temp.maf', outputFileName])
+                subprocess.run(['rm', outputDirPath + '/temp.maf'])
 
 
 if __name__ == '__main__':
@@ -83,8 +94,10 @@ if __name__ == '__main__':
     parser.add_argument('alignmentFile',
                         help='a .maf alignment file \
                                 sorted by query coordinates')
+    parser.add_argument('outputDirPath',
+                        help='path of the output directory')
     args = parser.parse_args()
     '''
     MAIN
     '''
-    makeDotplotFiles(args.alignmentFile)
+    makeDotplotFiles(args.alignmentFile, args.outputDirPath)
