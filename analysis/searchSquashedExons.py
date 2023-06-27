@@ -11,7 +11,8 @@ from Alignment import Alignment
 def segmentOverlap(a1, b1, a2, b2):
     s1 = (a1 - a2) * (b1 - b2)
     s2 = (a1 - b2) * (b1 - a2)
-    if ((s1 == 0 and s2 < 0) or (s1 < 0 and s2 < 0) or (s1 > 0 and s2 < 0)):
+    # if not no-overlap
+    if not (s1 > 0 and s2 > 0):
         return True
     else:
         return False
@@ -19,7 +20,7 @@ def segmentOverlap(a1, b1, a2, b2):
 
 def overlap(aln, start, end):
     if (aln.rID == start[0] and segmentOverlap(aln.rStart, aln.rEnd,
-                                               start, end)):
+                                               start[1], end[1])):
         return True
     else:
         return False
@@ -66,11 +67,12 @@ def getOvlGroups(alignmentFile):
 
 def makeDotplotFiles(alignmentFile):
     for ovlList in getOvlGroups(alignmentFile):
-        
-
-
-
-
+        for i, aln in enumerate(ovlList):
+            if i == 0:
+                print('Group start:')
+            else:
+                pass
+            print(aln._MAF())
 
 
 if __name__ == '__main__':
@@ -79,9 +81,10 @@ if __name__ == '__main__':
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('alignmentFile',
-                        help='a .maf alignment file sorted by query coordinates')
+                        help='a .maf alignment file \
+                                sorted by query coordinates')
     args = parser.parse_args()
     '''
     MAIN
     '''
-    main(args.alignmentFile)
+    makeDotplotFiles(args.alignmentFile)
