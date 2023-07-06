@@ -13,6 +13,8 @@ maf="eachOikPart_OnePartInLanc_alignment_$DATE.maf"
 sam="eachOikPart_OnePartInLanc_alignment_$DATE.sam"
 pngFile="eachOikPart_OnePartInLanc_alignment_$DATE.png"
 
+cd ~/oikdata/lanc_oik_last
+
 # lastdb
 echo "---lastdb"
 if [ ! -d /home/mrk/oikdata/lanc_oik_last/$dbName ]; then
