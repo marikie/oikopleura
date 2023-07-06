@@ -57,7 +57,8 @@ fi
 echo "---last-dotplot"
 if [ ! -e $pngFile ]; then
         echo "making $pngFile"
-        last-dotplot -a ~/oikdata/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff $maf $pngFile
+        #last-dotplot -a ~/oikdata/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff $maf $pngFile
+        last-dotplot $maf $pngFile
 else
         echo "$pngFile already exists"
 fi
