@@ -75,15 +75,21 @@ def getOvlGroups(alignmentFile):
 
 
 def makeDotplotFiles(alignmentFile, outputDirPath):
-    p1 = subprocess.run(['ls', outputDirPath], check=False)
+    # print('before subprocess')
+    p1 = subprocess.run(['ls', outputDirPath], capture_output=True)
+    # print('after subprocess')
+    # print(p1.returncode)
     if p1.returncode != 0:
         # make a dir
         subprocess.run(['mkdir', outputDirPath])
 
     for ovlGroup in getOvlGroups(alignmentFile):
+        # print(type(ovlGroup[0]))
         if ovlGroup[0].rStrand == '-':
             # convet to + strand coord
+            print('convert to + strand coord')
             firstStart = convert2CoorOnOppositeStrand(ovlGroup[0])[0]
+            print('firstStart', firstStart)
         else:
             firstStart = ovlGroup[0].rStart
 
