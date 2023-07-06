@@ -18,7 +18,7 @@ def plusStrandStart(aln):
         return convert2CoorOnOppositeStrand(aln)[0]
 
 
-def minusStrandEnd(aln):
+def plusStrandEnd(aln):
     if aln.rStrand == '+':
         return aln.rEnd
     else:
@@ -36,7 +36,7 @@ def main(alignmentFile):
     # sort mafEntries_all by query's "+ strand" coordinate
     print('sorting alignment entries')
     mafEntries_all.sort(key=lambda x: (x.rID, plusStrandStart(x),
-                                       minusStrandEnd(x)))
+                                       plusStrandEnd(x)))
     # write in outFile
     print('writing in the output file')
     outFilePath = os.path.splitext(alignmentFile)[0] + '_sortedByQuery.maf'
