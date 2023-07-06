@@ -74,7 +74,7 @@ def getOvlGroups(alignmentFile):
             pass
 
 
-def makeDotplotFiles(alignmentFile, outputDirPath):
+def makeDotplotFiles(alignmentFile, annoFile, annoOf, outputDirPath):
     # print('before subprocess')
     p1 = subprocess.run(['ls', outputDirPath], capture_output=True)
     # print('after subprocess')
@@ -112,11 +112,24 @@ def makeDotplotFiles(alignmentFile, outputDirPath):
                 # f.write('---- group end ----\n')
                 f.flush()
                 # cmd: last-dotplot temp.maf outputFileName
-                subprocess.run(['last-dotplot',
-                                '--labels1=3',
-                                '--labels2=3',
-                                outputDirPath + '/' + outputFileName_maf,
-                                outputDirPath + '/' + outputFileName_png])
+                if annoOf == 1:
+                    subprocess.run(['last-dotplot',
+                                    '--labels1=3',
+                                    '--labels2=3',
+                                    '-a',
+                                    annoFile,
+                                    outputDirPath + '/' + outputFileName_maf,
+                                    outputDirPath + '/' + outputFileName_png])
+                elif annoOf == 2:
+                    subprocess.run(['last-dotplot',
+                                    '--labels1=3',
+                                    '--labels2=3',
+                                    '-b',
+                                    annoFile,
+                                    outputDirPath + '/' + outputFileName_maf,
+                                    outputDirPath + '/' + outputFileName_png])
+                else:
+                    raise Exception
 
 
 if __name__ == '__main__':
@@ -127,10 +140,17 @@ if __name__ == '__main__':
     parser.add_argument('alignmentFile',
                         help='a .maf alignment file \
                                 sorted by query coordinates')
+    parser.add_argument('annotationFile',
+                        help='an annotation file')
+    parser.add_argument('annoOf',
+                        help='1: annotation for the 1st (horizontal) genome, \
+                              2: annotation for the 2nd (vertical) genome',
+                        type=int)
     parser.add_argument('outputDirPath',
                         help='path of the output directory')
     args = parser.parse_args()
     '''
     MAIN
     '''
-    makeDotplotFiles(args.alignmentFile, args.outputDirPath)
+    makeDotplotFiles(args.alignmentFile, args.annotationFile, args.annoOf,
+                     args.outputDirPath)
