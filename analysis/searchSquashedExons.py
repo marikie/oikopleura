@@ -1,5 +1,5 @@
 '''
-Input: .maf file sorted by query coordinates
+Input: .maf file sorted by query's + strand coordinate
 Output: dotplot.png files
 '''
 
