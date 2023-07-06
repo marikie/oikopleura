@@ -23,6 +23,7 @@ def setToPlusCoord(aln):
 
 def isClose(prevEnd, currStart, allowedLen):
     diff = currStart - prevEnd
+    print('diff: ', diff)
     if (0 <= diff and diff <= allowedLen):
         return True
     else:
@@ -30,7 +31,7 @@ def isClose(prevEnd, currStart, allowedLen):
 
 
 def close2EachOther(end, chr, alnStart, allowedLen):
-    if (end[0] == chr and isClose(end[1], alnStart, allowedLen)):
+    if (end[0] == chr and (isClose(end[1], alnStart, allowedLen))):
         return True
     else:
         return False
@@ -46,7 +47,7 @@ def getCloseSegs(alignmentFile, allowedLen):
         currAln = Alignment.fromMAFEntry(mafEntry)
         currChr = currAln.rID
         # set coord to + strand coord
-        currStart, currEnd = setToPlusCoord(aln)
+        currStart, currEnd = setToPlusCoord(currAln)
         
         # the 1st mafEntry
         if (not prevEnd):
@@ -65,9 +66,10 @@ def getCloseSegs(alignmentFile, allowedLen):
                 # add ovlList to allGroupsList
                 yield closeSegList
             else:
-                # set prevEnd
-                prevEnd = (currChr, currEnd)
-                closeSegList = [currAln]
+                pass
+            # set prevEnd
+            prevEnd = (currChr, currEnd)
+            closeSegList = [currAln]
     else:
         if len(closeSegList) > 1:
             yield closeSegList
@@ -88,7 +90,9 @@ def makeDotplotFiles(alignmentFile, annoFile, annoOf,
     for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
         # convet to + strand coord
         firstStart = setToPlusCoord(closeSegGroup[0])[0]
+        print('firstStart: ', firstStart)
         lastEnd = setToPlusCoord(closeSegGroup[-1])[1]
+        print('lastEnd: ', lastEnd)
 
         outputFileName_png = closeSegGroup[0].rID + '_' + str(firstStart) \
                             + '-' \
