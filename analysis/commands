@@ -410,3 +410,6 @@ mv chimeric_introns_sorted_embryos_20221223.json trans_splicings_sorted_embryos_
 
 # June 21, 2023
 python sortAlignmentsByQueryCoord.py ~/big_oiks/lanc_oik_last/FLancOik2_20230614.maf
+
+# July 7, 2023
+python searchAlignedSegmentsClose2EachOther.py ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff 50 ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230707_BothAnno_Out
