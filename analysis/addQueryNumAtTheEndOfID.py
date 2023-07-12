@@ -14,7 +14,8 @@ def main(fastaFile, number):
         for line in f:
             if line.startswith('@'):
                 print(line.split()[0] + '\\'
-                      + str(number) + ' '.join(line.split()[1:-1])) 
+                      + str(number) + ' '
+                      + ' '.join(line.split()[1:]))
             else:
                 print(line.rstrip())
 
