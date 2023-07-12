@@ -1,4 +1,4 @@
-# 2023-05-30
+# May 30, 2023
 # Trinity de-novo
 # embryos
 DATE=$1
@@ -17,7 +17,7 @@ singularity exec -e $HOME/.local/src/trinityrnaseq.v2.15.1.simg  Trinity \
 --CPU 10 --min_contig_length 100 --max_memory 50G \
 --verbose
 
-# 2023-05-31
+# May 31, 2023
 DATE=$1
 libType='FR'
 alignmentBamFileDir="/big/mrk/oikopleura/last/embryos"
@@ -48,3 +48,29 @@ Error, cmd: /usr/local/bin/util/support_scripts/write_partitioned_trinity_cmds.p
 main::process_cmd("/usr/local/bin/util/support_scripts/write_partitioned_trinity"...) called at /usr/local/bin/Trinity line 3730
 main::write_trinity_partitioned_cmds("read_files.list", "trinity_GG.cmds", "GENOME_GUIDED_MODE") called at /usr/local/bin/Trinity line 3600
 main::run_genome_guided_Trinity("/big/mrk/oikopleura/last/embryos/lastsplitOKI2018_I69_1.0_ERR"..., undef) called at /usr/local/bin/Trinity line 1467
+
+DATE=$1
+seqType='fq'
+libType='FR'
+readDir="/big/mrk/oikopleura/rna-seq-data/maturedAdults"
+read1Path="$readDir/ERR4570987_1_filtered_trimmed_sorted.fastq"
+read2Path="$readDir/ERR4570987_2_filtered_trimmed_sorted.fastq"
+devStage='maturedAdults'
+outputDir="/big/mrk/oikopleura/trinity/trinity_denovo_${devStage}_$DATE"
+
+if [ ! -d  $outputDir ]; then
+        echo "making output dir"
+        mkdir $outputDir
+else
+        echo "$outputDir already exists."
+fi
+
+export SINGULARITY_BIND="$readDir:$readDir,$outputDir:$outputDir"
+
+# Trinity
+singularity exec -e $HOME/.local/src/trinityrnaseq.v2.15.1.simg  Trinity \
+--seqType $seqType  \
+--left $read1Path --right $read2Path --SS_lib_type $libType \
+--CPU 10 --min_contig_length 100 --max_memory 50G \
+--verbose \
+--output $outputDir
