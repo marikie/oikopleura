@@ -416,3 +416,4 @@ python searchAlignedSegmentsClose2EachOther.py ~/biohazard/data/lanc_oik_last/ea
 
 # July 7, 2023
 python searchAlignedSegmentsClose2EachOther.py ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff 50 ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230707_BothAnno_Out
+
