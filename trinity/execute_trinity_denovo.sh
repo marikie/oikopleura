@@ -23,7 +23,8 @@ else
         echo "$outputDir already exists."
 fi
 
-export SINGULARITY_BIND="$readDir:$readDir,$outputDir:$outputDir"
+export SINGULARITY_BIND="$readDir:$readDir,$outputDir:$outputDir,/big/mrk/oikopleura/trinity:/big/mrk/oikopleura/trinity"
+#echo $SINGULARITY_BIND
 
 # Trinity
 singularity exec -e $HOME/.local/src/trinityrnaseq.v2.15.1.simg  Trinity \
