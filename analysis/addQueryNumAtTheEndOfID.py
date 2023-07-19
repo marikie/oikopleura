@@ -1,8 +1,11 @@
 '''
+THIS CODE INCLUDES A BUG.
+QUALITY LINE ALSO SOMETIMES STARTS WITH '@'!!
+
 Input: a fastq file
 
 Search lines start with "@",
-then add "/number" (eg. /1) at the end of the lines
+then add "/number" (eg. /1) at the end of the IDs
 
 Output: print out
 '''
@@ -13,7 +16,7 @@ def main(fastqFile, number):
     with open(fastqFile) as f:
         for line in f:
             if line.startswith('@'):
-                print(line.split()[0] + '\\'
+                print(line.split()[0] + '/'
                       + str(number) + ' '
                       + ' '.join(line.split()[1:]))
             else:
