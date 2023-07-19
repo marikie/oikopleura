@@ -14,16 +14,16 @@ train_imm="train_OKI2018_I69_1.0_ERR4570986.out"
 train_mat="train_OKI2018_I69_1.0_ERR4570987.out"
 al_emb1="lastsplitOKI2018_I69_1.0_ERR4570985_1_filtered_trimmed_sorted_numbered_postmask_$DATE.maf"
 al_emb2="lastsplitOKI2018_I69_1.0_ERR4570985_2_filtered_trimmed_sorted_numbered_postmask_$DATE.maf"
-al_emb_pairprob="lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_numbered_postmask_pairprob_$DATE.maf"
+al_emb_combined="lastsplitOKI2018_I69_1.0_ERR4570985_filtered_trimmed_sorted_numbered_postmask_combined_$DATE.maf"
 al_imm1="lastsplitOKI2018_I69_1.0_ERR4570986_1_filtered_trimmed_sorted_numbered_postmask_$DATE.maf"
 al_imm2="lastsplitOKI2018_I69_1.0_ERR4570986_2_filtered_trimmed_sorted_numbered_postmask_$DATE.maf"
-al_imm_pairprob="lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_numbered_postmask_pairprob_$DATE.maf"
+al_imm_combined="lastsplitOKI2018_I69_1.0_ERR4570986_filtered_trimmed_sorted_numbered_postmask_combined_$DATE.maf"
 al_mat1="lastsplitOKI2018_I69_1.0_ERR4570987_1_filtered_trimmed_sorted_numbered_postmask_$DATE.maf"
 al_mat2="lastsplitOKI2018_I69_1.0_ERR4570987_2_filtered_trimmed_sorted_numbered_postmask_$DATE.maf"
-al_mat_pairprob="lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_numbered_postmask_pairprob_$DATE.maf"
-sam_emb="${al_emb_pairprob:0:-4}.sam"
-sam_imm="${al_imm_pairprob:0:-4}.sam"
-sam_mat="${al_mat_pairprob:0:-4}.sam"
+al_mat_combined="lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_numbered_postmask_combined_$DATE.maf"
+sam_emb="${al_emb_combined:0:-4}.sam"
+sam_imm="${al_imm_combined:0:-4}.sam"
+sam_mat="${al_mat_combined:0:-4}.sam"
 fai_FILE="~/big_oiks/last/OKI2018_I69_1.0.removed_chrUn.fa.fai"
 SORT_BAM_emb="${sam_emb:0:-4}.sort.bam"
 SORT_BAM_imm="${sam_imm:0:-4}.sort.bam"
@@ -54,7 +54,7 @@ echo "---last-train"
 if [ ! -e embryos/$train_emb ]; then
         echo "doing last-train on embryos"
         pwd
-        last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq > embryos/$train_emb
+        last-train -P8 -Q1 $dbNAME/$dbNAME ../rna-seq-data/embryos/ERR4570985_filtered_trimmed_sorted_interleaved.fastq > embryos/$train_emb
 else
         echo "embryos/$train_emb already exists"
 fi
@@ -62,7 +62,7 @@ fi
 # immature adults
 if [ ! -e immatureAdults/$train_imm ]; then
         echo "doing last-train on immature adults"
-        last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq > immatureAdults/$train_imm
+        last-train -P8 -Q1 $dbNAME/$dbNAME ../rna-seq-data/immatureAdults/ERR4570986_filtered_trimmed_sorted_interleaved.fastq > immatureAdults/$train_imm
 else
         echo "immatureAdults/$train_imm already exists"
 fi
@@ -70,7 +70,7 @@ fi
 # matured adults
 if [ ! -e maturedAdults/$train_mat ]; then
         echo "doing last-train on matured adults"
-        last-train -P8 -Q0 $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq > maturedAdults/$train_mat
+        last-train -P8 -Q1 $dbNAME/$dbNAME ../rna-seq-data/maturedAdults/ERR4570987_filtered_trimmed_sorted_interleaved.fastq > maturedAdults/$train_mat
 else
         echo "maturedAdults/$train_mat already exists"
 fi
@@ -94,17 +94,14 @@ if [ ! -e embryos/$al_emb2 ]; then
 else
         echo "embryos/$al_emb2 already exists"
 fi
-# - last-pair-probs Read1, Read2
-if [ ! -e embryos/$al_emb_pairprob ]; then
-        echo "running last-pair-probs"
-        last-pair-probs -r embryos/$al_emb1 embryos/$al_emb2 > embryos/$al_emb_pairprob 
-else
-        echo "embryos/$al_emb_pairprob already exists"
-fi
+
+# - combine al_emb1 and al_emb2
+cat embryos/$al_emb1 embryos/$al_emb2 > embryos/$al_emb_combined
+
 # - maf-convert sam
 if [ ! -e embryos/$sam_emb ]; then
         echo "converting maf to sam"
-        maf-convert -j1e5 -d sam embryos/$al_emb_pairprob > embryos/$sam_emb 
+        maf-convert -j1e5 -d sam embryos/$al_emb_combined > embryos/$sam_emb 
 else
         echo "embryos/$sam_emb already exists"
 fi
@@ -133,20 +130,18 @@ if [ ! -e immatureAdults/$al_imm2 ]; then
 else
         echo "immatureAdults/$al_imm2 already exists"
 fi
-# - last-pair-probs Read1, Read2
-if [ ! -e immatureAdults/$al_imm_pairprob ]; then
-        echo "running last-pair-probs"
-        last-pair-probs -r immatureAdults/$al_imm1 immatureAdults/$al_imm2 > immatureAdults/$al_imm_pairprob 
-else
-        echo "immatureAdults/$al_imm_pairprob already exists"
-fi
+
+# - combine al_emb1 and al_emb2
+cat immatureAdults/$al_imm1 immatureAdults/$al_imm2 > immatureAdults/$al_imm_combined
+
 # - maf-convert sam
 if [ ! -e immatureAdults/$sam_imm ]; then
         echo "convert maf to sam"
-        maf-convert -j1e5 -d sam immatureAdults/$al_imm_pairprob > immatureAdults/$sam_imm 
+        maf-convert -j1e5 -d sam immatureAdults/$al_imm_combined > immatureAdults/$sam_imm 
 else
         echo "immatureAdults/$sam_imm already exists"
 fi
+
 # - convert SAM -> BAM, sort, index
 if [ ! -e immatureAdults/$SORT_BAM_imm ]; then
         echo "converting sam to bam and sort"
@@ -172,17 +167,14 @@ if [ ! -e maturedAdults/$al_mat2 ]; then
 else
         echo "maturedAdults/$al_mat2 already exists"
 fi
-# - last-pair-probs Read1, Read2
-if [ ! -e maturedAdults/$al_mat_pairprob ]; then
-        echo "running last-pair-probs"
-        last-pair-probs -r maturedAdults/$al_mat1 maturedAdults/$al_mat2 > maturedAdults/$al_mat_pairprob 
-else
-        echo "maturedAdults/$al_mat_pairprob already exists"
-fi
+
+# - combine al_emb1 and al_emb2
+cat maturedAdults/$al_mat1 maturedAdults/$al_mat2 > maturedAdults/$al_mat_combined
+
 # - maf-convert sam
 if [ ! -e maturedAdults/$sam_mat ]; then
         echo "converting maf to sam"
-        maf-convert -j1e5 -d sam maturedAdults/$al_mat_pairprob > maturedAdults/$sam_mat 
+        maf-convert -j1e5 -d sam maturedAdults/$al_mat_combined > maturedAdults/$sam_mat 
 else
         echo "maturedAdults/$sam_mat already exists"
 fi
