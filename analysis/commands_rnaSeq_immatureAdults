@@ -17,3 +17,12 @@ fastq-interleave ERR4570986_1_filtered_trimmed_sorted.fastq ERR4570986_2_filtere
 # July 12, 2023
 python addQueryNumAtTheEndOfID.py immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq 1 > immatureAdults/ERR4570987_1_filtered_trimmed_sorted_numbered.fastq
 python addQueryNumAtTheEndOfID.py immatureAdults/ERR4570986_2_filtered_trimmed_sorted.fastq 2 > immatureAdults/ERR4570986_2_filtered_trimmed_sorted_numbered.fastq
+
+# July 18, 2023
+python addQueryNumAtTheEndOfID.py immatureAdults/ERR4570986_1_filtered_trimmed_sorted.fastq 1 > immatureAdults/ERR4570986_1_filtered_trimmed_sorted_numbered.fastq
+
+python ../addQueryNumAtTheEndOfID.py ERR4570986_2_filtered_trimmed_sorted.fastq 2 > ERR4570986_2_filtered_trimmed_sorted_numbered.fastq
+
+# July 19, 2023
+awk 'NR % 4 == 1 {$1 = $1 "/1"} 1' ERR4570986_1_filtered_trimmed_sorted.fastq > ERR4570986_1_filtered_trimmed_sorted_numbered.fastq
+awk 'NR % 4 == 1 {$1 = $1 "/2"} 1' ERR4570986_2_filtered_trimmed_sorted.fastq > ERR4570986_2_filtered_trimmed_sorted_numbered.fastq

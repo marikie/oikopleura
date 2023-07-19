@@ -19,3 +19,12 @@ fastq-interleave ERR4570985_1_filtered_trimmed_sorted.fastq ERR4570985_2_filtere
 # July 12, 2023
 python addQueryNumAtTheEndOfID.py embryos/ERR4570985_1_filtered_trimmed_sorted.fastq 1 > embryos/ERR4570985_1_filtered_trimmed_sorted_numbered.fastq
 python addQueryNumAtTheEndOfID.py embryos/ERR4570985_2_filtered_trimmed_sorted.fastq 2 > embryos/ERR4570985_2_filtered_trimmed_sorted_numbered.fastq
+
+# July 18, 2023
+python addQueryNumAtTheEndOfID.py embryos/ERR4570985_1_filtered_trimmed_sorted.fastq 1 > embryos/ERR4570985_1_filtered_trimmed_sorted_numbered.fastq
+
+python addQueryNumAtTheEndOfID.py embryos/ERR4570985_2_filtered_trimmed_sorted.fastq 2 > embryos/ERR4570985_2_filtered_trimmed_sorted_numbered.fastq
+
+# July 19, 2023
+awk 'NR % 4 == 1 {$1 = $1 "/1"} 1' ERR4570985_1_filtered_trimmed_sorted.fastq > ERR4570985_1_filtered_trimmed_sorted_numbered.fastq
+awk 'NR % 4 == 1 {$1 = $1 "/2"} 1' ERR4570985_2_filtered_trimmed_sorted.fastq > ERR4570985_2_filtered_trimmed_sorted_numbered.fastq
