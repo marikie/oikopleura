@@ -24,7 +24,7 @@ al_mat_combined="lastsplitOKI2018_I69_1.0_ERR4570987_filtered_trimmed_sorted_num
 sam_emb="${al_emb_combined:0:-4}.sam"
 sam_imm="${al_imm_combined:0:-4}.sam"
 sam_mat="${al_mat_combined:0:-4}.sam"
-fai_FILE="~/big_oiks/last/OKI2018_I69_1.0.removed_chrUn.fa.fai"
+fai_FILE="~/oikopleura/last/OKI2018_I69_1.0.removed_chrUn.fa.fai"
 SORT_BAM_emb="${sam_emb:0:-4}.sort.bam"
 SORT_BAM_imm="${sam_imm:0:-4}.sort.bam"
 SORT_BAM_mat="${sam_mat:0:-4}.sort.bam"
@@ -96,11 +96,17 @@ else
 fi
 
 # - combine al_emb1 and al_emb2
-cat embryos/$al_emb1 embryos/$al_emb2 > embryos/$al_emb_combined
+if [ ! -e embryos/$al_emb_combined ]; then
+        echo "combining al_emb1 and al_emb2"
+        cat embryos/$al_emb1 embryos/$al_emb2 > embryos/$al_emb_combined
+else
+        echo "embryos/$al_emb_combined already exists"
+fi
 
 # - maf-convert sam
 if [ ! -e embryos/$sam_emb ]; then
         echo "converting maf to sam"
+        # pwd
         maf-convert -j1e5 -d sam embryos/$al_emb_combined > embryos/$sam_emb 
 else
         echo "embryos/$sam_emb already exists"
@@ -108,9 +114,10 @@ fi
 # - convert SAM -> BAM, sort, index
 if [ ! -e embryos/$SORT_BAM_emb ]; then
         echo "converting sam to bam and sort"
-        samtools view -bt $fai_FILE $sam_emb | samtools sort -o $SORT_BAM_emb  
-        echo "index $SORT_BAM_emb"
-        samtools index $SORT_BAM_emb
+        pwd
+        samtools view -bt $fai_FILE embryos/$sam_emb | samtools sort -o embryos/$SORT_BAM_emb  
+        echo "index embryos/$SORT_BAM_emb"
+        samtools index embryos/$SORT_BAM_emb
 else
         echo "embryos/$SORT_BAM_emb already exists"
 fi
@@ -131,8 +138,14 @@ else
         echo "immatureAdults/$al_imm2 already exists"
 fi
 
-# - combine al_emb1 and al_emb2
-cat immatureAdults/$al_imm1 immatureAdults/$al_imm2 > immatureAdults/$al_imm_combined
+# - combine al_imm1 and al_imm2
+if [ ! -e "immatureAdults/$al_imm_combined" ]; then
+        echo "combining al_imm1 and imm2"
+        cat immatureAdults/$al_imm1 immatureAdults/$al_imm2 > immatureAdults/$al_imm_combined
+else
+        echo "immatureAdults/$al_imm_combined already exists"
+
+fi
 
 # - maf-convert sam
 if [ ! -e immatureAdults/$sam_imm ]; then
@@ -145,9 +158,9 @@ fi
 # - convert SAM -> BAM, sort, index
 if [ ! -e immatureAdults/$SORT_BAM_imm ]; then
         echo "converting sam to bam and sort"
-        samtools view -bt $fai_FILE $sam_imm | samtools sort -o $SORT_BAM_imm  
-        echo "index $SORT_BAM_imm"
-        samtools index $SORT_BAM_imm
+        samtools view -bt $fai_FILE immatureAdults/$sam_imm | samtools sort -o immatureAdults/$SORT_BAM_imm  
+        echo "index immatureAdults/$SORT_BAM_imm"
+        samtools index immatureAdults/$SORT_BAM_imm
 else
         echo "immatureAdults/$SORT_BAM_imm already exists"
 fi
@@ -168,8 +181,13 @@ else
         echo "maturedAdults/$al_mat2 already exists"
 fi
 
-# - combine al_emb1 and al_emb2
-cat maturedAdults/$al_mat1 maturedAdults/$al_mat2 > maturedAdults/$al_mat_combined
+# - combine al_mat1 and al_mat2
+if [ ! -e "maturedAdults/$al_mat_combined" ];then
+        echo "combining al_mat1 and al_mat2"
+        cat maturedAdults/$al_mat1 maturedAdults/$al_mat2 > maturedAdults/$al_mat_combined
+else
+        echo "maturedAdults/$al_mat_combined already exists"
+fi
 
 # - maf-convert sam
 if [ ! -e maturedAdults/$sam_mat ]; then
@@ -181,9 +199,9 @@ fi
 # - convert SAM -> BAM, sort, index
 if [ ! -e maturedAdults/$SORT_BAM_mat ]; then
         echo "converting sam to bam and sort"
-        samtools view -bt $fai_FILE $sam_mat| samtools sort -o $SORT_BAM_mat  
-        echo "index $SORT_BAM_mat"
-        samtools index $SORT_BAM_mat
+        samtools view -bt $fai_FILE maturedAdults/$sam_mat| samtools sort -o maturedAdults/$SORT_BAM_mat  
+        echo "index maturedAdults/$SORT_BAM_mat"
+        samtools index maturedAdults/$SORT_BAM_mat
 else
         echo "maturedAdults/$SORT_BAM_mat already exists"
 fi
