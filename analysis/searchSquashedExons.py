@@ -1,4 +1,5 @@
 '''
+Search aligned segments that overlap on the query chromosome
 Input: .maf file sorted by query's + strand coordinate
 Output: dotplot.png files
 '''
