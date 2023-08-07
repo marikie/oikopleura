@@ -13,8 +13,6 @@ import pprint as p
 from Util import getMAFBlock
 from Util import convert2CoorOnOppositeStrand
 from Alignment import Alignment
-from BCBio.GFF import GFFExaminer
-from BCBio import GFF
 
 
 def setToPlusCoord(aln):
@@ -83,49 +81,94 @@ def getCloseSegs(alignmentFile, allowedLen):
             pass
 
 
+def addMAF2Dir(closeSegGroup, outputDirPathAndFileName):
+    with open(outputDirPathAndFileName, 'w') as f:
+        for aln in closeSegGroup:
+            f.write(aln._MAF())
+        f.flush()
+
+
+def getGeneName(opt, aln, annoFile):
+    if opt == 'ref':
+        # get geneName on reference
+        pass
+    elif opt == 'query':
+        # get geneName on query
+        pass
+    else:
+        raise ValueError('opt should be either "ref" or "query"')
+
+    return geneName
 def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
                     allowedLen, outputDirPath):
     # print('before subprocess')
     p1 = subprocess.run(['ls', outputDirPath], capture_output=True)
     # print('after subprocess')
     # print(p1.returncode)
+
+    # sub directories
+    sameOnRef_sameOnQuery_DirPath = outputDirPath + '/sameOnRef_sameOnQuery'
+    sameOnRef_diffOnQuery_DirPath = outputDirPath + '/sameOnRef_diffOnQuery'
+    diffOnRef_sameOnQuery_DirPath = outputDirPath + '/diffOnRef_sameOnQuery' 
+    diffOnRef_diffOnQuery_DirPath = outputDirPath + '/diffOnRef_diffOnQuery'
+
     if p1.returncode != 0:
         # make a dirs
         subprocess.run(['mkdir', outputDirPath])
-        subprocess.run(['mkdir', outputDirPath + '/sameOnRef_sameOnQuery'])
-        subprocess.run(['mkdir', outputDirPath + '/sameOnRef_diffOnQuery'])
-        subprocess.run(['mkdir', outputDirPath + '/diffOnRef_sameOnQuery'])
-        subprocess.run(['mkdir', outputDirPath + '/diffOnRef_diffOnQuery'])
+        subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath])
+        subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath])
+        subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath])
+        subprocess.run(['mkdir', diffOnRef_diffOnQuery_DirPath])
     else:
         pass
 
 
-    # for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
-    #     # convet to + strand coord
-    #     firstElemStart = setToPlusCoord(closeSegGroup[0])[0]
-    #     print('firstStart: ', firstElemStart)
-    #     lastElemEnd = setToPlusCoord(closeSegGroup[-1])[1]
-    #     print('lastEnd: ', lastElemEnd)
-    #
-    #     outputFileName_maf = closeSegGroup[0].rID + '_' + str(firstElemStart) \
-    #                         + '-' \
-    #                         + str(lastElemEnd) + '.maf'
-    #
-    #     
-    #     # genesOnRef = ()
-    #     # genesOnQuery = ()
-    #     # for aln in closeSegGroup:
-    #
-    #
-    #
-    #
-    #
-    #     with open(outputDirPath + '/' + outputFileName_maf, 'a') as f:
-    #         for aln in closeSegGroup:
-    #             f.write(aln._MAF())
-    #         else:
-    #             # f.write('---- group end ----\n')
-    #             f.flush()
+    for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
+        # set the outputFileName
+        # convet to + strand coord
+        firstElemStart = setToPlusCoord(closeSegGroup[0])[0]
+        print('firstStart: ', firstElemStart)
+        lastElemEnd = setToPlusCoord(closeSegGroup[-1])[1]
+        print('lastEnd: ', lastElemEnd)
+
+        mafFileName = closeSegGroup[0].rID + '_' + str(firstElemStart) \
+                            + '-' \
+                            + str(lastElemEnd) + '.maf'
+
+        
+        genesOnRef = set()
+        genesOnQuery = set()
+        for aln in closeSegGroup:
+            geneNameOnRef = getGeneName('ref', aln, annoFile_Ref)
+            geneNameOnQuery = getGeneName('query', aln, annoFile_Query)
+            
+            genesOnRef.add(geneNameOnRef)
+            genesOnQuery.add(geneNameOnQuery)
+
+        if (len(genesOnRef) == 1 and len(genesOnQuery) == 1):
+            # add maf file to sameOnRef_sameOnQuery
+            outputDirPathAndFileName = sameOnRef_sameOnQuery_DirPath \
+                                            + '/' + mafFileName
+        elif (len(genesOnRef) == 1 and len(genesOnQuery) != 1):
+            # add maf file to sameOnRef_diffOnQuery
+            outputDirPathAndFileName = sameOnRef_diffOnQuery_DirPath \
+                                            + '/' + mafFileName
+        elif (len(genesOnRef) != 1 and len(genesOnQuery) == 1):
+            # add maf file to diffOnRef_sameOnQuery
+            outputDirPathAndFileName = diffOnRef_sameOnQuery_DirPath \
+                                            + '/' + mafFileName
+        else:
+            # add maf file to diffOnRef_diffOnQuery 
+            outputDirPathAndFileName = diffOnRef_diffOnQuery_DirPath \
+                                            + '/' + mafFileName
+        
+        addMAF2Dir(closeSegGroup, outputDirPathAndFileName)
+
+
+
+
+
+
 
 
 # def makeDotplotFiles(alignmentFile, annoFile_1, annoFile_2,
@@ -192,13 +235,6 @@ if __name__ == '__main__':
     '''
     MAIN
     '''
-    limit_info = dict(gff_id=['NC_000834.1'], gff_type=['CDS'])
-    # limit_info = {'gff_id': ['NC_000834.1'], 'gff_type': ['CDS']}
-    annoFile_Ref_handle = open(args.annotationFile_Reference)
-    for rec in GFF.parse(annoFile_Ref_handle, limit_info=limit_info):
-        p.pprint(rec.name)
-    annoFile_Ref_handle.close()
-
-    # makeDotplotFiles(args.alignmentFile, args.annotationFile_1,
-    #                  args.annotationFile_2,
-    #                  args.allowedLen, args.outputDirPath)
+    makeDotplotFiles(args.alignmentFile, args.annotationFile_1,
+                     args.annotationFile_2,
+                     args.allowedLen, args.outputDirPath)
