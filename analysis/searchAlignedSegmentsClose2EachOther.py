@@ -1,7 +1,7 @@
 '''
 * Assuming no overlapped segments on the query
 Search aligned segments that are close to each other (<= allowedLen)
-on the query chromosom.
+on the query's chromosom.
 Input: .maf file sorted by query's + strand coordinate
 Output: sameOnRef_sameOnQuery/mafFiles, diffOnRef_sameOnQuery/mafFiles,
         sameOnRef_diffOnQuery/mafFiles, diffOnRef_diffOnQuery/mafFiles
@@ -9,9 +9,12 @@ Output: sameOnRef_sameOnQuery/mafFiles, diffOnRef_sameOnQuery/mafFiles,
 
 import argparse
 import subprocess
+import pprint as p
 from Util import getMAFBlock
 from Util import convert2CoorOnOppositeStrand
 from Alignment import Alignment
+from BCBio.GFF import GFFExaminer
+from BCBio import GFF
 
 
 def setToPlusCoord(aln):
@@ -87,39 +90,42 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     # print('after subprocess')
     # print(p1.returncode)
     if p1.returncode != 0:
-        # make a dir
+        # make a dirs
         subprocess.run(['mkdir', outputDirPath])
         subprocess.run(['mkdir', outputDirPath + '/sameOnRef_sameOnQuery'])
         subprocess.run(['mkdir', outputDirPath + '/sameOnRef_diffOnQuery'])
         subprocess.run(['mkdir', outputDirPath + '/diffOnRef_sameOnQuery'])
         subprocess.run(['mkdir', outputDirPath + '/diffOnRef_diffOnQuery'])
+    else:
+        pass
 
-    for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
-        # convet to + strand coord
-        firstElemStart = setToPlusCoord(closeSegGroup[0])[0]
-        print('firstStart: ', firstElemStart)
-        lastElemEnd = setToPlusCoord(closeSegGroup[-1])[1]
-        print('lastEnd: ', lastElemEnd)
 
-        outputFileName_maf = closeSegGroup[0].rID + '_' + str(firstElemStart) \
-                            + '-' \
-                            + str(lastElemEnd) + '.maf'
-
-        with open(outputDirPath + '/' + outputFileName_maf, 'a') as f:
-            for aln in closeSegGroup:
-                f.write(aln._MAF())
-            else:
-                # f.write('---- group end ----\n')
-                f.flush()
-                # cmd: last-dotplot temp.maf outputFileName
-                subprocess.run(['last-dotplot',
-                                '--labels1=3',
-                                '--labels2=3',
-                                '-a',
-                                annoFile_Ref,
-                                '-b',
-                                annoFile_Query,
-                                outputDirPath + '/' + outputFileName_maf])
+    # for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
+    #     # convet to + strand coord
+    #     firstElemStart = setToPlusCoord(closeSegGroup[0])[0]
+    #     print('firstStart: ', firstElemStart)
+    #     lastElemEnd = setToPlusCoord(closeSegGroup[-1])[1]
+    #     print('lastEnd: ', lastElemEnd)
+    #
+    #     outputFileName_maf = closeSegGroup[0].rID + '_' + str(firstElemStart) \
+    #                         + '-' \
+    #                         + str(lastElemEnd) + '.maf'
+    #
+    #     
+    #     # genesOnRef = ()
+    #     # genesOnQuery = ()
+    #     # for aln in closeSegGroup:
+    #
+    #
+    #
+    #
+    #
+    #     with open(outputDirPath + '/' + outputFileName_maf, 'a') as f:
+    #         for aln in closeSegGroup:
+    #             f.write(aln._MAF())
+    #         else:
+    #             # f.write('---- group end ----\n')
+    #             f.flush()
 
 
 # def makeDotplotFiles(alignmentFile, annoFile_1, annoFile_2,
@@ -171,12 +177,12 @@ if __name__ == '__main__':
     parser.add_argument('alignmentFile',
                         help='a .maf alignment file \
                                 sorted by query coordinates')
-    parser.add_argument('annotationFile_1',
+    parser.add_argument('annotationFile_Reference',
                         help='an annotation file for the 1st \
-                                (horizontal) genome')
-    parser.add_argument('annotationFile_2',
+                                (horizontal) genome (reference)')
+    parser.add_argument('annotationFile_Query',
                         help='an annotation file for the 2nd \
-                                (vertical) genome')
+                                (vertical) genome (query)')
     parser.add_argument('allowedLen',
                         help='allowed length between aligned segments',
                         type=int)
@@ -186,6 +192,13 @@ if __name__ == '__main__':
     '''
     MAIN
     '''
-    makeDotplotFiles(args.alignmentFile, args.annotationFile_1,
-                     args.annotationFile_2,
-                     args.allowedLen, args.outputDirPath)
+    limit_info = dict(gff_id=['NC_000834.1'], gff_type=['CDS'])
+    # limit_info = {'gff_id': ['NC_000834.1'], 'gff_type': ['CDS']}
+    annoFile_Ref_handle = open(args.annotationFile_Reference)
+    for rec in GFF.parse(annoFile_Ref_handle, limit_info=limit_info):
+        p.pprint(rec.name)
+    annoFile_Ref_handle.close()
+
+    # makeDotplotFiles(args.alignmentFile, args.annotationFile_1,
+    #                  args.annotationFile_2,
+    #                  args.allowedLen, args.outputDirPath)
