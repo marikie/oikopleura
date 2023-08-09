@@ -9,7 +9,8 @@ Output: sameOnRef_sameOnQuery/mafFiles, diffOnRef_sameOnQuery/mafFiles,
 
 import argparse
 import subprocess
-import pprint as p
+# import pprint as p
+import gffpandas.gffpandas as gffpd
 from Util import getMAFBlock
 from Util import convert2CoorOnOppositeStrand
 from Alignment import Alignment
@@ -88,13 +89,30 @@ def addMAF2Dir(closeSegGroup, outputDirPathAndFileName):
         f.flush()
 
 
-def getGeneName(opt, aln, annoFile):
+def getGeneNames(opt, aln, annoFile):
+    '''
+    Returns a set of (parentID, productName(protein name))
+    Elements in the set overlap with input "aln"
+    '''
+    parent_product_set = set()
     if opt == 'ref':
         # get geneName on reference
-        pass
+        # aln.gChr, aln.gStart, aln.gEnd, aln.gStrand(always +)
+        annotation = gffpd.read_gff3(annoFile)
+        # set coord from inbetween to 1-base
+        aln_1base_gStart = aln.gStart + 1
+        aln_1base_gEnd = aln.gEnd
+        overlappings = annotation.overlaps_with(seq_id=aln.gChr, type='CDS',
+                                                start=aln_1base_gStart,
+                                                end=aln_1base_gEnd)
+        ovl_attrcolums = overlappings.attributes_to_columns()
+
+
+
+
     elif opt == 'query':
         # get geneName on query
-        pass
+        annotation = gffpd.read_gff3(annoFile)
     else:
         raise ValueError('opt should be either "ref" or "query"')
 
