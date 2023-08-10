@@ -10,6 +10,7 @@ Output: sameOnRef_sameOnQuery/mafFiles, diffOnRef_sameOnQuery/mafFiles,
 import argparse
 import subprocess
 # import pprint as p
+import pandas as pd
 import gffpandas.gffpandas as gffpd
 from Util import getMAFBlock
 from Util import convert2CoorOnOppositeStrand
@@ -89,12 +90,12 @@ def addMAF2Dir(closeSegGroup, outputDirPathAndFileName):
         f.flush()
 
 
-def getGeneNames(opt, aln, annoFile):
+def getGeneIDs_anno(opt, aln, annoFile):
     '''
-    Returns a set of (parentID, productName(protein name))
+    Returns a set of tuples: (parentID, productName(protein name))
     Elements in the set overlap with input "aln"
     '''
-    parent_product_set = set()
+    gene_set = set()
     if opt == 'ref':
         # get geneName on reference
         # aln.gChr, aln.gStart, aln.gEnd, aln.gStrand(always +)
@@ -125,6 +126,10 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     # print(p1.returncode)
 
     # sub directories
+    nonCDSOnRef_CDSOnQuery_DirPath = outputDirPath + '/nonCDSOnRef_CDSOnQuery'
+    CDSOnRef_nonCDSOnQuery_DirPath = outputDirPath + '/CDSOnRef_nonCDSOnQuery'
+    nonCDSOnRef_nonCDSOnQuery_DirPath = outputDirPath \
+                                            + '/nonCDSOnRef_nonCDSOnQuery'
     sameOnRef_sameOnQuery_DirPath = outputDirPath + '/sameOnRef_sameOnQuery'
     sameOnRef_diffOnQuery_DirPath = outputDirPath + '/sameOnRef_diffOnQuery'
     diffOnRef_sameOnQuery_DirPath = outputDirPath + '/diffOnRef_sameOnQuery' 
@@ -145,10 +150,9 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         # set the outputFileName
         # convet to + strand coord
         firstElemStart = setToPlusCoord(closeSegGroup[0])[0]
-        print('firstStart: ', firstElemStart)
+        # print('firstStart: ', firstElemStart)
         lastElemEnd = setToPlusCoord(closeSegGroup[-1])[1]
-        print('lastEnd: ', lastElemEnd)
-
+        # print('lastEnd: ', lastElemEnd)
         mafFileName = closeSegGroup[0].rID + '_' + str(firstElemStart) \
                             + '-' \
                             + str(lastElemEnd) + '.maf'
@@ -157,30 +161,44 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         genesOnRef = set()
         genesOnQuery = set()
         for aln in closeSegGroup:
-            geneNameOnRef = getGeneName('ref', aln, annoFile_Ref)
-            geneNameOnQuery = getGeneName('query', aln, annoFile_Query)
+            geneIdsOnRef, annoRef = getGeneIDs_anno('ref', aln, annoFile_Ref)
+            geneIdsOnQuery, annoRef = getGeneIDs_anno('query', aln,
+                                                      annoFile_Query)
             
-            genesOnRef.add(geneNameOnRef)
-            genesOnQuery.add(geneNameOnQuery)
+            genesOnRef.add(geneIdsOnRef)
+            genesOnQuery.add(geneIdsOnQuery)
 
-        if (len(genesOnRef) == 1 and len(genesOnQuery) == 1):
+        if (len(genesOnRef) == 0 and len(genesOnQuery) != 0):
+            # add maf file to nonCDSOnRef_CDSOnQuery
+            outputDirPathAndmafFileName = nonCDSOnRef_CDSOnQuery_DirPath \
+                                            + '/' + mafFileName
+        elif (len(genesOnRef) != 0 and len(genesOnQuery) == 0):
+            # add maf file to CDSOnRef_nonCDSOnQuery
+            outputDirPathAndmafFileName = CDSOnRef_nonCDSOnQuery_DirPath \
+                                            + '/' + mafFileName
+        elif (len(genesOnRef) == 0 and len(genesOnQuery) == 0):
+            # add maf file to nonCDSOnRef_nonCDSOnQuery
+            outputDirPathAndmafFileName = nonCDSOnRef_nonCDSOnQuery_DirPath \
+                                            + '/' + mafFileName
+
+        elif (len(genesOnRef) == 1 and len(genesOnQuery) == 1):
             # add maf file to sameOnRef_sameOnQuery
-            outputDirPathAndFileName = sameOnRef_sameOnQuery_DirPath \
+            outputDirPathAndmafFileName = sameOnRef_sameOnQuery_DirPath \
                                             + '/' + mafFileName
         elif (len(genesOnRef) == 1 and len(genesOnQuery) != 1):
             # add maf file to sameOnRef_diffOnQuery
-            outputDirPathAndFileName = sameOnRef_diffOnQuery_DirPath \
+            outputDirPathAndmafFileName = sameOnRef_diffOnQuery_DirPath \
                                             + '/' + mafFileName
         elif (len(genesOnRef) != 1 and len(genesOnQuery) == 1):
             # add maf file to diffOnRef_sameOnQuery
-            outputDirPathAndFileName = diffOnRef_sameOnQuery_DirPath \
+            outputDirPathAndmafFileName = diffOnRef_sameOnQuery_DirPath \
                                             + '/' + mafFileName
         else:
             # add maf file to diffOnRef_diffOnQuery 
-            outputDirPathAndFileName = diffOnRef_diffOnQuery_DirPath \
+            outputDirPathAndmafFileName = diffOnRef_diffOnQuery_DirPath \
                                             + '/' + mafFileName
         
-        addMAF2Dir(closeSegGroup, outputDirPathAndFileName)
+        addMAF2Dir(closeSegGroup, outputDirPathAndmafFileName)
 
 
 
