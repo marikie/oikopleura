@@ -54,7 +54,7 @@ def getCloseSegs(alignmentFile, allowedLen):
         currChr = currAln.rID
         # set coord to + strand coord
         currStart, currEnd = setToPlusCoord(currAln)
-        
+
         # the 1st mafEntry
         if (not prevEnd):
             prevEnd = (currChr, currEnd)
