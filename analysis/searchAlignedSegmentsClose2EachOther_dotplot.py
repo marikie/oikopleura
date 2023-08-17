@@ -48,7 +48,7 @@ def getCloseSegs(alignmentFile, allowedLen):
         currChr = currAln.rID
         # set coord to + strand coord
         currStart, currEnd = setToPlusCoord(currAln)
-
+        
         # the 1st mafEntry
         if (not prevEnd):
             prevEnd = (currChr, currEnd)
@@ -77,7 +77,7 @@ def getCloseSegs(alignmentFile, allowedLen):
             pass
 
 
-def makeDotplotFiles(alignmentFile, annoFile, annoOf,
+def makeDotplotFiles(alignmentFile, annoFile_1, annoFile_2,
                      allowedLen, outputDirPath):
     # print('before subprocess')
     p1 = subprocess.run(['ls', outputDirPath], capture_output=True)
@@ -95,11 +95,11 @@ def makeDotplotFiles(alignmentFile, annoFile, annoOf,
         print('lastEnd: ', lastEnd)
 
         outputFileName_png = closeSegGroup[0].rID + '_' + str(firstStart) \
-            + '-' \
-            + str(lastEnd) + '.png'
+                            + '-' \
+                            + str(lastEnd) + '.png'
         outputFileName_maf = closeSegGroup[0].rID + '_' + str(firstStart) \
-            + '-' \
-            + str(lastEnd) + '.maf'
+                            + '-' \
+                            + str(lastEnd) + '.maf'
         with open(outputDirPath + '/' + outputFileName_maf, 'a') as f:
             for aln in closeSegGroup:
                 f.write(aln._MAF())
@@ -107,24 +107,15 @@ def makeDotplotFiles(alignmentFile, annoFile, annoOf,
                 # f.write('---- group end ----\n')
                 f.flush()
                 # cmd: last-dotplot temp.maf outputFileName
-                if annoOf == 1:
-                    subprocess.run(['../last/last-dotplot_mariko.py',
-                                    '--labels1=3',
-                                    '--labels2=3',
-                                    '-a',
-                                    annoFile,
-                                    outputDirPath + '/' + outputFileName_maf,
-                                    outputDirPath + '/' + outputFileName_png])
-                elif annoOf == 2:
-                    subprocess.run(['../last/last-dotplot_mariko.py',
-                                    '--labels1=3',
-                                    '--labels2=3',
-                                    '-b',
-                                    annoFile,
-                                    outputDirPath + '/' + outputFileName_maf,
-                                    outputDirPath + '/' + outputFileName_png])
-                else:
-                    raise Exception
+                subprocess.run(['last-dotplot',
+                                '--labels1=3',
+                                '--labels2=3',
+                                '-a',
+                                annoFile_1,
+                                '-b',
+                                annoFile_2,
+                                outputDirPath + '/' + outputFileName_maf,
+                                outputDirPath + '/' + outputFileName_png])
 
 
 if __name__ == '__main__':
@@ -135,12 +126,12 @@ if __name__ == '__main__':
     parser.add_argument('alignmentFile',
                         help='a .maf alignment file \
                                 sorted by query coordinates')
-    parser.add_argument('annotationFile',
-                        help='an annotation file')
-    parser.add_argument('annoOf',
-                        help='1: annotation for the 1st (horizontal) genome, \
-                              2: annotation for the 2nd (vertical) genome',
-                        type=int)
+    parser.add_argument('annotationFile_1',
+                        help='an annotation file for the 1st \
+                                (horizontal) genome')
+    parser.add_argument('annotationFile_2',
+                        help='an annotation file for the 2nd \
+                                (vertical) genome')
     parser.add_argument('allowedLen',
                         help='allowed length between aligned segments',
                         type=int)
@@ -150,5 +141,6 @@ if __name__ == '__main__':
     '''
     MAIN
     '''
-    makeDotplotFiles(args.alignmentFile, args.annotationFile, args.annoOf,
+    makeDotplotFiles(args.alignmentFile, args.annotationFile_1,
+                     args.annotationFile_2,
                      args.allowedLen, args.outputDirPath)
