@@ -657,7 +657,7 @@ def annotsFromGff(opts, line, seqName):
             if "gene" in attrs:
                 geneName = attrs["product"]  # seems good for NCBI gff
             elif "Name" in attrs:
-                geneName = attrs["product"]
+                geneName = attrs["Name"]
             else:
                 geneName = ""
         yield 300, opts.exon_color, seqName, beg, end, geneName
