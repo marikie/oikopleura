@@ -107,7 +107,8 @@ def makeDotplotFiles(alignmentFile, annoFile_1, annoFile_2,
                 # f.write('---- group end ----\n')
                 f.flush()
                 # cmd: last-dotplot temp.maf outputFileName
-                subprocess.run(['python /big/mrk/oikopleura/scripts/last/last-dotplot_mariko.py',
+                subprocess.run(['python',
+                                '/big/mrk/oikopleura/scripts/last/last-dotplot_mariko.py',
                                 '--labels1=3',
                                 '--labels2=3',
                                 '-a',
