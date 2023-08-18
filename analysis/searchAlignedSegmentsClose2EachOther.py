@@ -95,7 +95,7 @@ def getGeneIDs_anno(opt, aln, annoFile):
     Returns a set of tuples: (parentID, productName(protein name))
     Elements in the set overlap with input "aln"
     '''
-    gene_set = set()
+    setOfGenes = set()
     if opt == 'ref':
         # get geneName on reference
         # aln.gChr, aln.gStart, aln.gEnd, aln.gStrand(always +)
@@ -129,7 +129,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     nonCDSOnRef_CDSOnQuery_DirPath = outputDirPath + '/nonCDSOnRef_CDSOnQuery'
     CDSOnRef_nonCDSOnQuery_DirPath = outputDirPath + '/CDSOnRef_nonCDSOnQuery'
     nonCDSOnRef_nonCDSOnQuery_DirPath = outputDirPath \
-                                            + '/nonCDSOnRef_nonCDSOnQuery'
+        + '/nonCDSOnRef_nonCDSOnQuery'
     sameOnRef_sameOnQuery_DirPath = outputDirPath + '/sameOnRef_sameOnQuery'
     sameOnRef_diffOnQuery_DirPath = outputDirPath + '/sameOnRef_diffOnQuery'
     diffOnRef_sameOnQuery_DirPath = outputDirPath + '/diffOnRef_sameOnQuery' 
