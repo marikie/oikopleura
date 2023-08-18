@@ -395,7 +395,9 @@ def allSortedRanges(opts, alignments, alignmentsB,
 
 def myTextsize(textDraw, font, text):
     try:
-        out = textDraw.textsize(text, font=font)
+        # out = textDraw.textsize(text, font=font)
+        a, b, c, d = textDraw.textbbox((0, 0), text, font=font)
+        out = c, d
     except AttributeError:
         a, b, c, d = textDraw.textbbox((0, 0), text, font=font)
         out = c, d
@@ -649,11 +651,13 @@ def annotsFromGff(opts, line, seqName):
     feature = fields[2]
     beg = int(fields[3]) - 1
     end = int(fields[4])
-    if feature == "exon":
+    if feature == "CDS":
         geneName = fields[8]
         if ";" in geneName or "=" in geneName:
             parts = geneName.rstrip(";").split(";")
+            # print(parts)
             attrs = dict(re.split('[= ]', i.strip(), 1) for i in parts)
+            # print(attrs)
             if "gene" in attrs:
                 geneName = attrs["product"]  # seems good for NCBI gff
             elif "Name" in attrs:
