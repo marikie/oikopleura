@@ -544,3 +544,7 @@ if [ ! -e maturedAdults/$SORT_BAM_mat ]; then
 else
         echo "maturedAdults/$SORT_BAM_mat already exists"
 fi
+
+# Aug 21, 2023
+# last-dotplot with options
+python ~/biohazard/oikopleura/last/last-dotplot_mariko.py --fontsize=10 --border-pixels=5 --rot1=v --labels1=3 --labels2=3 -a ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff -b ~/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff \*chr1_2961624-2961854.maf ~/Desktop/\*chr1_2961624-2961854.png

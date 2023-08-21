@@ -659,14 +659,18 @@ def annotsFromGff(opts, line, seqName):
             attrs = dict(re.split('[= ]', i.strip(), 1) for i in parts)
             # print(attrs)
             if "gene" in attrs:
+                # if attrs['ID'] == 'cds-XP_035677032.1':
+                #     print(attrs)
                 geneName = attrs["product"]  # seems good for NCBI gff
+                # print(geneName)
             elif "Name" in attrs:
                 geneName = attrs["Name"]
+                # print(geneName)
             else:
                 geneName = ""
         yield 300, opts.exon_color, seqName, beg, end, geneName
-    elif feature == "CDS":
-        yield 400, opts.cds_color, seqName, beg, end, ""
+    # elif feature == "CDS":
+    #     yield 400, opts.cds_color, seqName, beg, end, ""
 
 def annotsFromRep(rangeDict, seqName, beg, end, strand, repName, repClass):
     simple = "Low_complexity", "Simple_repeat", "Satellite"
@@ -699,6 +703,7 @@ def annotsFromFiles(opts, fileNames, rangeDict):
                 seqName = w[0]
                 if seqName not in rangeDict: continue
                 g = annotsFromGff(opts, line, seqName)
+                # print(g)
             elif n > 9 and w[2] in "+-" and isDig(w[4] + w[5] + w[6]):
                 geneName = w[12 if n > 12 else 0]  # XXX ???
                 g = annotsFromGpd(opts, rangeDict, w, geneName)
