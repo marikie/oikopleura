@@ -139,6 +139,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     # print(p1.returncode)
 
     # sub directories
+    multiCDSOnOneSeg_DirPath = outputDirPath + '/multiCDSOnOneSeg'
     nonCDSOnRef_CDSOnQuery_DirPath = outputDirPath + '/nonCDSOnRef_CDSOnQuery'
     cdsOnRef_nonCDSOnQuery_DirPath = outputDirPath + '/cdsOnRef_nonCDSOnQuery'
     nonCDSOnRef_nonCDSOnQuery_DirPath = outputDirPath \
@@ -151,6 +152,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     if p1.returncode != 0:
         # make dirs
         subprocess.run(['mkdir', outputDirPath])
+        subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath])
         subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath])
         subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath])
         subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath])
@@ -172,14 +174,21 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
 
         genesOnRef = set()
         genesOnQuery = set()
+        multiGenesOnOneSeg = False
         for aln in closeSegGroup:
             geneIdsOnRef = getGeneIDs_anno('ref', aln, annoFile_Ref)
             geneIdsOnQuery = getGeneIDs_anno('query', aln,
                                              annoFile_Query)
+            if (len(geneIdsOnRef) > 1 or len(geneIdsOnQuery) > 1):
+                multiGenesOnOneSeg = True
             genesOnRef.add(geneIdsOnRef)
             genesOnQuery.add(geneIdsOnQuery)
 
-        if (len(genesOnRef) == 0 and len(genesOnQuery) != 0):
+        if multiGenesOnOneSeg:
+            # add maf file to multiCDSOnOneSeg
+            outputDirPathAndmafFileName = multiCDSOnOneSeg_DirPath \
+                                            + '/' + mafFileName
+        elif (len(genesOnRef) == 0 and len(genesOnQuery) != 0):
             # add maf file to nonCDSOnRef_CDSOnQuery
             outputDirPathAndmafFileName = nonCDSOnRef_CDSOnQuery_DirPath \
                                             + '/' + mafFileName
