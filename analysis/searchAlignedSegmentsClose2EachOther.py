@@ -3,14 +3,21 @@
 Search aligned segments that are close to each other (<= allowedLen)
 on the query's chromosom.
 Input: .maf file sorted by query's + strand coordinate
-Output: sameOnRef_sameOnQuery/mafFiles, diffOnRef_sameOnQuery/mafFiles,
-        sameOnRef_diffOnQuery/mafFiles, diffOnRef_diffOnQuery/mafFiles
+Output: maf files in directories below
+            - multiCDSOnOneSeg/MAF
+            - nonCDSOnRef_CDSOnQuery/MAF
+            - cdsOnRef_nonCDSOnQuery/MAF
+            - nonCDSOnRef_nonCDSOnQuery/MAF
+            - sameOnRef_sameOnQuery/MAF
+            - sameOnRef_diffOnQuery/MAF
+            - diffOnRef_sameOnQuery/MAF
+            - diffOnRef_diffOnQuery/MAF
 '''
 
 import argparse
 import subprocess
-# import pprint as p
-import pandas as pd
+import pprint as p
+# import pandas as pd
 import gffpandas.gffpandas as gffpd
 from Util import getMAFBlock
 from Util import convert2CoorOnOppositeStrand
@@ -47,7 +54,6 @@ def getCloseSegs(alignmentFile, allowedLen):
     alnFileHandle = open(alignmentFile)
 
     prevEnd = None
-    allowedLen = 50
     closeSegList = []
     for mafEntry in getMAFBlock(alnFileHandle):
         currAln = Alignment.fromMAFEntry(mafEntry)
@@ -94,7 +100,7 @@ def getGeneIDs_anno(opt, aln, annoFile):
     Returns a set of tuples: (geneID, productName(protein name))
     Elements in the set overlap with input "aln"
     '''
-    setOfGenes = set()
+    gene_set = set()
     if opt == 'ref':
         # get geneName on reference
         # aln.gChr, aln.gStart, aln.gEnd, aln.gStrand(always +)
@@ -106,11 +112,9 @@ def getGeneIDs_anno(opt, aln, annoFile):
                                                 start=aln_1base_gStart,
                                                 end=aln_1base_gEnd)
         ovl_attrcols = overlappings.attributes_to_columns()
-        ovl_attrcols_filtered = ovl_attrcols.filter(items=['gene', 'product'])
-        gene_product_list = ovl_attrcols_filtered.values.tolist()
-        gene_product_set = set([tuple(gpPair) for gpPair in gene_product_list])
-
-        return gene_product_set
+        ovl_attrcols_filtered = ovl_attrcols.filter(items=['gene'])
+        gene_list = ovl_attrcols_filtered.values.tolist()
+        gene_set = set([tuple(gpPair) for gpPair in gene_list])
 
     elif opt == 'query':
         # get geneName on query
@@ -124,11 +128,14 @@ def getGeneIDs_anno(opt, aln, annoFile):
         ovl_attrcols = overlappings.attributes_to_columns()
         ovl_attrcols_filtered = ovl_attrcols.filter(items=['Name'])
         cds_list = ovl_attrcols_filtered.values.tolist()
-        cds_set = set([cdslist[0] for cdslist in cds_list])
+        gene_set = set(['.'.join(cdslist[0].split('.')[0:-2])
+                        for cdslist in cds_list])
 
-        return cds_set
     else:
         raise ValueError('opt should be either "ref" or "query"')
+
+    p.pprint(gene_set)
+    return gene_set
 
 
 def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
@@ -152,6 +159,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     if p1.returncode != 0:
         # make dirs
         subprocess.run(['mkdir', outputDirPath])
+
         subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath])
         subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath])
         subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath])
@@ -159,6 +167,14 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath])
         subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath])
         subprocess.run(['mkdir', diffOnRef_diffOnQuery_DirPath])
+
+        subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath + '/MAF'])
+        subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath + '/MAF'])
+        subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath + '/MAF'])
+        subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath + '/MAF'])
+        subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath + '/MAF'])
+        subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath + '/MAF'])
+        subprocess.run(['mkdir', diffOnRef_diffOnQuery_DirPath + '/MAF'])
     else:
         pass
 
@@ -181,41 +197,65 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
                                              annoFile_Query)
             if (len(geneIdsOnRef) > 1 or len(geneIdsOnQuery) > 1):
                 multiGenesOnOneSeg = True
-            genesOnRef.add(geneIdsOnRef)
-            genesOnQuery.add(geneIdsOnQuery)
+            genesOnRef.update(geneIdsOnRef)
+            genesOnQuery.update(geneIdsOnQuery)
 
         if multiGenesOnOneSeg:
             # add maf file to multiCDSOnOneSeg
             outputDirPathAndmafFileName = multiCDSOnOneSeg_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('multiGenesOnOneSeg')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) == 0 and len(genesOnQuery) != 0):
             # add maf file to nonCDSOnRef_CDSOnQuery
             outputDirPathAndmafFileName = nonCDSOnRef_CDSOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('nonCDSOnRef_CDSOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) != 0 and len(genesOnQuery) == 0):
             # add maf file to CDSOnRef_nonCDSOnQuery
             outputDirPathAndmafFileName = cdsOnRef_nonCDSOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('cdsOnRef_nonCDSOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) == 0 and len(genesOnQuery) == 0):
             # add maf file to nonCDSOnRef_nonCDSOnQuery
             outputDirPathAndmafFileName = nonCDSOnRef_nonCDSOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('nonCDSOnRef_nonCDSOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) == 1 and len(genesOnQuery) == 1):
             # add maf file to sameOnRef_sameOnQuery
             outputDirPathAndmafFileName = sameOnRef_sameOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('sameOnRef_sameOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) == 1 and len(genesOnQuery) != 1):
             # add maf file to sameOnRef_diffOnQuery
             outputDirPathAndmafFileName = sameOnRef_diffOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('sameOnRef_diffOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) != 1 and len(genesOnQuery) == 1):
             # add maf file to diffOnRef_sameOnQuery
             outputDirPathAndmafFileName = diffOnRef_sameOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('diffOnRef_sameOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         elif (len(genesOnRef) != 1 and len(genesOnQuery) != 1):
             # add maf file to diffOnRef_diffOnQuery
             outputDirPathAndmafFileName = diffOnRef_diffOnQuery_DirPath \
-                                            + '/' + mafFileName
+                                            + '/MAF/' + mafFileName
+            print('diffOnRef_diffOnQuery')
+            p.pprint(genesOnRef)
+            p.pprint(genesOnQuery)
         else:
             raise Exception('len(genesOnRef): ' + str(len(genesOnRef))
                             + 'len(genesOnQuery): ' + str(len(genesOnQuery)))
@@ -238,7 +278,8 @@ if __name__ == '__main__':
                         help='an annotation file for the 2nd \
                                 (vertical) genome (query)')
     parser.add_argument('allowedLen',
-                        help='allowed length between aligned segments',
+                        help='allowed length between aligned segments \
+                                on query',
                         type=int)
     parser.add_argument('outputDirPath',
                         help='path of the output directory')
