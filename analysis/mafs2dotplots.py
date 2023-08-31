@@ -9,43 +9,53 @@ Output:
 
 import argparse
 import subprocess
+import os
 
-p1 = subprocess.run(['ls', outputDirPath], capture_output=True)
-# print('after subprocess')
-# print(p1.returncode)
 
-# sub directories
-multiCDSOnOneSeg_DirPath = outputDirPath + '/multiCDSOnOneSeg'
-nonCDSOnRef_CDSOnQuery_DirPath = outputDirPath + '/nonCDSOnRef_CDSOnQuery'
-cdsOnRef_nonCDSOnQuery_DirPath = outputDirPath + '/cdsOnRef_nonCDSOnQuery'
-nonCDSOnRef_nonCDSOnQuery_DirPath = outputDirPath \
-    + '/nonCDSOnRef_nonCDSOnQuery'
-sameOnRef_sameOnQuery_DirPath = outputDirPath + '/sameOnRef_sameOnQuery'
-sameOnRef_diffOnQuery_DirPath = outputDirPath + '/sameOnRef_diffOnQuery'
-diffOnRef_sameOnQuery_DirPath = outputDirPath + '/diffOnRef_sameOnQuery'
-diffOnRef_diffOnQuery_DirPath = outputDirPath + '/diffOnRef_diffOnQuery'
+def makeDotPlotFiles(inputDirPath, annoFile_Reference, annoFile_Query):
+    p_ls_inDir = subprocess.run(['ls', inputDirPath], capture_output=True)
 
-if p1.returncode != 0:
-    # make dirs
-    subprocess.run(['mkdir', outputDirPath])
+    subDirs = p_ls_inDir.stdout.decode('utf-8').strip().split('\n')
 
-    subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath])
-    subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath])
-    subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath])
-    subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath])
-    subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath])
-    subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath])
-    subprocess.run(['mkdir', diffOnRef_diffOnQuery_DirPath])
+    for subdir in subDirs:
+        outputDirPath = inputDirPath + '/' + subdir + '/PNG'
+        p_ls_outDir = subprocess.run(['ls', outputDirPath],
+                                     capture_output=True)
+        if p_ls_outDir.returcode != 0:
+            # make outDir
+            subprocess.run(['mkdir', outputDirPath])
+        else:
+            pass
 
-    subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath + '/MAF'])
-    subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath + '/MAF'])
-    subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath + '/MAF'])
-    subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath + '/MAF'])
-    subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath + '/MAF'])
-    subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath + '/MAF'])
-    subprocess.run(['mkdir', diffOnRef_diffOnQuery_DirPath + '/MAF'])
-else:
-    pass
+        # ls subdir/MAF
+        p_ls_maf = subprocess.run(['ls', inputDirPath + '/' + subdir + '/MAF'],
+                                  capture_output=True)
+        mafFiles = p_ls_maf.stdout.decode('utf-8').strip().split('\n')
+        if mafFiles[0] != '':
+            for maffile in mafFiles:
+                pngfile = os.path.splitext(maffile)[0] + '.png'
+                # make .png file
+                subprocess.run(['python',
+                                '../last/last-dotplot_mariko.py',
+                                '--sort1=3',
+                                '--strands1=1',
+                                '--border-color=silver',
+                                '--border-pixels=5',
+                                '--rot1=v',
+                                '--labels1=2',
+                                '--labels2=2',
+                                '--font-size=10',
+                                '-a',
+                                annoFile_Reference,
+                                '-b',
+                                annoFile_Query,
+                                maffile,
+                                outputDirPath + '/' + pngfile
+                                ])
+        else:
+            pass
+
+
 
 subprocess.run(['python',
                 '../last/last-dotplot_mariko.py',
@@ -57,3 +67,19 @@ subprocess.run(['python',
                 annoFile_2,
                 outputDirPath + '/' + outputFileName_maf,
                 outputDirPath + '/' + outputFileName_png])
+
+
+if __name__ == '__main__':
+    '''
+    File Parsing
+    '''
+    parser = argparse.ArgumentParser()
+    parser.add_argument('inputDirPath',
+                        help='path of the directory, which is \
+                        the result directory of \
+                        searchAlignedSegmentsClose2EachOther.py')
+    args = parser.parse_args()
+    '''
+    MAIN
+    '''
+    makeDotPlotFiles(args.inputDirPath)
