@@ -56,19 +56,6 @@ def makeDotPlotFiles(inputDirPath, annoFile_Reference, annoFile_Query):
             pass
 
 
-
-subprocess.run(['python',
-                '../last/last-dotplot_mariko.py',
-                '--labels1=3',
-                '--labels2=3',
-                '-a',
-                annoFile_1,
-                '-b',
-                annoFile_2,
-                outputDirPath + '/' + outputFileName_maf,
-                outputDirPath + '/' + outputFileName_png])
-
-
 if __name__ == '__main__':
     '''
     File Parsing
@@ -78,8 +65,15 @@ if __name__ == '__main__':
                         help='path of the directory, which is \
                         the result directory of \
                         searchAlignedSegmentsClose2EachOther.py')
+    parser.add_argument('annoFile_Reference',
+                        help='path of an annotation file of \
+                        the reference')
+    parser.add_argument('annoFile_Query',
+                        help='path of an annotation file of \
+                        the query')
     args = parser.parse_args()
     '''
     MAIN
     '''
-    makeDotPlotFiles(args.inputDirPath)
+    makeDotPlotFiles(args.inputDirPath, args.annoFile_Reference,
+                     args.annoFile_Query)
