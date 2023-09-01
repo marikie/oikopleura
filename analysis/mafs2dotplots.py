@@ -21,7 +21,7 @@ def makeDotPlotFiles(inputDirPath, annoFile_Reference, annoFile_Query):
         outputDirPath = inputDirPath + '/' + subdir + '/PNG'
         p_ls_outDir = subprocess.run(['ls', outputDirPath],
                                      capture_output=True)
-        if p_ls_outDir.returcode != 0:
+        if p_ls_outDir.returncode != 0:
             # make outDir
             subprocess.run(['mkdir', outputDirPath])
         else:
@@ -34,6 +34,7 @@ def makeDotPlotFiles(inputDirPath, annoFile_Reference, annoFile_Query):
         if mafFiles[0] != '':
             for maffile in mafFiles:
                 pngfile = os.path.splitext(maffile)[0] + '.png'
+                maffilePath = inputDirPath + '/' + subdir + '/MAF/' + maffile
                 # make .png file
                 subprocess.run(['python',
                                 '../last/last-dotplot_mariko.py',
@@ -44,12 +45,12 @@ def makeDotPlotFiles(inputDirPath, annoFile_Reference, annoFile_Query):
                                 '--rot1=v',
                                 '--labels1=2',
                                 '--labels2=2',
-                                '--font-size=10',
+                                '--fontsize=10',
                                 '-a',
                                 annoFile_Reference,
                                 '-b',
                                 annoFile_Query,
-                                maffile,
+                                maffilePath,
                                 outputDirPath + '/' + pngfile
                                 ])
         else:
