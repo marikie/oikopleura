@@ -95,45 +95,70 @@ def addMAF2Dir(closeSegGroup, outputDirPathAndFileName):
             f.write(aln._MAF())
 
 
-def getGeneIDs_anno(opt, aln, annoFile):
+def getGeneIDsOfOneSeg(opt, aln, annoFile):
     '''
     Returns a set of tuples: (geneID, productName(protein name))
     Elements in the set overlap with input "aln"
     '''
-    gene_set = set()
     if opt == 'ref':
+        assert aln.gStrand == '+', 'aln.gStrand is supposed be +'
         # get geneName on reference
         # aln.gChr, aln.gStart, aln.gEnd, aln.gStrand(always +)
         annotation = gffpd.read_gff3(annoFile)
         # set coord from inbetween to 1-base
         aln_1base_gStart = aln.gStart + 1
         aln_1base_gEnd = aln.gEnd
+        print('seqID: ', aln.gChr)
+        print('aln_1base_rStart: ', aln_1base_gStart)
+        print('aln_1base_rEnd: ', aln_1base_gEnd)
         overlappings = annotation.overlaps_with(seq_id=aln.gChr, type='CDS',
                                                 start=aln_1base_gStart,
                                                 end=aln_1base_gEnd)
         ovl_attrcols = overlappings.attributes_to_columns()
         ovl_attrcols_filtered = ovl_attrcols.filter(items=['gene'])
         gene_list = ovl_attrcols_filtered.values.tolist()
-        gene_set = set([tuple(gpPair) for gpPair in gene_list])
+        print(type(gene_list))
+        p.pprint(gene_list)
+        gene_set = set([tuple(glist) for glist in gene_list])
 
     elif opt == 'query':
         # get geneName on query
         annotation = gffpd.read_gff3(annoFile)
+        # set to + strand coord
+        alnrStart, alnrEnd = setToPlusCoord(aln)
         # set coord from inbetween to 1-base
-        aln_1base_rStart = aln.rStart + 1
-        aln_1base_rEnd = aln.rEnd
+        aln_1base_rStart = alnrStart + 1
+        aln_1base_rEnd = alnrEnd
+        print('seqID: ', aln.rID)
+        print('aln_1base_rStart: ', aln_1base_rStart)
+        print('aln_1base_rEnd: ', aln_1base_rEnd)
         overlappings = annotation.overlaps_with(seq_id=aln.rID, type='CDS',
                                                 start=aln_1base_rStart,
                                                 end=aln_1base_rEnd)
+        p.pprint(overlappings.df)
         ovl_attrcols = overlappings.attributes_to_columns()
         ovl_attrcols_filtered = ovl_attrcols.filter(items=['Name'])
         cds_list = ovl_attrcols_filtered.values.tolist()
-        gene_set = set(['.'.join(cdslist[0].split('.')[0:-2])
-                        for cdslist in cds_list])
+        print('cds_list: ', end='')
+        p.pprint(cds_list)
+        cds_tuple_list = [tuple(cdslist) for cdslist in cds_list]
+        print('cds_tuple_list: ', end='')
+        p.pprint(cds_tuple_list)
+        gene_tuple_list = []
+        for cdstuple in cds_tuple_list:
+            genetuple = tuple()
+            for cds in cdstuple:
+                gene = '.'.join(cds.split('.')[0:-2])
+                # print(gene)
+                genetuple = genetuple + (gene,)
+                # print(genetuple)
+            gene_tuple_list.append(genetuple)
+        gene_set = set(gene_tuple_list)
 
     else:
         raise ValueError('opt should be either "ref" or "query"')
 
+    print('gene_set: ', end='')
     p.pprint(gene_set)
     return gene_set
 
@@ -163,6 +188,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath])
         subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath])
         subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath])
+        subprocess.run(['mkdir', nonCDSOnRef_nonCDSOnQuery_DirPath])
         subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath])
         subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath])
         subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath])
@@ -171,6 +197,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         subprocess.run(['mkdir', multiCDSOnOneSeg_DirPath + '/MAF'])
         subprocess.run(['mkdir', nonCDSOnRef_CDSOnQuery_DirPath + '/MAF'])
         subprocess.run(['mkdir', cdsOnRef_nonCDSOnQuery_DirPath + '/MAF'])
+        subprocess.run(['mkdir', nonCDSOnRef_nonCDSOnQuery_DirPath + '/MAF'])
         subprocess.run(['mkdir', sameOnRef_sameOnQuery_DirPath + '/MAF'])
         subprocess.run(['mkdir', sameOnRef_diffOnQuery_DirPath + '/MAF'])
         subprocess.run(['mkdir', diffOnRef_sameOnQuery_DirPath + '/MAF'])
@@ -179,6 +206,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         pass
 
     for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
+        print('-----------------closeSegGroup START--------------------')
         # set the outputFileName
         # convet to + strand coord
         firstElemStart = setToPlusCoord(closeSegGroup[0])[0]
@@ -192,13 +220,19 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
         genesOnQuery = set()
         multiGenesOnOneSeg = False
         for aln in closeSegGroup:
-            geneIdsOnRef = getGeneIDs_anno('ref', aln, annoFile_Ref)
-            geneIdsOnQuery = getGeneIDs_anno('query', aln,
-                                             annoFile_Query)
-            if (len(geneIdsOnRef) > 1 or len(geneIdsOnQuery) > 1):
+            print('-----------------ALN START-------------------------')
+            print('--- genes on ref')
+            geneIdsOfOneSegOnRef = getGeneIDsOfOneSeg('ref', aln, annoFile_Ref)
+            print('--- genes on query')
+            geneIdsOfOneSegOnQuery = getGeneIDsOfOneSeg('query', aln,
+                                                        annoFile_Query)
+            if (len(geneIdsOfOneSegOnRef) > 1 or
+                    len(geneIdsOfOneSegOnQuery) > 1):
+                print('--- multiGenesOnOneSeg ON')
                 multiGenesOnOneSeg = True
-            genesOnRef.update(geneIdsOnRef)
-            genesOnQuery.update(geneIdsOnQuery)
+            genesOnRef.update(geneIdsOfOneSegOnRef)
+            genesOnQuery.update(geneIdsOfOneSegOnQuery)
+            print('-----------------ALN END---------------------------')
 
         if multiGenesOnOneSeg:
             # add maf file to multiCDSOnOneSeg
@@ -261,6 +295,7 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
                             + 'len(genesOnQuery): ' + str(len(genesOnQuery)))
 
         addMAF2Dir(closeSegGroup, outputDirPathAndmafFileName)
+        print('-----------------closeSegGroup END--------------------')
 
 
 if __name__ == '__main__':
