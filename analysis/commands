@@ -423,3 +423,7 @@ python searchAlignedSegmentsClose2EachOther_dotplot.py ~/oikopleura/lanc_oik_las
 # August 18, 2023
 # my local laptop
 python searchAlignedSegmentsClose2EachOther_dotplot.py ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff  ~/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff 50 ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230817_BothAnno_Out
+
+# September 3, 2023
+# my local laptop
+python searchAlignedSegmentsClose2EachOther.py ~/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf  ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff 50 ~/biohazard/data/lanc_oik_last/searchAlignedSegmentsClose2EachOther_from_eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery_20230903 
