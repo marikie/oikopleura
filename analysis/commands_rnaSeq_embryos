@@ -28,3 +28,8 @@ python addQueryNumAtTheEndOfID.py embryos/ERR4570985_2_filtered_trimmed_sorted.f
 # July 19, 2023
 awk 'NR % 4 == 1 {$1 = $1 "/1"} 1' ERR4570985_1_filtered_trimmed_sorted.fastq > ERR4570985_1_filtered_trimmed_sorted_numbered.fastq
 awk 'NR % 4 == 1 {$1 = $1 "/2"} 1' ERR4570985_2_filtered_trimmed_sorted.fastq > ERR4570985_2_filtered_trimmed_sorted_numbered.fastq
+
+# Aug 21, 2023
+grep -n '^T\{10,\}[^T]*$' ERR4570985_1_filtered_trimmed_sorted.fastq  > polyT_1.txt
+
+grep -n '^.*[^A]*A\{50,\}$' ERR4570985_2_filtered_trimmed_sorted.fastq > polyA_2_A50.txt
