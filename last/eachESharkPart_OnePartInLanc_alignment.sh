@@ -21,7 +21,7 @@ if [ ! -d /home/mrk/oikopleura/lanc_eshark_last/$dbName ]; then
         echo "making lastdb"
         mkdir $dbName
         cd $dbName
-        lastdb -P8 -uMAM8 $dbName ~/oikopleura/elephantShark/ # Start modifying from here!
+        lastdb -P8 -uMAM8 $dbName ~/oikopleura/lancelets/genome_assemblies_branchiostoma_floridae/ncbi-genomes-2023-06-13/GCF_000003815.2_Bfl_VNyyK_genomic.fna
         cd ..
 else
         echo "$dbName already exists"
@@ -31,7 +31,7 @@ fi
 echo "--last-train"
 if [ ! -e $trainFile ]; then
         echo "doing last-train"
-        last-train -P8 --revsym -E0.05 $dbName/$dbName ~/oikdata/last/OKI2018_I69_1.0.removed_chrUn.fa > $trainFile
+        last-train -P8 --revsym -E0.05 $dbName/$dbName ~/oikopleura/elephantShark/ncbi_dataset/data/GCF_018977255.1/GCF_018977255.1_IMCB_Cmil_1.0_genomic.fna > $trainFile
 else
         echo "$trainFile already exists"
 fi
@@ -39,8 +39,8 @@ fi
 # lastal 
 echo "---lastal"
 if [ ! -e $maf ]; then 
-        echo "doing lastal phase 1"
-        lastal -E0.05 --split-f=MAF+ -p $trainFile $dbName/$dbName ~/oikdata/last/OKI2018_I69_1.0.removed_chrUn.fa | last-postmask > $maf
+        echo "doing lastal"
+        lastal -E0.05 --split-f=MAF+ -p $trainFile $dbName/$dbName ~/oikopleura/elephantShark/ncbi_dataset/data/GCF_018977255.1/cds_from_genomic.fna | last-postmask > $maf
 else
         echo "$maf already exists"
 fi
@@ -57,7 +57,6 @@ fi
 echo "---last-dotplot"
 if [ ! -e $pngFile ]; then
         echo "making $pngFile"
-        #last-dotplot -a ~/oikdata/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff $maf $pngFile
         last-dotplot $maf $pngFile
 else
         echo "$pngFile already exists"
