@@ -40,7 +40,7 @@ fi
 echo "---lastal"
 if [ ! -e $maf ]; then 
         echo "doing lastal"
-        lastal -E0.05 --split-f=MAF+ -p $trainFile $dbName/$dbName ~/oikopleura/elephantShark/ncbi_dataset/data/GCF_018977255.1/cds_from_genomic.fna | last-postmask > $maf
+        lastal -E0.05 --split-f=MAF+ -p $trainFile $dbName/$dbName ~/oikopleura/elephantShark/ncbi_dataset/data/GCF_018977255.1/GCF_018977255.1_IMCB_Cmil_1.0_genomic.fna | last-postmask > $maf
 else
         echo "$maf already exists"
 fi
