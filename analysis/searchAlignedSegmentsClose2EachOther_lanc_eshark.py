@@ -154,8 +154,6 @@ def getGeneIDsOfOneSeg(opt, aln, annotation):
 
 def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
                    allowedLen, outputDirPath):
-    annotation_ref = gffpd.read_gff3(annoFile_Ref)
-    annotation_query = gffpd.read_gff3(annoFile_Query)
 
     # print('before subprocess')
     p1 = subprocess.run(['ls', outputDirPath], capture_output=True)
@@ -197,6 +195,8 @@ def outputMAFFiles(alignmentFile, annoFile_Ref, annoFile_Query,
     else:
         pass
 
+    annotation_ref = gffpd.read_gff3(annoFile_Ref)
+    annotation_query = gffpd.read_gff3(annoFile_Query)
     for closeSegGroup in getCloseSegs(alignmentFile, allowedLen):
         print('-----------------closeSegGroup START--------------------')
         # set the outputFileName
