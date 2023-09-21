@@ -79,7 +79,7 @@ if [ ! -e $maf ]; then
         #        If the reference was split into volumes by lastdb, then lastal
         #        uses one volume at a time.  The maximum multiplicity then applies
         #        to each volume, not the whole reference.  This is why voluming
-        #        changes the results.
+        #        changes the results. (How to decide the num of multiplicity??)
 else
         echo "$maf already exists"
 fi
