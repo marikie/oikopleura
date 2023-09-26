@@ -432,3 +432,7 @@ python mafs2dotplots.py ~/biohazard/data/lanc_oik_last/searchAlignedSegmentsClos
 # September 11, 2023
 # sort alignments by query coordinate
 python sortAlignmentsByQueryCoord.py ~/biohazard/data/lanc_eshark_last/eachESharkPart_OnePartInLanc_alignment_20230911.maf
+
+# September 26, 2023
+# sort alignments by reference coordinates 
+python sortAlignmentsByRefCoord.py ~/oikopleura/lanc_eshark_last/eachESharkPart_OnePartInLanc_alignment_20230919.maf
