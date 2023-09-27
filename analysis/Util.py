@@ -3,20 +3,20 @@ from itertools import groupby
 
 
 def resetCoordToItsStrand(aln, readStrand):
-    '''
+    """
     reset coordinates of the read to
     + strand coordinates if its rStrand == '+',
     - strand coordinates if its rStrand == '-'
-    '''
-    if readStrand == '+':
-        if aln.rStrand == '+':
+    """
+    if readStrand == "+":
+        if aln.rStrand == "+":
             pass
         # aln.rStrand == '-'
         else:
             rStart, rEnd = convert2CoorOnOppositeStrand(aln)
     # readStrand == '-'
     else:
-        if aln.rStrand == '+':
+        if aln.rStrand == "+":
             rStart, rEnd = convert2CoorOnOppositeStrand(aln)
         else:
             pass
@@ -24,24 +24,24 @@ def resetCoordToItsStrand(aln, readStrand):
 
 
 def filterComments(lines):
-    '''
+    """
     from Alignments.py in JSA. written by Anish Shrestha.
     ignores lines in a maf file begining with #
-    '''
+    """
     for line in lines:
-        if line.startswith('#'):
+        if line.startswith("#"):
             pass
         else:
             yield line
 
 
 def getMAFBlock(mafLines):
-    '''
+    """
     from Alignments.py in JSA. written by Anish Shrestha.
     takes in raw lines from a mafFile, filters comment lines,
     return a list containing lines of a maf block
     i.e. ['a ...', 's ...', 's ...']
-    '''
+    """
     for k, groupedLines in groupby(filterComments(mafLines), str.isspace):
         if not k:
             mafBlock = [line for line in groupedLines]
@@ -49,36 +49,45 @@ def getMAFBlock(mafLines):
             yield mafBlock
 
 
+def getAln(mafLines):
+    for k, groupedLines in groupby(filterComments(mafLines), str.isspace):
+        if not k:
+            mafBlock = [line for line in groupedLines]
+            # print(mafBlock)
+            yield Alignment.fromMAFEntry(mafBlock)
+
+
 def getAlignmentObjsOneByOne(alignmentFile):
-    '''
+    """
     takes an alignmentFile and yield Alignment objects one by one
-    '''
+    """
     alnFileHandle = open(alignmentFile)
     for mafEntry in getMAFBlock(alnFileHandle):
-        yield Alignment.fromMAFEntry(mafEntry) 
+        yield Alignment.fromMAFEntry(mafEntry)
 
 
 def getAlignmentObjs(alignmentFile):
-    '''
-    takes an alignmentFile and returns a list of Alignment objects 
-    '''
+    """
+    takes an alignmentFile and returns a list of Alignment objects
+    """
     alnFileHandle = open(alignmentFile)
     alnObjList = []
     for mafEntry in getMAFBlock(alnFileHandle):
-        alnObjList.append(Alignment.fromMAFEntry(mafEntry))  
+        alnObjList.append(Alignment.fromMAFEntry(mafEntry))
     return alnObjList
 
 
 def getMultiMAFEntries_all(alignmentFile):
-    '''
+    """
     from Alignments.py in JSA. written by Anish Shrestha.
     takes in mafEntries in list of strings (line) form.
     yield all Alignment objs.
-    '''
-    alnFileHandle = open(alignmentFile, 'r')
+    """
+    alnFileHandle = open(alignmentFile, "r")
     # alignments must be in MAF format.
-    for rid, mafEntries in groupby(getMAFBlock(alnFileHandle),
-                                   lambda x: x[2].split()[1]):
+    for rid, mafEntries in groupby(
+        getMAFBlock(alnFileHandle), lambda x: x[2].split()[1]
+    ):
         mafEntries = list(mafEntries)
         alnObjectList = []
         for mafEntry in mafEntries:
@@ -87,17 +96,18 @@ def getMultiMAFEntries_all(alignmentFile):
 
 
 def getMultiMAFEntries(alignmentFile):
-    '''
+    """
     ONLY SPLICED READS
     from Alignments.py in JSA. written by Anish Shrestha.
     takes in mafEntries in list of strings (line) form.
     If a query has multiple entries:
     constructs Alignment objects, and yields them.
-    '''
-    alnFileHandle = open(alignmentFile, 'r')
+    """
+    alnFileHandle = open(alignmentFile, "r")
     # alignments must be in MAF format.
-    for rid, mafEntries in groupby(getMAFBlock(alnFileHandle),
-                                   lambda x: x[2].split()[1]):
+    for rid, mafEntries in groupby(
+        getMAFBlock(alnFileHandle), lambda x: x[2].split()[1]
+    ):
         mafEntries = list(mafEntries)
         alnObjectList = []
         if len(mafEntries) > 1:
@@ -108,87 +118,91 @@ def getMultiMAFEntries(alignmentFile):
 
 
 def convert2CoorOnOppositeStrand(alnObj):
-    '''
+    """
     Convert start and end coordinates of a read
     to start and end coordinates on the reverse strand of read's coordinates
-    '''
+    """
     start = alnObj.rLength - alnObj.rEnd
     end = alnObj.rLength - alnObj.rStart
     return (start, end)
 
 
 def getIntronCoord(readStrand, aln1, aln2):
-    '''
+    """
     Get which strand of read is aligned (readStrand) and its two alignments.
     Return intron start coordinates and intron end coodinates.
     The coordinates include strand info too.
     # aln1 is 5' side alignment (having donor),
       aln2 is 3' side alignment (having acceptor).
-    '''
+    """
     # assuming aln.gStrand == '+'
     try:
-        if not (aln1.gStrand == '+' and aln2.gStrand == '+'):
+        if not (aln1.gStrand == "+" and aln2.gStrand == "+"):
             raise Exception
     except Exception:
-        print('< gStrand = \"-\" >')
+        print('< gStrand = "-" >')
         print(aln1)
         print(aln2)
     # assuming the order of [aln1, aln2]:
     # aln1: 5' side (having donor),
     # aln2: 3' side (having acceptor)
-    if ((readStrand == '+' and aln1.rStrand == '+') or
-            (readStrand == '-' and aln1.rStrand == '-')):
-        intronStart = (aln1.gChr, aln1.gEnd, '+')
+    if (readStrand == "+" and aln1.rStrand == "+") or (
+        readStrand == "-" and aln1.rStrand == "-"
+    ):
+        intronStart = (aln1.gChr, aln1.gEnd, "+")
     else:
         # ((readStrand == '+' and aln1.rStrand == '-') or
         #   (readStrand == '-' and aln1.rStrand == '+'))
-        intronStart = (aln1.gChr, aln1.gStart, '-')
+        intronStart = (aln1.gChr, aln1.gStart, "-")
 
-    if ((readStrand == '+' and aln2.rStrand == '+') or
-            (readStrand == '-' and aln2.rStrand == '-')):
-        intronEnd = (aln2.gChr, aln2.gStart, '+')
+    if (readStrand == "+" and aln2.rStrand == "+") or (
+        readStrand == "-" and aln2.rStrand == "-"
+    ):
+        intronEnd = (aln2.gChr, aln2.gStart, "+")
     else:
         # ((readStrand == '+' and aln1.rStrand == '-') or
         #   (readStrand == '-' and aln1.rStrand == '+'))
-        intronEnd = (aln2.gChr, aln2.gEnd, '-')
+        intronEnd = (aln2.gChr, aln2.gEnd, "-")
 
     return (intronStart, intronEnd)
 
 
 def toSTR(intronCoords):
-    '''
+    """
     convert intronCoords into string
     intronCoords == ((sChr(str), sPos(int), sStrand(str)),
                      (eChr(str), ePos(int), eStrand(str))
     -> sChr_sPos_sStrand_eChr_ePos_eStrand
-    '''
-    startCoord = '_'.join([intronCoords[0][0], str(intronCoords[0][1]),
-                           intronCoords[0][2]])
-    endCoord = '_'.join([intronCoords[1][0], str(intronCoords[1][1]),
-                        intronCoords[1][2]])
-    intronCoords_str = '_'.join([startCoord, endCoord])
+    """
+    startCoord = "_".join(
+        [intronCoords[0][0], str(intronCoords[0][1]), intronCoords[0][2]]
+    )
+    endCoord = "_".join(
+        [intronCoords[1][0], str(intronCoords[1][1]), intronCoords[1][2]]
+    )
+    intronCoords_str = "_".join([startCoord, endCoord])
     return intronCoords_str
 
 
 def isExactSplit(readStrand, aln1, aln2):
-    '''
+    """
     Return True if the read is exactly spliced
     and there is no unaligned bases between two aligned regions.
     Otherwise return False.
 
     transcript order is aln1 -> aln2
     AlignmentObj: in-between coord
-    '''
+    """
     # calculate with + strand coord
-    if readStrand == '+':
+    if readStrand == "+":
         # calculate aln1End
-        if aln1.rStrand == '+':
+        if aln1.rStrand == "+":
             aln1End = aln1.rEnd
         else:
             aln1End = aln1.rLength - aln1.rStart
 
         # calculate aln2Start
-        if aln2.rStrand == '+':
+        if aln2.rStrand == "+":
             aln2Start = aln2.rStart
         else:
             aln2Start = aln2.rLength - aln2.rEnd
@@ -196,13 +210,13 @@ def isExactSplit(readStrand, aln1, aln2):
     # calculate with - strand coord
     else:
         # calculate aln1End
-        if aln1.rStrand == '-':
+        if aln1.rStrand == "-":
             aln1End = aln1.rEnd
         else:
             aln1End = aln1.rLength - aln1.rStart
 
         # calculate aln2Start
-        if aln2.rStrand == '-':
+        if aln2.rStrand == "-":
             aln2Start = aln2.rStart
         else:
             aln2Start = aln2.rLength - aln2.rEnd
@@ -216,7 +230,7 @@ def isExactSplit(readStrand, aln1, aln2):
 
 
 def getSplitAlignmentData(alignmentFile):
-    '''
+    """
     Input: an alignment .maf file
     Output:
         return only 'Exact Splits' and
@@ -227,8 +241,8 @@ def getSplitAlignmentData(alignmentFile):
         readStrand: '+'/'-'
         aln: Alignment()
         intron: (aln.gChr, aln.gStart/aln.gEnd, '+'/'-')
-    '''
-    print('--- Reading alignmentFile')
+    """
+    print("--- Reading alignmentFile")
     alignments_list = []
     for alignments in getMultiMAFEntries(alignmentFile):
         # prerequisite:
@@ -239,16 +253,18 @@ def getSplitAlignmentData(alignmentFile):
         # get the order of alignments
         # if the first alignment has donor and doesn't have acceptor
         # or the last alignment doesn't have donor and has acceptor
-        if (alignments[0].don and not alignments[0].acc)\
-                or (not alignments[-1].don and alignments[-1].acc):
+        if (alignments[0].don and not alignments[0].acc) or (
+            not alignments[-1].don and alignments[-1].acc
+        ):
             # set readStrand to '+'
-            readStrand = '+'
+            readStrand = "+"
         # if the last alignment has donor and doesn't have acceptor
         # or the first alignment doesn't have donor and has acceptor
-        elif (alignments[-1].don and not alignments[-1].acc)\
-                or (not alignments[0].don and alignments[0].acc):
+        elif (alignments[-1].don and not alignments[-1].acc) or (
+            not alignments[0].don and alignments[0].acc
+        ):
             # set readStrand to '-'
-            readStrand = '-'
+            readStrand = "-"
             # reverse the alignments list
             alignments.reverse()
         else:
@@ -266,24 +282,31 @@ def getSplitAlignmentData(alignmentFile):
                 #      str(intronStart[1]), intronStart[2])
                 # print('intronEnd: ', intronEnd[0],
                 #      str(intronEnd[1]), intronEnd[2])
-                intronLeft = min([intronStart, intronEnd],
-                                 key=lambda c: (c[0], c[1], c[2]))
-                intronRight = max([intronStart, intronEnd],
-                                  key=lambda c: (c[0], c[1], c[2]))
+                intronLeft = min(
+                    [intronStart, intronEnd], key=lambda c: (c[0], c[1], c[2])
+                )
+                intronRight = max(
+                    [intronStart, intronEnd], key=lambda c: (c[0], c[1], c[2])
+                )
                 # print('intronLeft: ', intronLeft[0],
                 #      str(intronLeft[1]), intronLeft[2])
                 # print('intronRight: ', intronRight[0],
                 #      str(intronRight[1]), intronRight[2])
                 # alignments_list: list of tuple
-                alignments_list.append(((readStrand, aln1, aln2),
-                                        (intronLeft, intronRight),
-                                        (intronStart, intronEnd)))
+                alignments_list.append(
+                    (
+                        (readStrand, aln1, aln2),
+                        (intronLeft, intronRight),
+                        (intronStart, intronEnd),
+                    )
+                )
 
     # sort alignments_list according to
     # intronLeft and intronRight chromosom name and coord
-    print('--- Sorting alignments')
-    alignments_list.sort(key=lambda a_c: ((a_c[1][0][0], a_c[1][0][1]),
-                                          (a_c[1][1][0], a_c[1][1][1])))
+    print("--- Sorting alignments")
+    alignments_list.sort(
+        key=lambda a_c: ((a_c[1][0][0], a_c[1][0][1]), (a_c[1][1][0], a_c[1][1][1]))
+    )
     # print sorted alignments_list
     # for alignments in alignments_list:
     #    intronLeft = alignments[1][0]
