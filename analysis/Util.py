@@ -127,6 +127,16 @@ def convert2CoorOnOppositeStrand(alnObj):
     return (start, end)
 
 
+def setToPlusCoord(aln):
+    if aln.rStrand == "-":
+        # convert coord to + strand coord
+        alnStart, alnEnd = convert2CoorOnOppositeStrand(aln)
+    else:
+        # do nothing
+        alnStart, alnEnd = (aln.rStart, aln.rEnd)
+    return alnStart, alnEnd
+
+
 def getIntronCoord(readStrand, aln1, aln2):
     """
     Get which strand of read is aligned (readStrand) and its two alignments.
