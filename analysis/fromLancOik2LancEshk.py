@@ -33,7 +33,7 @@ def noOverlap(aln1, aln2):
         else:
             return False
     else:
-        return False
+        return True
 
 
 def meetAtPoint(aln1, aln2):
@@ -99,6 +99,7 @@ def main(oneOik2lancAlignmentFile, esh2lancAlignmentFile, outputDirPath):
     oik2lancAlns = []
     for aln in getAln(oik2lancAlnFileHandle):
         oik2lancAlns.append(aln)
+        # print(aln._MAF())
 
     # sort oik2lancAlns by reference's coordinates
     # assuming ref's strand is always "+"
@@ -106,43 +107,59 @@ def main(oneOik2lancAlignmentFile, esh2lancAlignmentFile, outputDirPath):
 
     esh2lancAlns = []
     i = 0
-    for esh2lanc in getAln(esh2lancAlnFileHandle):
+    for j, esh2lanc in enumerate(getAln(esh2lancAlnFileHandle)):
+        # print(esh2lanc._MAF())
         if i < len(oik2lancAlns) and (
             noOverlap(esh2lanc, oik2lancAlns[i])
             or meetAtPoint(esh2lanc, oik2lancAlns[i])
         ):
+            # print("j = ", j)
+            # print("noOverlap, meetAtPoint")
             continue
         elif i < len(oik2lancAlns) and (
             exactMatch(esh2lanc, oik2lancAlns[i])
             or oneIncludesTheOther(esh2lanc, oik2lancAlns[i])
             or overlap(esh2lanc, oik2lancAlns[i])
         ):
+            # print("exactMatch, oneIncludesTheOther, overlap")
             esh2lancAlns.append(esh2lanc)
         elif i < len(oik2lancAlns):
+            # print(esh2lanc._MAF())
+            # print(oik2lancAlns[i]._MAF())
+            # print("i = ", i)
+            # print("i += 1")
             i += 1
         else:
             break
 
-    p1 = subprocess.run(["ls", outputDirPath], capture_output=True)
-    if p1.returncode != 0:
-        subprocess.run(["mkdir", outputDirPath])
-        subprocess.run(["mkdir", outputDirPath + "/MAF"])
+    if len(esh2lancAlns) > 0:
+        # output to a .maf file
+        p1 = subprocess.run(["ls", outputDirPath], capture_output=True)
+        if p1.returncode != 0:
+            subprocess.run(["mkdir", outputDirPath])
+            subprocess.run(["mkdir", outputDirPath + "/MAF"])
+        else:
+            pass
+
+        # convet to + strand coord
+        firstElemStart = setToPlusCoord(oik2lancAlns[0])[0]
+        # print('firstStart: ', firstElemStart)
+        lastElemEnd = setToPlusCoord(oik2lancAlns[-1])[1]
+        # print('lastEnd: ', lastElemEnd)
+        mafFileName = (
+            oik2lancAlns[0].rID
+            + "_"
+            + str(firstElemStart)
+            + "-"
+            + str(lastElemEnd)
+            + ".maf"
+        )
+
+        with open(outputDirPath + "/MAF/" + mafFileName, "w") as f:
+            for aln in esh2lancAlns:
+                f.write(aln._MAF())
     else:
         pass
-
-    # convet to + strand coord
-    firstElemStart = setToPlusCoord(oik2lancAlns[0])[0]
-    # print('firstStart: ', firstElemStart)
-    lastElemEnd = setToPlusCoord(oik2lancAlns[-1])[1]
-    # print('lastEnd: ', lastElemEnd)
-    mafFileName = (
-        oik2lancAlns[0].rID
-        + "_"
-        + str(firstElemStart)
-        + "-"
-        + str(lastElemEnd)
-        + ".maf"
-    )
 
 
 if __name__ == "__main__":
@@ -151,18 +168,22 @@ if __name__ == "__main__":
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "oneOik2lancAlignementFile",
+        "oneOik2lancAlignmentFile",
         help="an alignment .maf file of oik-to-lanc \
                         (a group of maf entries close to each other on oik)",
     )
     parser.add_argument(
-        "esh2lancAlignmentFile",
+        "esh2lancAlignmentFile_sorted",
         help="a whole alignment .maf file of cmil-to-lanc \
-                                sorted by lanc's coordinates",
+                                SORTED by lanc's coordinates",
     )
     parser.add_argument("outputDirPath", help="a path of outputDirectory")
     args = parser.parse_args()
     """
     MAIN
     """
-    main(args.oneOik2lancAlignmentFile, args.esh2lancAlignmentFile, args.outputDirPath)
+    main(
+        args.oneOik2lancAlignmentFile,
+        args.esh2lancAlignmentFile_sorted,
+        args.outputDirPath,
+    )
