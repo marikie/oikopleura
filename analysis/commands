@@ -436,3 +436,10 @@ python sortAlignmentsByQueryCoord.py ~/biohazard/data/lanc_eshark_last/eachEShar
 # September 26, 2023
 # sort alignments by reference coordinates 
 python sortAlignmentsByRefCoord.py ~/oikopleura/lanc_eshark_last/eachESharkPart_OnePartInLanc_alignment_20230919.maf
+
+# October 3, 2023
+# on my laptop
+# fromLancOik2LancEshk.py
+ls ~/biohazard/data/lanc_oik_last/searchAlignedSegmentsClose2EachOther_from_eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery_20230903/diffOnRef_sameOnQuery/MAF/ | xargs -I@ python ~/biohazard/oikopleura/analysis/fromLancOik2LancEshk.py ~/biohazard/data/lanc_oik_last/searchAlignedSegmentsClose2EachOther_from_eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery_20230903/diffOnRef_sameOnQuery/MAF/@ ~/biohazard/data/lanc_eshark_last/eachESharkPart_OnePartInLanc_alignment_20230919_sortedByRef.maf ~/biohazard/data/lanc_eshark_last/fromLancOik2LancEshk_diffOnRef_sameOnQuery_inLancOik_20231003
+# mafs2dotplots.py
+python mafs2dotplots.py ~/biohazard/data/lanc_eshark_last/fromLancOik2LancEshk_diffOnRef_sameOnQuery_inLancOik_20231003 ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/biohazard/data/elephantShark/ncbi_dataset/data/GCF_018977255.1/genomic.gff
