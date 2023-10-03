@@ -10,8 +10,17 @@ Output:
 """
 import argparse
 import subprocess
+import os
 from Util import getAln
 from Util import setToPlusCoord
+
+
+def start(aln):
+    return (aln.gChr, aln.gStart)
+
+
+def end(aln):
+    return (aln.gChr, aln.gEnd)
 
 
 def s1(aln1, aln2):
@@ -96,43 +105,54 @@ def main(oneOik2lancAlignmentFile, esh2lancAlignmentFile, outputDirPath):
     oik2lancAlnFileHandle = open(oneOik2lancAlignmentFile)
     esh2lancAlnFileHandle = open(esh2lancAlignmentFile)
 
+    print("loading oik2lancAlns")
     oik2lancAlns = []
     for aln in getAln(oik2lancAlnFileHandle):
         oik2lancAlns.append(aln)
         # print(aln._MAF())
-
     # sort oik2lancAlns by reference's coordinates
     # assuming ref's strand is always "+"
     oik2lancAlns.sort(key=lambda a: (a.gChr, a.gStart, a.gEnd))
 
+    print("loading esh2lancAlns")
+    # ! assuming esh2lancAlignmentFile is already SORTED !
     esh2lancAlns = []
-    i = 0
-    for j, esh2lanc in enumerate(getAln(esh2lancAlnFileHandle)):
-        # print(esh2lanc._MAF())
-        if i < len(oik2lancAlns) and (
-            noOverlap(esh2lanc, oik2lancAlns[i])
-            or meetAtPoint(esh2lanc, oik2lancAlns[i])
-        ):
-            # print("j = ", j)
-            # print("noOverlap, meetAtPoint")
-            continue
-        elif i < len(oik2lancAlns) and (
-            exactMatch(esh2lanc, oik2lancAlns[i])
-            or oneIncludesTheOther(esh2lanc, oik2lancAlns[i])
-            or overlap(esh2lanc, oik2lancAlns[i])
-        ):
-            # print("exactMatch, oneIncludesTheOther, overlap")
-            esh2lancAlns.append(esh2lanc)
-        elif i < len(oik2lancAlns):
-            # print(esh2lanc._MAF())
-            # print(oik2lancAlns[i]._MAF())
-            # print("i = ", i)
-            # print("i += 1")
-            i += 1
-        else:
-            break
+    for aln in getAln(esh2lancAlnFileHandle):
+        esh2lancAlns.append(aln)
 
-    if len(esh2lancAlns) > 0:
+    esh2lancAlns_toMAF = []
+    j = 0
+    for i in range(len(oik2lancAlns)):
+        while j < len(esh2lancAlns) and end(esh2lancAlns[j]) <= start(oik2lancAlns[i]):
+            # print("FIRST WHILE")
+            # print("i = ", i)
+            # print("j = ", j)
+            # print("eshark")
+            # print(esh2lancAlns[j]._MAF())
+            # print("oik")
+            # print(oik2lancAlns[i]._MAF())
+            j += 1
+        k = j
+        while k < len(esh2lancAlns) and start(esh2lancAlns[k]) < end(oik2lancAlns[i]):
+            if (
+                exactMatch(esh2lancAlns[k], oik2lancAlns[i])
+                or oneIncludesTheOther(esh2lancAlns[k], oik2lancAlns[i])
+                or overlap(esh2lancAlns[k], oik2lancAlns[i])
+            ):
+                # print("OVERLAP")
+                # print("i = ", i)
+                # print("j = ", j)
+                # print("k = ", k)
+                # print("eshark")
+                # print(esh2lancAlns[j]._MAF())
+                # print("oik")
+                # print(oik2lancAlns[i]._MAF())
+                esh2lancAlns_toMAF.append(esh2lancAlns[k])
+            else:
+                raise Exception("no overlap")
+            k += 1
+
+    if len(esh2lancAlns_toMAF) > 0:
         # output to a .maf file
         p1 = subprocess.run(["ls", outputDirPath], capture_output=True)
         if p1.returncode != 0:
@@ -141,22 +161,23 @@ def main(oneOik2lancAlignmentFile, esh2lancAlignmentFile, outputDirPath):
         else:
             pass
 
-        # convet to + strand coord
-        firstElemStart = setToPlusCoord(oik2lancAlns[0])[0]
-        # print('firstStart: ', firstElemStart)
-        lastElemEnd = setToPlusCoord(oik2lancAlns[-1])[1]
-        # print('lastEnd: ', lastElemEnd)
-        mafFileName = (
-            oik2lancAlns[0].rID
-            + "_"
-            + str(firstElemStart)
-            + "-"
-            + str(lastElemEnd)
-            + ".maf"
-        )
+        # # convet to + strand coord
+        # firstElemStart = setToPlusCoord(oik2lancAlns[0])[0]
+        # # print('firstStart: ', firstElemStart)
+        # lastElemEnd = setToPlusCoord(oik2lancAlns[-1])[1]
+        # # print('lastEnd: ', lastElemEnd)
+        # mafFileName = (
+        #     oik2lancAlns[0].rID
+        #     + "_"
+        #     + str(firstElemStart)
+        #     + "-"
+        #     + str(lastElemEnd)
+        #     + ".maf"
+        # )
+        mafFileName = os.path.basename(oneOik2lancAlignmentFile)
 
         with open(outputDirPath + "/MAF/" + mafFileName, "w") as f:
-            for aln in esh2lancAlns:
+            for aln in esh2lancAlns_toMAF:
                 f.write(aln._MAF())
     else:
         pass
