@@ -2,7 +2,10 @@
 * Assuming no overlapped segments on the query
 Categorize aligned segments based on query's annotation.
 Input:
-    - .maf file sorted by query's + strand coord
+    - .maf file
+    - .gff file of the query
+    - .gff file of the reference
+    - output dir path
 
 Output:
     - sameGeneQry_allNoGeneRef
@@ -20,18 +23,16 @@ def writeMAFandPNG(outMAFDirPath, outPNGDirPath, fileBasename):
     pass
 
 
-def getSameGeneGroup(sortedAlnFile, annoFile_Qry, annoFile_Ref):
-    """
-    Assuming sortedAlnFile is already sorted by query's + strand coord
-    """
-    alnFileHandle = open(sortedAlnFile)
-    annoQryHandle = open(annoFile_Qry)
+def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
+    alnFileHandle = open(alnFile)
+    annoFile_QryHandle = open(annoFile_Qry)
 
-    sameGeneGroup = []
+    geneID_alnList = {}
+    for aln in getAln(alnFileHandle):
+        for line in annoFile_QryHandle:
+            if overlap(aln, line):
+                geneID_alnList[geneID] = geneID_alnList.get(geneID, []).append(aln)
 
-
-
-def outputMAFandDotplotFiles(sortedAlnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
     for sameGeneGroup, genesOnRef in getSameGeneGroup(sortedAlnFile, annoFile_Qry):
         firstElmStart = setToPlusCoord(sameGeneGroup[0])[0]
         lastElmEnd = setToPlusCoord(sameGeneGroup[-1])[1]
@@ -62,11 +63,7 @@ if __name__ == "__main__":
     File Parsing
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "sortedAlnFile",
-        help="a .maf alignment file \
-                                sorted by query + strand coordinates",
-    )
+    parser.add_argument("alnFile", help="a .maf alignment file")
     parser.add_argument(
         "annoFile_Qry",
         help="an annotation file for the 2nd \
@@ -83,5 +80,5 @@ if __name__ == "__main__":
     MAIN
     """
     outputMAFandDotplotFiles(
-        args.sortedAlnFile, args.annoFile_Qry, args.annoFile_Ref, args.outputDirPath
+        args.alnFile, args.annoFile_Qry, args.annoFile_Ref, args.outputDirPath
     )
