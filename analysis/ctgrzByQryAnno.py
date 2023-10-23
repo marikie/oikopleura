@@ -25,52 +25,10 @@ def getSameGeneGroup(sortedAlnFile, annoFile_Qry, annoFile_Ref):
     Assuming sortedAlnFile is already sorted by query's + strand coord
     """
     alnFileHandle = open(sortedAlnFile)
+    annoQryHandle = open(annoFile_Qry)
 
-    prvGene = None
     sameGeneGroup = []
-    for currAln in getAln(alnFileHandle):
-        currGene = getGene(currAln, annoFile_Qry)
-        if prvGene == currGene:
-            # prvGene == currGene == None
-            if prvGene == None:
-                # do nothing
-                pass
-            # prvGene == currGene == geneA
-            else:
-                # add currAln
-                sameGeneGroup.append(currAln)
-                # no need to update prvGene
-        # prvGene != currGene
-        else:
-            # prvGene == None, currGene == geneA
-            if prvGene == None:
-                # add currAln
-                sameGeneGroup.append(currAln)
-                # update prvGene
-                prvGene = currGene
-            # prvGene == geneA, currGene == None
-            elif currGene == None:
-                if len(sameGeneGroup) > 1:
-                    yield sameGeneGroup
-                else:
-                    # do not yield
-                    pass
-                # reset sameGeneGroup
-                sameGeneGroup = []
-                # do not add currAln
-                # update prvGene
-                prvGene = currGene
-            # prvGene == geneA, currGene == geneB
-            else:
-                if len(sameGeneGroup) > 1:
-                    yield sameGeneGroup
-                else:
-                    # do not yield
-                    pass
-                # reset sameGeneGroup and add currAln
-                sameGeneGroup = [currAln]
-                # update prvGene
-                prvGene = currGene
+
 
 
 def outputMAFandDotplotFiles(sortedAlnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
