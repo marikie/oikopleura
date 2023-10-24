@@ -23,15 +23,31 @@ def writeMAFandPNG(outMAFDirPath, outPNGDirPath, fileBasename):
     pass
 
 
-def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
+def geneID_alnList_dict(alnFile, annoFile_Qry):
     alnFileHandle = open(alnFile)
     annoFile_QryHandle = open(annoFile_Qry)
-
     geneID_alnList = {}
     for aln in getAln(alnFileHandle):
         for line in annoFile_QryHandle:
-            if overlap(aln, line):
-                geneID_alnList[geneID] = geneID_alnList.get(geneID, []).append(aln)
+            fields = line.rstrip().split("\t")
+            feature = fields[2]  # gene, mRNA, CDS, intron, etc.
+            if feature == "CDS":
+                chrName = fields[0]  # chr1, chr2, etc.
+                beg = int(fields[3]) - 1  # from 1-base to inbetween coord
+                end = int(fields[4])
+                attr = fields[8]
+                if ";" in attr or "=" in attr:
+                    parts = attr.rstrip(";").split(";")
+                    attrDict = dict([(p.split("=")[0], p.split("=")[1]) for p in parts])
+                    geneID = attrDict["ID"].split(".")
+                if overlap(aln, (chrName, beg, end)):
+                    geneID_alnList[geneID] = geneID_alnList.get(geneID, []).append(aln)
+                else:
+                    pass
+
+
+def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
+    geneID_alnList = geneID_alnList_dict(alnFile, annoFile_Qry)
 
     for sameGeneGroup, genesOnRef in getSameGeneGroup(sortedAlnFile, annoFile_Qry):
         firstElmStart = setToPlusCoord(sameGeneGroup[0])[0]
