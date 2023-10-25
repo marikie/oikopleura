@@ -327,3 +327,89 @@ def getSplitAlignmentData(alignmentFile):
     #          str(intronRight[1]), intronRight[2])
 
     return alignments_list
+
+
+def start(aln):
+    return (aln.gChr, aln.gStart)
+
+
+def end(aln):
+    return (aln.gChr, aln.gEnd)
+
+
+def s1(a1, b1, a2, b2):
+    return (a1 - a2) * (b1 - b2)
+
+
+def s2(a1, b1, a2, b2):
+    return (a1 - b2) * (b1 - a2)
+
+
+def noOverlap(chr1, a1, b1, chr2, a2, b2):
+    """
+    compare reference coordinates
+    check if they don't overlap at all
+    """
+    if chr1 == chr2:
+        if s1(a1, b1, a2, b2) > 0 and s2(a1, b1, a2, b2) > 0:
+            return True
+        else:
+            return False
+    else:
+        return True
+
+
+def meetAtPoint(chr1, a1, b1, chr2, a2, b2):
+    """
+    compare reference coordinates
+    check if they meet at a point
+    """
+    if chr1 == chr2:
+        if s1(a1, b1, a2, b2) > 0 and s2(a1, b1, a2, b2) == 0:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def exactMatch(chr1, a1, b1, chr2, a2, b2):
+    """
+    compare reference coordinates
+    check if they match exactly
+    """
+    if chr1 == chr2:
+        if s1(a1, b1, a2, b2) == 0 and s2(a1, b1, a2, b2) < 0:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def oneIncludesTheOther(chr1, a1, b1, chr2, a2, b2):
+    """
+    compare reference coordinates
+    check if one includes the other
+    """
+    if chr1 == chr2:
+        if s1(a1, b1, a2, b2) <= 0 and s2(a1, b1, a2, b2) < 0:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def overlap(chr1, a1, b1, chr2, a2, b2):
+    """
+    compare reference coordinates
+    check if they overlap
+    """
+    if chr1 == chr2:
+        if s1(a1, b1, a2, b2) > 0 and s2(a1, b1, a2, b2) <= 0:
+            return True
+        else:
+            return False
+    else:
+        return False
