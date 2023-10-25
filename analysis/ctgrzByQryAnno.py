@@ -15,35 +15,65 @@ Output:
     (- Others) !! This is supposed to be empty
 """
 import argparse
+from collections import namedtuple as nt
 from Util import setToPlusCoord
 from Util import getAln
+from Util import noOverlap, meetAtPoint
 
 
 def writeMAFandPNG(outMAFDirPath, outPNGDirPath, fileBasename):
     pass
 
 
+def overlap(aln, anno):
+    """
+    If query's coord overlap with annotation line,
+    return True
+    """
+    chr1 = aln.rID
+    a1 = aln.rStart
+    b1 = aln.rEnd
+    chr2 = anno.chr
+    a2 = anno.beg
+    b2 = anno.end
+    if chr1 == chr2:
+        if not noOverlap(chr1, a1, b1, chr2, a2, b2) and not meetAtPoint(
+            chr1, a1, b1, chr2, a2, b2
+        ):
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
 def geneID_alnList_dict(alnFile, annoFile_Qry):
     alnFileHandle = open(alnFile)
-    annoFile_QryHandle = open(annoFile_Qry)
+    with open(annoFile_Qry) as f:
+        annoLines = f.readlines()
+
+    AnnoCoord = nt("AnnoCoord", ["chr", "beg", "end"])
     geneID_alnList = {}
     for aln in getAln(alnFileHandle):
-        for line in annoFile_QryHandle:
+        for line in annoLines:
             fields = line.rstrip().split("\t")
             feature = fields[2]  # gene, mRNA, CDS, intron, etc.
             if feature == "CDS":
                 chrName = fields[0]  # chr1, chr2, etc.
                 beg = int(fields[3]) - 1  # from 1-base to inbetween coord
                 end = int(fields[4])
+                anno = AnnoCoord(chrName, beg, end)
                 attr = fields[8]
-                if ";" in attr or "=" in attr:
-                    parts = attr.rstrip(";").split(";")
-                    attrDict = dict([(p.split("=")[0], p.split("=")[1]) for p in parts])
-                    geneID = attrDict["ID"].split(".")
-                if overlap(aln, (chrName, beg, end)):
+                parts = attr.rstrip(";").split(";")
+                attrDict = dict([(p.split("=")[0], p.split("=")[1]) for p in parts])
+                geneID = ".".join(attrDict["ID"].split(".")[-4:-2])
+                if overlap(aln, anno):
                     geneID_alnList[geneID] = geneID_alnList.get(geneID, []).append(aln)
                 else:
                     pass
+            else:
+                pass
+    return geneID_alnList
 
 
 def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
