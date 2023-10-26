@@ -25,17 +25,17 @@ def writeMAFandPNG(outMAFDirPath, outPNGDirPath, fileBasename):
     pass
 
 
-def overlap(aln, anno):
+def overlap(alnCoord, annoCoord):
     """
     If query's coord overlap with annotation line,
     return True
     """
-    chr1 = aln.rID
-    a1 = aln.rStart
-    b1 = aln.rEnd
-    chr2 = anno.chr
-    a2 = anno.beg
-    b2 = anno.end
+    chr1 = alnCoord.chr
+    a1 = alnCoord.beg
+    b1 = alnCoord.end
+    chr2 = annoCoord.chr
+    a2 = annoCoord.beg
+    b2 = annoCoord.end
     if chr1 == chr2:
         if not noOverlap(chr1, a1, b1, chr2, a2, b2) and not meetAtPoint(
             chr1, a1, b1, chr2, a2, b2
@@ -53,6 +53,7 @@ def geneID_alnList_dict(alnFile, annoFile_Qry):
         annoLines = f.readlines()
 
     AnnoCoord = nt("AnnoCoord", ["chr", "beg", "end"])
+    AlnCoord = nt("AlnCoord", ["chr", "beg", "end"])  # + strand coord
     geneID_alnList = {}
     for aln in getAln(alnFileHandle):
         for line in annoLines:
@@ -62,12 +63,14 @@ def geneID_alnList_dict(alnFile, annoFile_Qry):
                 chrName = fields[0]  # chr1, chr2, etc.
                 beg = int(fields[3]) - 1  # from 1-base to inbetween coord
                 end = int(fields[4])
-                anno = AnnoCoord(chrName, beg, end)
+                annoCoord = AnnoCoord(chrName, beg, end)
                 attr = fields[8]
                 parts = attr.rstrip(";").split(";")
                 attrDict = dict([(p.split("=")[0], p.split("=")[1]) for p in parts])
                 geneID = ".".join(attrDict["ID"].split(".")[-4:-2])
-                if overlap(aln, anno):
+                alnBegPlus, alnEndPlus = setToPlusCoord(aln)
+                alnCoord = AlnCoord(aln.rID, alnBegPlus, alnEndPlus)
+                if overlap(alnCoord, annoCoord):
                     geneID_alnList[geneID] = geneID_alnList.get(geneID, []).append(aln)
                 else:
                     pass
@@ -76,28 +79,64 @@ def geneID_alnList_dict(alnFile, annoFile_Qry):
     return geneID_alnList
 
 
-def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
-    geneID_alnList = geneID_alnList_dict(alnFile, annoFile_Qry)
+def aln_geneID_dict(alnFile, annoFile_Ref):
+    alnFileHandle = open(alnFile)
+    with open(annoFile_Ref) as f:
+        annoLines = f.readlines()
 
-    for sameGeneGroup, genesOnRef in getSameGeneGroup(sortedAlnFile, annoFile_Qry):
+    AnnoCoord = nt("AnnoCoord", ["chr", "beg", "end"])
+    AlnCoord = nt("AlnCoord", ["chr", "beg", "end"])  # + strand coord
+    aln_refGeneID_dict = {}
+    for aln in getAln(alnFileHandle):
+        for line in annoLines:
+            fields = line.rstrip().split("\t")
+            feature = fields[2]  # gene, mRNA, CDS, intron, etc.
+            if feature == "CDS":
+                chrName = fields[0]  # chr1, chr2, etc.
+                beg = int(fields[3]) - 1  # from 1-base to inbetween coord
+                end = int(fields[4])
+                annoCoord = AnnoCoord(chrName, beg, end)
+                attr = fields[8]
+                parts = attr.rstrip(";").split(";")
+                attrDict = dict([(p.split("=")[0], p.split("=")[1]) for p in parts])
+                geneID = attrDict["gene"]
+                # Assuming all ref coords are on the + strand
+                alnCoord = AlnCoord(aln.gChr, aln.gStart, aln.gEnd)
+                if overlap(alnCoord, annoCoord):
+                    aln_refGeneID_dict[aln] = aln_refGeneID_dict.get(aln, set()).add(
+                        geneID
+                    )
+                else:
+                    pass
+            else:
+                pass
+
+
+def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
+    qryGeneID_alnList_dict = geneID_alnList_dict(alnFile, annoFile_Qry)
+    aln_refGeneID_dict = aln_geneID_dict(alnFile, annoFile_Ref)
+
+    for alnGroup in qryGeneID_alnList_dict.values():
+        refCTGR = refCategory(alnGroup, aln_refGeneID_dict)
+
         firstElmStart = setToPlusCoord(sameGeneGroup[0])[0]
         lastElmEnd = setToPlusCoord(sameGeneGroup[-1])[1]
         # file name without extention
         fileBasename = (
             sameGeneGroup[0].rID + "-" + str(firstElmStart) + "-" + str(lastElmEnd)
         )
-        if genesOnRef == "allNoGene":
-            outMAFDirPath = outRootDirPath + "/sameGeneQry_allNoGeneRef/MAF"
-            outPNGDirPath = outRootDirPath + "/sameGeneQry_allNoGeneRef/PNG"
-        elif genesOnRef == "sameGene":
-            outMAFDirPath = outRootDirPath + "/sameGeneQry_sameGeneRef/MAF"
-            outPNGDirPath = outRootDirPath + "/sameGeneQry_sameGeneRef/PNG"
-        elif genesOnRef == "diffGene_wtNoGene":
-            outMAFDirPath = outRootDirPath + "/sameGeneQry_diffGeneRef_wtNoGene/MAF"
-            outPNGDirPath = outRootDirPath + "/sameGeneQry_diffGeneRef_wtNoGene/PNG"
-        elif genesOnRef == "diffGene_pure":
-            outMAFDirPath = outRootDirPath + "/sameGeneQry_diffGeneRef_pure/MAF"
-            outPNGDirPath = outRootDirPath + "/sameGeneQry_diffGeneRef_pure/PNG"
+        if refCTGR == "sameGene":
+            outMAFDirPath = outRootDirPath + "/sameGeneRef/MAF"
+            outPNGDirPath = outRootDirPath + "/sameGeneRef/PNG"
+        elif refCTGR == "diffGene_icldNoGene":
+            outMAFDirPath = outRootDirPath + "/diffGeneRef_icldNoGene/MAF"
+            outPNGDirPath = outRootDirPath + "/diffGeneRef_icldNoGene/PNG"
+        elif refCTGR == "diffGene_noNoGene":
+            outMAFDirPath = outRootDirPath + "/diffGeneRef_noNoGene/MAF"
+            outPNGDirPath = outRootDirPath + "/diffGeneRef_noNoGene/PNG"
+        elif refCTGR == "allNoGene":
+            outMAFDirPath = outRootDirPath + "/allNoGeneRef/MAF"
+            outPNGDirPath = outRootDirPath + "/allNoGeneRef/PNG"
         else:
             outMAFDirPath = outRootDirPath + "/Others/MAF"
             outPNGDirPath = outRootDirPath + "/Others/PNG"
