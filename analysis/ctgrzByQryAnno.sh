@@ -47,4 +47,9 @@ mkdir "$OUTDIRPATH/allNoGeneRef"
 mkdir "$OUTDIRPATH/allNoGeneRef/MAF"
 mkdir "$OUTDIRPATH/allNoGeneRef/PNG"
 
+# These should be empty
+mkdir "$OUTDIRPATH/Others"
+mkdir "$OUTDIRPATH/Others/MAF"
+mkdir "$OUTDIRPATH/Others/PNG"
+
 python ctgrzByQryAnno.py $mafFile_chr $qryAnnoFile_chr $refAnnoFile $OUTDIRPATH
