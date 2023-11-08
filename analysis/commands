@@ -447,3 +447,30 @@ ls ~/oikopleura/lanc_oik_last/searchAlignedSegmentsClose2EachOther_from_eachOikP
 ls ~/biohazard/data/lanc_oik_last/searchAlignedSegmentsClose2EachOther_from_eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery_20230903/diffOnRef_sameOnQuery/MAF/ | xargs -I@ python ~/biohazard/oikopleura/analysis/fromLancOik2LancEshk.py ~/biohazard/data/lanc_oik_last/searchAlignedSegmentsClose2EachOther_from_eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery_20230903/diffOnRef_sameOnQuery/MAF/@ ~/biohazard/data/lanc_eshark_last/eachESharkPart_OnePartInLanc_alignment_20230919_sortedByRef.maf ~/biohazard/data/lanc_eshark_last/fromLancOik2LancEshk_diffOnRef_sameOnQuery_inLancOik_20231003
 # mafs2dotplots.py
 python mafs2dotplots.py ~/biohazard/data/lanc_eshark_last/fromLancOik2LancEshk_diffOnRef_sameOnQuery_inLancOik_20231003 ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/biohazard/data/elephantShark/ncbi_dataset/data/GCF_018977255.1/genomic.gff
+
+# November 2, 2023
+# on my laptop
+# Group aligned segments that are on the same gene's CDS 
+# .maf -> .tab
+maf-convert tab  eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf > eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.tab
+# .tab -> query coord and geneID (chr start end geneID)
+
+# November 6, 2023
+# on my laptop
+# Group aligned segments that are on the same gene's CDS
+# .maf -> .psl psl: inbetween coord
+maf-convert psl  eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf > eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.psl
+# .psl -> .bed
+awk -v OFS='\t' '{print $10, $12, $13, ".", ".", $9}' eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.psl > oik_lanc_many2one_alignedQuery_20231106.bed
+# .gff CDS oik anno -> .bed
+awk -v OFS='\t' '$3=="CDS"{print $0}' ../oikopleura/OKI2018_I69_1.0.gm.gff| awk -v OFS='\t' '{print $1, $4-1, $5, $9, ".", $7}' | awk 'BEGIN {OFS="\t"} {split($4, a, ";"); split(a[1], b, "="); split(b[2], c, "."); print $1, $2, $3, c[4]"."c[5], $5, $6}' > oik_anno_CDS_20231106.bed
+
+# add "chr_" to $1
+cat oik_lanc_many2one_alignedQuery_20231106.bed| awk 'BEGIN {OFS="\t"} {$1="chr_"$1; print}' > oik_lanc_many2one_alignedQuery_20231106_chr.bed
+cat oik_anno_CDS_20231106.bed| awk 'BEGIN {OFS="\t"} {$1="chr_"$1; print}' > oik_anno_CDS_20231106_chr.bed
+mv oik_lanc_many2one_alignedQuery_20231106_chr.bed oik_lanc_many2one_alignedQuery_20231106.bed
+mv oik_anno_CDS_20231106_chr.bed oik_anno_CDS_20231106.bed
+
+# November 8, 2023
+# make separate files according to geneID
+cat ../oik_lanc_intersect_oik_anno_20231106.out| awk '{file=$10".out"; print >> file; close(file)}'
