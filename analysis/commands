@@ -474,3 +474,39 @@ mv oik_anno_CDS_20231106_chr.bed oik_anno_CDS_20231106.bed
 # November 8, 2023
 # make separate files according to geneID
 cat ../oik_lanc_intersect_oik_anno_20231106.out| awk '{file=$10".out"; print >> file; close(file)}'
+
+# divide files by the number of lines 
+bash ~/biohazard/oikopleura/analysis/singleLinesOrMultiLines.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/temp
+#!/bin/bash
+
+# Separate files under a directory into two different directories
+# single: files with only one line
+# multiple: files with equal to or more than two lines
+
+argNum=1
+
+if [ $# -ne $argNum ]; then
+        echo "You need $argNum arguments." 1>&2
+        echo "- path to the target directory" 1>&2 # $1
+        exit 1
+fi
+
+targetDir=$1
+
+for file in $(ls $targetDir); do 
+  # echo "$file"
+  if [ -f "$file" ]; then
+    lines=$(wc -l < "$file")
+    # echo "$lines"
+    if [ "$lines" -gt 1 ]; then
+      echo "$file has $lines lines (more than 1 lines)"
+      mv "$file" $targetDir"/multiple"
+    else
+      echo "$file has $lines lines (1 or fewer lines)"
+      mv "$file" $targetDir"/single"
+    fi
+  # else
+    # echo "else"
+  fi
+done
+
