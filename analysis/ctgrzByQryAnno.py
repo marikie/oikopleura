@@ -8,27 +8,25 @@ Input:
     - output dir path
 
 Output:
-    - sameGeneQry_allNoGeneRef
-    - sameGeneQry_sameGeneRef
-    - sameGeneQry_diffGeneRef_wtNoGene
-    - sameGeneQry_diffGeneRef_pure
-    (- Others) !! This is supposed to be empty
+    .maf files under directories below:
+        - sameGeneQry_allNoGeneRef
+        - sameGeneQry_sameGeneRef
+        - sameGeneQry_diffGeneRef_wtNoGene
+        - sameGeneQry_diffGeneRef_pure
 """
 import argparse
 from collections import namedtuple as nt
 from Util import setToPlusCoord
 from Util import getAln
 from Util import noOverlap, meetAtPoint
-
-
-def writeMAFandPNG(outMAFDirPath, outPNGDirPath, fileBasename):
-    pass
+from Util import plusStrandStart, plusStrandEnd
 
 
 def overlap(alnCoord, annoCoord):
     """
     If query's coord overlap with annotation line,
     return True
+    * alnCoord is + strand coord
     """
     chr1 = alnCoord.chr
     a1 = alnCoord.beg
@@ -88,6 +86,7 @@ def aln_geneID_dict(alnFile, annoFile_Ref):
     AlnCoord = nt("AlnCoord", ["chr", "beg", "end"])  # + strand coord
     aln_refGeneID_dict = {}
     for aln in getAln(alnFileHandle):
+        flag = False
         for line in annoLines:
             fields = line.rstrip().split("\t")
             feature = fields[2]  # gene, mRNA, CDS, intron, etc.
@@ -103,6 +102,7 @@ def aln_geneID_dict(alnFile, annoFile_Ref):
                 # Assuming all ref coords are on the + strand
                 alnCoord = AlnCoord(aln.gChr, aln.gStart, aln.gEnd)
                 if overlap(alnCoord, annoCoord):
+                    flag = True
                     aln_refGeneID_dict[aln] = aln_refGeneID_dict.get(aln, set()).add(
                         geneID
                     )
@@ -110,6 +110,41 @@ def aln_geneID_dict(alnFile, annoFile_Ref):
                     pass
             else:
                 pass
+        if not flag:
+            aln_refGeneID_dict[aln] = aln_refGeneID_dict.get(aln, set()).add(None)
+        else:
+            pass
+
+
+def refCategory(alnGroup, aln_geneID_dict):
+    for aln in alnGroup:
+        geneIDset = aln_geneID_dict[aln]
+        if None not in geneIDset and len(geneIDset) == 1:
+            return "sameGene"
+        elif len(geneIDset) > 1 and None in geneIDset:
+            return "diffGene_icldNoGene"
+        elif len(geneIDset) > 1 and None not in geneIDset:
+            return "diffGene_noNoGene"
+        elif None in geneIDset and len(geneIDset) == 1:
+            return "allNoGene"
+        else:
+            raise Exception("len(geneIDset): " + str(len(geneIDset)))
+
+
+def setName(alnGroup):
+    alnGroup.sort(key=lambda a: (a.rID, plusStrandStart(a), plusStrandEnd(a)))
+    firstAlnStart = plusStrandStart(alnGroup[0])
+    lastAlnEnd = plusStrandEnd(alnGroup[-1])
+    fileName = (
+        alnGroup[0].rID + "_" + str(firstAlnStart) + "-" + str(lastAlnEnd) + ".maf"
+    )
+    return fileName
+
+
+def writeMAFs(alnGroup, outMAFDirPath, fileName):
+    with open(outMAFDirPath + "/" + fileName, "w") as f:
+        for aln in alnGroup:
+            f.write(aln._MAF())
 
 
 def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath):
@@ -117,30 +152,24 @@ def outputMAFandDotplotFiles(alnFile, annoFile_Qry, annoFile_Ref, outRootDirPath
     aln_refGeneID_dict = aln_geneID_dict(alnFile, annoFile_Ref)
 
     for alnGroup in qryGeneID_alnList_dict.values():
-        refCTGR = refCategory(alnGroup, aln_refGeneID_dict)
+        if len(alnGroup) > 1:
+            try:
+                refCTGR = refCategory(alnGroup, aln_refGeneID_dict)
+            except:
+                print("Other category")
 
-        firstElmStart = setToPlusCoord(sameGeneGroup[0])[0]
-        lastElmEnd = setToPlusCoord(sameGeneGroup[-1])[1]
-        # file name without extention
-        fileBasename = (
-            sameGeneGroup[0].rID + "-" + str(firstElmStart) + "-" + str(lastElmEnd)
-        )
-        if refCTGR == "sameGene":
-            outMAFDirPath = outRootDirPath + "/sameGeneRef/MAF"
-            outPNGDirPath = outRootDirPath + "/sameGeneRef/PNG"
-        elif refCTGR == "diffGene_icldNoGene":
-            outMAFDirPath = outRootDirPath + "/diffGeneRef_icldNoGene/MAF"
-            outPNGDirPath = outRootDirPath + "/diffGeneRef_icldNoGene/PNG"
-        elif refCTGR == "diffGene_noNoGene":
-            outMAFDirPath = outRootDirPath + "/diffGeneRef_noNoGene/MAF"
-            outPNGDirPath = outRootDirPath + "/diffGeneRef_noNoGene/PNG"
-        elif refCTGR == "allNoGene":
-            outMAFDirPath = outRootDirPath + "/allNoGeneRef/MAF"
-            outPNGDirPath = outRootDirPath + "/allNoGeneRef/PNG"
+            fileName = setName(alnGroup)
+            if refCTGR == "sameGene":
+                outMAFDirPath = outRootDirPath + "/sameGeneRef/MAF"
+            elif refCTGR == "diffGene_icldNoGene":
+                outMAFDirPath = outRootDirPath + "/diffGeneRef_icldNoGene/MAF"
+            elif refCTGR == "diffGene_noNoGene":
+                outMAFDirPath = outRootDirPath + "/diffGeneRef_noNoGene/MAF"
+            else:  # refCTGR == "allNoGene"
+                outMAFDirPath = outRootDirPath + "/allNoGeneRef/MAF"
+            writeMAFs(alnGroup, outMAFDirPath, fileName)
         else:
-            outMAFDirPath = outRootDirPath + "/Others/MAF"
-            outPNGDirPath = outRootDirPath + "/Others/PNG"
-        writeMAFandPNG(outMAFDirPath, outPNGDirPath, fileBasename)
+            pass
 
 
 if __name__ == "__main__":
