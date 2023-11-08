@@ -127,6 +127,20 @@ def convert2CoorOnOppositeStrand(alnObj):
     return (start, end)
 
 
+def plusStrandStart(aln):
+    if aln.rStrand == "+":
+        return aln.rStart
+    else:
+        return convert2CoorOnOppositeStrand(aln)[0]
+
+
+def plusStrandEnd(aln):
+    if aln.rStrand == "+":
+        return aln.rEnd
+    else:
+        return convert2CoorOnOppositeStrand(aln)[1]
+
+
 def setToPlusCoord(aln):
     if aln.rStrand == "-":
         # convert coord to + strand coord
