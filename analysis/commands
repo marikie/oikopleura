@@ -471,6 +471,9 @@ cat oik_anno_CDS_20231106.bed| awk 'BEGIN {OFS="\t"} {$1="chr_"$1; print}' > oik
 mv oik_lanc_many2one_alignedQuery_20231106_chr.bed oik_lanc_many2one_alignedQuery_20231106.bed
 mv oik_anno_CDS_20231106_chr.bed oik_anno_CDS_20231106.bed
 
+# bedtools 
+bedtools intersect -wa -wb -a oik_lanc_many2one_alignedQuery_20231106.bed -b oik_anno_CDS_20231106.bed > oik_lanc_intersect_oik_anno_20231106.out
+
 # November 8, 2023
 # make separate files according to geneID
 cat ../oik_lanc_intersect_oik_anno_20231106.out| awk '{file=$10".out"; print >> file; close(file)}'
@@ -510,3 +513,30 @@ for file in $(ls $targetDir); do
   fi
 done
 
+# November 10, 2023
+# .psl -> query coord, strand, reference coord 
+awk -v OFS="\t" '{print "chr_"$10, $12, $13, $9, "chr_"$14, $16, $17}' eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.psl > oik_lanc_many2one_alignedQuery_20231110.bed
+# single or multiple
+bash ~/biohazard/oikopleura/analysis/singleLinesOrMultiLines.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/
+
+# rearrange to bring the ref coord at first
+bash ~/biohazard/oikopleura/analysis/rearrange2refFirst.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/multiAlnSegOnTheSameQryGene
+#!/bin/bash
+
+# rearrange to show the coord of ref at left
+
+argNum=1
+
+if [ $# -ne $argNum ]; then
+        echo "You need $argNum arguments." 1>&2
+        echo "- path to the target directory" 1>&2 # $1
+        exit 1
+fi
+
+targetDir=$1
+
+for file in $(ls $targetDir); do 
+  if [ -f "$file" ]; then
+    awk -v OFS="\t" '{print $5, $6, $7, $1, $2, $3, $4, $8, $9, $10, $11, $13}' $file > $targetDir"/ref.$file"
+  fi
+done
