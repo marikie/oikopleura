@@ -25,10 +25,10 @@ for file in $(ls ranno*); do
 
     if [ "$numOfGenes" -gt 1 ]; then
       echo "$file has $numOfGenes different genes"
-      mv "$file" $targetDir"/diffGeneRef"
+      mv "$file" $targetDir"/diffRefGene"
     else
       echo "$file has $numOfGenes gene"
-      mv "$file" $targetDir"/sameGeneRef"
+      mv "$file" $targetDir"/sameRefGene"
     fi
   # else
     # echo "else"
