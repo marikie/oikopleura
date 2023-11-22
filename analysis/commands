@@ -480,22 +480,9 @@ cat ../oik_lanc_intersect_oik_anno_20231106.out| awk '{file=$10".out"; print >> 
 
 # divide files by the number of lines 
 bash ~/biohazard/oikopleura/analysis/singleLinesOrMultiLines.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/temp
-#!/bin/bash
-
 # Separate files under a directory into two different directories
 # single: files with only one line
 # multiple: files with equal to or more than two lines
-
-argNum=1
-
-if [ $# -ne $argNum ]; then
-        echo "You need $argNum arguments." 1>&2
-        echo "- path to the target directory" 1>&2 # $1
-        exit 1
-fi
-
-targetDir=$1
-
 for file in $(ls $targetDir); do 
   # echo "$file"
   if [ -f "$file" ]; then
@@ -521,22 +508,28 @@ bash ~/biohazard/oikopleura/analysis/singleLinesOrMultiLines.sh ~/biohazard/data
 
 # rearrange to bring the ref coord at first
 bash ~/biohazard/oikopleura/analysis/rearrange2refFirst.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/multiAlnSegOnTheSameQryGene
-#!/bin/bash
-
 # rearrange to show the coord of ref at left
-
-argNum=1
-
-if [ $# -ne $argNum ]; then
-        echo "You need $argNum arguments." 1>&2
-        echo "- path to the target directory" 1>&2 # $1
-        exit 1
-fi
-
-targetDir=$1
-
 for file in $(ls $targetDir); do 
   if [ -f "$file" ]; then
     awk -v OFS="\t" '{print $5, $6, $7, $1, $2, $3, $4, $8, $9, $10, $11, $13}' $file > $targetDir"/ref.$file"
+  fi
+done
+
+# November 20, 2023
+# lancelet annotation: .gff -> .bed
+cat ../lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff | awk -v OFS="\t" '$3=="CDS"{print $0}' | awk -v FS="\t" -v OFS="\t" '{print "chr_"$1, $4, $5, $7, $9}' | awk -v FS="\t" -v OFS="\t" -F';|=|\t' '{for (i=1; i<NF; i+=2) {if ($i == "gene") print $1, $2, $3, $4, $(i+1)}}' > lanc_anno_CDS_20231120.bed
+
+# (the versatile code by Liu-san)
+cat /home/mrk/oikopleura/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff | awk -v OFS="\t" -F';|=|\t' '$3=="CDS"{for(i=9; i<NF; i+=2) {if ($i == "gene") print "chr_"$1, $4, $5, $7, $(i+1)}}' | less
+
+# November 21, 2023
+# lancelet annotation just reordered columns
+cat lanc_anno_CDS_20231120.bed | awk -v OFS="\t" '{print $1, $2, $3, $5, $4}' > lanc_anno_CDS_20231121.bed
+
+# bedtools intersect: ref coord in aligned segments intersect with ref annotation 
+./overlappingRefAnnoToRefCoord.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/multiAlnSegOnTheSameQryGene
+for file in $(ls ref*); do 
+  if [ -f "$file" ]; then
+    bedtools intersect -wa -wb -a $file -b ../../lanc_anno_CDS_20231121.bed > "ranno."$file
   fi
 done
