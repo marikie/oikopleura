@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Separate files under a directory to different directories
+# sameGeneRef: files with the same gene annotation on the reference
+# diffGeneRef: files wit˙ the different gene annotations on the reference
+
+argNum=1
+
+if [ $# -ne $argNum ]; then
+        echo "You need $argNum arguments." 1>&2
+        echo "- path to the target directory" 1>&2 # $1
+        exit 1
+fi
+
+targetDir=$1
+
+cd $targetDir
+mkdir sameGeneRef
+mkdir diffGeneRef
+
+for file in $(ls ranno*); do 
+  # echo "$file"
+  if [ -f "$file" ]; then
+    numOfGenes=$(cat $file | awk '{print $16}' | uniq | wc -l)
+
+    if [ "$numOfGenes" -gt 1 ]; then
+      echo "$file has $numOfGenes different genes"
+      mv "$file" $targetDir"/diffGeneRef"
+    else
+      echo "$file has $numOfGenes gene"
+      mv "$file" $targetDir"/sameGeneRef"
+    fi
+  # else
+    # echo "else"
+  fi
+done
