@@ -554,3 +554,44 @@ for file in $(ls ranno*); do
     # echo "else"
   fi
 done
+
+# November 22, 2023
+# .bed -> .psl
+./fromBED2PSL.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/multiAlnSegOnTheSameQryGene/diffRefGene
+for file in $(ls ranno*\.out); do 
+  # echo "$file"
+  if [ -f "$file" ]; then
+    basename="$(basename "$file" ".out")"
+    pslFile="$basename.psl"
+    
+    # echo "$pslFile"
+    awk 'NR == FNR {a[$4, $5, $6, $1, $2, $3]; next} ("chr_"$10, $12, $13, "chr_"$14, $16, $17) in a' $file ../../../eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.psl > $pslFile
+  fi
+done
+
+# .psl -> .png
+./fromPSL2Dotplot.sh ~/biohazard/data/lanc_oik_last/oik_lanc_intersect_oik_anno/multiAlnSegOnTheSameQryGene/diffRefGene
+for file in $(ls ranno*\.psl); do 
+  # echo "$file"
+  if [ -f "$file" ]; then
+    basename="$(basename "$file" ".psl")"
+    pngFile="$basename.png"
+    
+    # echo "$pslFile"
+    python ~/biohazard/oikopleura/last/last-dotplot_mariko_1513.py --sort1=3 --strands1=1 --border-color=silver --rot1=v --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $file $pngFile
+  fi
+done
+
+# November 28, 2023
+# divide into directories
+mkdir OUT
+mkdir PSL
+mkdir PNG
+mv *.out OUT
+mv *.psl PSL
+mv *.png PNG
+
+# .gff -> lanc_anno_gene.bed
+awk -v OFS="\t" -F'\t|=|;' '$3=="gene"{for(i=9; i<NF; i+=2){if ($i=="gene") print "chr_"$1, $4-1, $5, $7, $(i+1)}}' ../lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff > lanc_anno_gene_20231128.bed
+
+# November 29, 2023
