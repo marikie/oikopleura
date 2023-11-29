@@ -21,7 +21,7 @@ mkdir diffGeneRef
 for file in $(ls ranno*); do 
   # echo "$file"
   if [ -f "$file" ]; then
-    numOfGenes=$(cat $file | awk '{print $16}' | uniq | wc -l)
+    numOfGenes=$(cat $file | awk '{print $16}' | sort -u | wc -l)
 
     if [ "$numOfGenes" -gt 1 ]; then
       echo "$file has $numOfGenes different genes"
