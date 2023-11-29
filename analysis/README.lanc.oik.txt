@@ -84,6 +84,7 @@
           $19: start
           $20: end
           $21: strand
+          $22: geneID
       each qgene.qry.rgene.ranno.ref.*.out
         - $1: oik chromosome (aligned part)
           $2: start
@@ -106,7 +107,9 @@
           $19: start
           $20: end
           $21: strand
-          $22: oik chromosome (the whole "gene" annotation)
-          $23: start
-          $24: end
-          $25: strand
+          $22: geneID
+          $23: oik chromosome (the whole "gene" annotation)
+          $24: start
+          $25: end
+          $26: strand
+          $27: geneID
