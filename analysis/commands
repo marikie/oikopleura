@@ -595,3 +595,15 @@ mv *.png PNG
 awk -v OFS="\t" -F'\t|=|;' '$3=="gene"{for(i=9; i<NF; i+=2){if ($i=="gene") print "chr_"$1, $4-1, $5, $7, $(i+1)}}' ../lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff > lanc_anno_gene_20231128.bed
 
 # November 29, 2023
+last-dotplot  --max-gap2=100 --max-gap1=100 --sort1=3 --strands1=1 --border-color=silver --border-pixels=5 --rot1=v  --rot2=h --labels1=2 --labels2=2 --fontsize=10 -a /Users/nakagawamariko/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff -b /Users/nakagawamariko/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff  -1 NC_049980.1:19957171-19987773 -1 NC_049982.1:15230685-15257151 -2 PAR:5803360-5809454  /Users/nakagawamariko/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf ./test_anno.png\n\n
+
+awk -v OFS="\t" '$3=="gene"{split($9, a, ";"); split(a[1],b,"="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' ../oikopleura/OKI2018_I69_1.0.gm.gff > oik_anno_gene_20231129.bed
+
+# December 7, 2023
+# make it short (chr start end strand chr start end geneID strand)
+# and remove duplicated lines
+cat oik_lanc_intersect_oik_anno_20231110.out | awk -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $11, $13}' | awk 'x[$0]++==0' > oik_lanc_intersect_oik_anno_shrt_20231207.out
+# remove duplicated lines
+cat oik_lanc_intersect_oik_anno_shrt_20231207.out | awk 'x[$0]++==0' > oik_lanc_intersect_oik_anno_shrt_merged_20231207.out
+
+
