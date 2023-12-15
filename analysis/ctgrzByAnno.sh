@@ -23,17 +23,39 @@ awk -v OFS="\t" '{print "chr_"$10, $12, $13, $9, "chr_"$14, $16, $17}' $pslFile 
 
 # CDS query anno (chr, start, end, strand, geneID)
 cat $qryAnnoFile  awk -v OFS='\t' '$3=="CDS"{split($9, a, ";"); split(a[1], b, "="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' > oik_anno_exon.bed
+# gene query anno (chr, start, end, strand, geneID)
+awk -v OFS="\t" '$3=="gene"{split($9, a, ";"); split(a[1],b,"="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' ../oikopleura/OKI2018_I69_1.0.gm.gff > oik_anno_gene_20231129.bed
 
 # intersect aligned seg on query <- -> query CDS annotation
 bedtools intersect -wa -wb -a oik_lanc_many2one_alignedQuery_20231106.bed -b oik_anno_CDS_20231106.bed > oik_lanc_intersect_oik_anno_20231106.out
 # make it short (chr start end strand chr start end geneID strand)
 # and remove duplicated lines
-cat oik_lanc_intersect_oik_anno_20231110.out | awk -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $11, $13}' | awk 'x[$0]++==0' > oik_lanc_intersect_oik_anno_shrt_20231207.out
-# remove duplicated lines
-cat oik_lanc_intersect_oik_anno_shrt_20231205.out | awk 'x[$0]++==0' > oik_lanc_intersect_oik_anno_shrt_merged_20231207.out
-
-# gene query anno (chr, start, end, strand, geneID)
-awk -v OFS="\t" '$3=="gene"{split($9, a, ";"); split(a[1],b,"="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' ../oikopleura/OKI2018_I69_1.0.gm.gff > oik_anno_gene_20231129.bed
+# cat oik_lanc_intersect_oik_anno_20231110.out | awk -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $11, $13}' | awk 'x[$0]++==0' > oik_lanc_intersect_oik_anno_shrt_20231207.out
+cat oik_lanc_intersect_oik_anno_20231110.out| awk 'x[$0]++==0' | awk -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $11, $13}' > oik_lanc_intersect_oik_anno_shrt_20231214.out
 
 # intersect aligned seg on query <- -> query gene annotation 
-bedtools intersect -wa -wb -a oik_lanc_intersect_oik_anno_shrt_merged_20231207.out -b oik_anno_gene_20231129.bed 
+# query coord, strand, ref coord, geneID, strand, query whole gene coord
+# awk 'NR==FNR{a[$8]=$0; next} $5 in a{print a[$5],$0}' oik_lanc_intersect_oik_anno_shrt_merged_20231207.out oik_anno_gene_20231129.bed | awk '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | awk -v OFS="\t" '{gsub(/^chr_/, "", $10)}1' > oik_lanc_oikCDS_oikGene_20231207.out
+# If $8 in the first file is equal to $5 in the second file, merge the line of the first file and the second file.
+awk 'NR==FNR{a[$8]=$0; next} $5 in a{print a[$5], $0}' oik_lanc_intersect_oik_anno_shrt_20231214.out oik_anno_gene_20231129.bed| awk '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | awk -v OFS="\t" '{gsub(/^chr_/, "", $10)}1' > oik_lanc_oikCDS_oikGene_20231214.out
+
+# bring ref coord to left
+cat oik_lanc_oikCDS_oikGene_20231214.out | awk -v OFS="\t" '{print $5, $6, $7, $1, $2, $3, $4, $8, $9, $10, $11, $12}' > lanc_oik_oikCDS_oikGene_20231214.out
+# CDS ref anno: .gff -> (chr, start, end, strand, geneID)
+cat /home/mrk/oikopleura/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff | awk -v OFS="\t" -F';|=|\t' '$3=="CDS"{for(i=9; i<NF; i+=2) {if ($i == "gene") print "chr_"$1, $4, $5, $7, $(i+1)}}' > lanc_anno_CDS_20231120.bed
+# gene ref anno: .gff -> (chr, start, end, strand, geneID)
+awk -v OFS="\t" -F'\t|=|;' '$3=="gene"{for(i=9; i<NF; i+=2){if ($i=="gene") print "chr_"$1, $4-1, $5, $7, $(i+1)}}' ../lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff > lanc_anno_gene_20231128.bed
+
+# intersect aligned seg on ref <- -> ref CDS annotation
+bedtools intersect -wa -wb -a lanc_oik_oikCDS_oikGene_20231214.out -b lanc_anno_CDS_20231121.bed > lanc_oik_oikCDS_oikGene_lancCDS_20231214_tmp.out
+# make it short and remove duplicated lines
+cat lanc_oik_oikCDS_oikGene_lancCDS_20231214_tmp.out | awk 'x[$0]++==0' | awk -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $16, $17}' > lanc_oik_oikCDS_oikGene_lancCDS_20231214.out
+
+# intersect aligned seg on ref <- -> ref gene anno
+# If $13 in the first file is equal to $5 in the second file, merge the line of the first file and the second file.
+awk 'NR==FNR{a[$13]=$0; next} $5 in a{print a[$5], $0}' lanc_oik_oikCDS_oikGene_lancCDS_20231214.out lanc_anno_gene_20231128.bed| awk '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17}' | awk -v OFS="\t" '{gsub(/^chr_/, "", $15)}1' > lanc_oik_oikCDS_oikGene_lancCDS_lancGene_20231214.out
+
+# separate data into
+# consistent and inconsistent
+awk '{if ($7 == "+" && $9 == $14) print >> "lanc_oik_oikCDS_oikGene_lancCDS_lancGene_consistent.out"; else if ($7 != "+" && $9 != $14) print >> "lanc_oik_oikCDS_oikGene_lancCDS_lancGene_consistent.out"; else print >> "lanc_oik_oikCDS_oikGene_lancCDS_lancGene_inconsistent.out"}' lanc_oik_oikCDS_oikGene_lancCDS_lancGene_20231214.out
+
