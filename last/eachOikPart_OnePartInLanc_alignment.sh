@@ -1,46 +1,68 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-        echo "You need 1 argument" 1>&2
+argNum=4
+if [ $# -ne $argNum ]; then
+        echo "You need $argNum argument" 1>&2
         echo "- today's date" 1>&2
+        echo "- path to the lanc_oik_last dir" 1>&2
+        echo "- path to the lancelet's reference fasta file" 1>&2
+        echo "- path to the oik's reference fasta file" 1>&2
         exit 1
 fi
 
 DATE=$1
-dbName="F-Lanceletdb"
-trainFile="Oik2Lanc.train"
-maf="eachOikPart_OnePartInLanc_alignment_$DATE.maf"
-sam="eachOikPart_OnePartInLanc_alignment_$DATE.sam"
-pngFile="eachOikPart_OnePartInLanc_alignment_$DATE.png"
+outDirPath=$2
+lancFASTA=$3
+oikFASTA=$4
+dbName="F-Lanceletdb_$DATE"
+trainFile="Oik2Lanc_$DATE.train"
+maf="oik2lanc_many2one_$DATE.maf"
+sam="oik2lanc_many2one_$DATE.sam"
+pngFile="oik2lanc_many2one_$DATE.png"
 
-cd ~/oikdata/lanc_oik_last
+cd $outDirPath
 
 # lastdb
 echo "---lastdb"
-if [ ! -d /home/mrk/oikdata/lanc_oik_last/$dbName ]; then
+if [ ! -d $outDirPath/$dbName ]; then
         echo "making lastdb"
         mkdir $dbName
         cd $dbName
-        lastdb -P8 -uMAM8 $dbName ~/oikdata/lancelets/genome_assemblies_branchiostoma_floridae/ncbi-genomes-2023-06-13/GCF_000003815.2_Bfl_VNyyK_genomic.fna 
+        lastdb -P8 -uMAM8 -c $dbName $lancFASTA
         cd ..
 else
         echo "$dbName already exists"
 fi
+        # -P8: makes it faster by using 8 threads (This has no effect on the results.)
+        # -uMAM8: strives for high sensitivity, but use a lot of memory and run time.
+        # -c: Soft-mask lowercase letters.  This means that, when we compare
+        #     these sequences to some other sequences using lastal, lowercase
+        #     letters will be excluded from initial matches.  This will apply
+        #     to lowercase letters in both sets of sequences.
 
 # last-train
 echo "--last-train"
 if [ ! -e $trainFile ]; then
         echo "doing last-train"
-        last-train -P8 --revsym -E0.05 $dbName/$dbName ~/oikdata/last/OKI2018_I69_1.0.removed_chrUn.fa > $trainFile
+        last-train -P8 --revsym -D1e7 --sample-number=5000 $dbName/$dbName $oikFASTA > $trainFile
 else
         echo "$trainFile already exists"
 fi
+        # --revsym: Force the substitution scores to have reverse-complement
+        #           symmetry, e.g. score(A→G) = score(T→C).  This is often
+        #           appropriate, if neither strand is "special".
+        # --sample-number=5000: makes last-train use more samples of genome2, 
+        #                       for fear that most of genome2 lacks similarity to genome1. 
+        # -D1e7: Report alignments that are expected 
+        #        by chance at most once per LENGTH query letters
+        #        The defalt sample-length is 2000, so the total number of query letters
+        #        are 10^7. Thus the expected number of alignments by chance is at most one.
 
 # lastal 
 echo "---lastal"
 if [ ! -e $maf ]; then 
-        echo "doing lastal phase 1"
-        lastal -E0.05 --split-f=MAF+ -p $trainFile $dbName/$dbName ~/oikdata/last/OKI2018_I69_1.0.removed_chrUn.fa | last-postmask > $maf
+        echo "doing lastal"
+        lastal -P8 -D1e7 -m100 --split-f=MAF+ -p $trainFile $dbName/$dbName $oikFASTA | last-postmask > $maf
 else
         echo "$maf already exists"
 fi
