@@ -21,7 +21,7 @@ for file in $(ls $targetDir); do
     # echo "$lines"
     if [ "$lines" -gt 1 ]; then
       echo "$file has $lines lines (more than 1 lines)"
-      mv "$file" $targetDir"/multiAlnSegOnTheSameQryGene"
+      mv "$file" $targetDir"/multiAlnSegsOnTheSameQryGene"
     else
       echo "$file has $lines lines (1 or fewer lines)"
       mv "$file" $targetDir"/singleAlnSeg"
