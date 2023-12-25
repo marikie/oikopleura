@@ -15,13 +15,13 @@ fi
 targetDir=$1
 
 cd $targetDir
-mkdir sameGeneRef
-mkdir diffGeneRef
+mkdir sameRefGene
+mkdir diffRefGene
 
-for file in $(ls ranno*); do 
+for file in $(ls $targetDir); do 
   # echo "$file"
   if [ -f "$file" ]; then
-    numOfGenes=$(cat $file | awk '{print $16}' | sort -u | wc -l)
+    numOfGenes=$(cat $file | awk '{print $13}' | sort -u | wc -l)
 
     if [ "$numOfGenes" -gt 1 ]; then
       echo "$file has $numOfGenes different genes"
