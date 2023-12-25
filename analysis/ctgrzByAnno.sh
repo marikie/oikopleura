@@ -68,3 +68,7 @@ cat ../lanc_oik_oikCDS_oikGene_lancCDS_lancGene_consistent_20231221.out | awk '{
 # multiple: files with equal to or more than two lines
 bash ~/biohazard/oikopleura/analysis/singleLinesOrMultiLines.sh ~/biohazard/data/lanc_oik_last/oik2lanc_20231221
 
+# Separate files under a directory /multiAlnSegsOnTheSameQryGene into two directories
+# diffRefGene 
+# sameRefGene
+bash ~/biohazard/oikopleura/analysis/sameOrDiffRefGene.sh ~/biohazard/data/lanc_oik_last/oik2lanc_20231221/multiAlnSegsOnTheSameQryGene
