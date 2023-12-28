@@ -14,16 +14,20 @@ fi
 
 targetDir=$1
 
+cd $targetDir
+mkdir multiAlnSegsOnTheSameQryGene
+mkdir singleAlnSeg
+
 for file in $(ls $targetDir); do 
   # echo "$file"
   if [ -f "$file" ]; then
     lines=$(wc -l < "$file")
     # echo "$lines"
     if [ "$lines" -gt 1 ]; then
-      echo "$file has $lines lines (more than 1 lines)"
+      # echo "$file has $lines lines (more than 1 lines)"
       mv "$file" $targetDir"/multiAlnSegsOnTheSameQryGene"
     else
-      echo "$file has $lines lines (1 or fewer lines)"
+      # echo "$file has $lines lines (1 or fewer lines)"
       mv "$file" $targetDir"/singleAlnSeg"
     fi
   # else
