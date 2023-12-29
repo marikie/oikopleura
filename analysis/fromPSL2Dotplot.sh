@@ -13,13 +13,17 @@ qryAnnoFile="/Users/nakagawamariko/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.
 
 cd $targetDir
 
-for file in $(ls ranno*\.psl); do 
+for file in $(ls $targetDir); do 
   # echo "$file"
   if [ -f "$file" ]; then
     basename="$(basename "$file" ".psl")"
-    pngFile="$basename.png"
+    ziPngFile=$basename"_zi.png"
+    # zoPngFile="$(basename)_zo.png"
     
     # echo "$pslFile"
-    python ~/biohazard/oikopleura/last/last-dotplot_mariko_1513.py --sort1=3 --strands1=1 --border-color=silver --rot1=v --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $file $pngFile
+    python ~/biohazard/oikopleura/last/last-dotplot_mariko_1513.py --sort1=3 --strands1=1 --border-color=silver --rot1=v --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $file ../PNG/$ziPngFile
+
+
+    # last-dotplot  --max-gap2=100 --max-gap1=100 --sort1=3 --strands1=1 --border-color=silver --border-pixels=5 --rot1=v  --rot2=h --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile  -1 NC_049980.1:19957171-19987773 -1 NC_049982.1:15230685-15257151 -2 PAR:5803360-5809454  /Users/nakagawamariko/biohazard/data/lanc_oik_last/eachOikPart_OnePartInLanc_alignment_20230706_sortedByQuery.maf ./test_anno.png\n\n
   fi
 done
