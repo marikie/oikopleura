@@ -86,4 +86,5 @@ bash ~/biohazard/oikopleura/analysis/fromBED2PSL.sh ~/biohazard/data/lanc_oik_la
 cd OUT
 mv *.psl ../PSL
 
+# make dotplot zoom in PNG files 
 
