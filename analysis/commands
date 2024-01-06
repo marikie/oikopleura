@@ -607,4 +607,10 @@ cat oik_lanc_intersect_oik_anno_20231110.out | awk -v OFS="\t" '{print $1, $2, $
 cat oik_lanc_intersect_oik_anno_shrt_20231207.out | awk 'x[$0]++==0' > oik_lanc_intersect_oik_anno_shrt_merged_20231207.out
 
 # January 4, 2024
+# make a file with geneID and description
 awk -F'\t' '{print $13, $18}' lanc_oik_oikCDS_oikGene_lancCDS_lancGene_consistent_20231228.out | sort -u > lancGeneID_desc_uniq_20240104.out
+
+# January 6, 2024
+# count the number of nucleotides in a FASTA file
+grep -v "^>"  GCF_018977255.1_IMCB_Cmil_1.0_genomic.fna| wc -c
+
