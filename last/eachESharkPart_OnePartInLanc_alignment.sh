@@ -1,6 +1,8 @@
 #!/bin/bash
-if [ $# -ne 1 ]; then
-	echo "You need 1 argument" 1>&2
+
+argNum=4
+if [ $# -ne $argNum ]; then
+	echo "You need $argNum arguments" 1>&2
 	echo "- today's date" 1>&2                              # $1
 	echo "- path to the lanc_eshark_last dir" 1>&2          # $2
 	echo "- path to the lancelet's lastdb dir" 1>&2         # $3
