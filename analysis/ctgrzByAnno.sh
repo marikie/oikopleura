@@ -22,9 +22,9 @@ maf-convert psl $mafFile >$pslFile
 awk -v OFS="\t" '{print "chr_"$10, $12, $13, $9, "chr_"$14, $16, $17}' $pslFile >qry_ref.bed
 
 # CDS query anno (chr, start, end, strand, geneID)
-cat $qryAnnoFile awk -v OFS='\t' '$3=="CDS"{split($9, a, ";"); split(a[1], b, "="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' >oik_anno_exon.bed
+cat $qryAnnoFile | awk -v OFS='\t' '$3=="CDS"{split($9, a, ";"); split(a[1], b, "="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' >oik_anno_exon.bed
 # CDS ref anno: .gff -> (chr, start, end, strand, geneID, proteinDescription)
-cat ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff | awk -v OFS="\t" -F';|=|\t' '$3=="CDS"{for(i=9; i<NF; i+=2) {if ($i=="gene") gene=$(i+1); if($i=="product") product=$(i+1)} print "chr_"$1, $4, $5, $7, gene, product}' >lanc_anno_CDS_20231219.bed
+cat ~/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff | awk -v OFS="\t" -F';|=|\t' '$3=="CDS"{for(i=9; i<NF; i+=2) {if ($i=="gene") gene=$(i+1); if($i=="product") product=$(i+1)} print "chr_"$1, $4-1, $5, $7, gene, product}' >lanc_anno_CDS_20231219.bed
 
 # gene query anno (chr, start, end, strand, geneID)
 awk -v OFS="\t" '$3=="gene"{split($9, a, ";"); split(a[1],b,"="); split(b[2], c, "."); print "chr_"$1, $4-1, $5, $7, c[4]"."c[5]}' ../oikopleura/OKI2018_I69_1.0.gm.gff >oik_anno_gene_20231129.bed
@@ -35,7 +35,7 @@ awk -v OFS="\t" -F'\t|=|;' '$3=="gene"{for(i=9; i<NF; i+=2){if ($i=="gene") prin
 bedtools intersect -wa -wb -a qry_ref.bed -b oik_anno_CDS_20231106.bed >oik_lanc_oikCDS_20231218_tmp.out
 # remove duplicated lines
 # and make it short (chr start end strand chr start end geneID strand)
-cat oik_lanc_oikCDS_20231218_tmp.out | awk -F'\t' 'x[$0]++==0' | awk -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $11, $13}' >oik_lanc_oikCDS_20231218.out
+cat oik_lanc_oikCDS_20231218_tmp.out | awk -F'\t' 'x[$0]++==0' | awk -F'\t' -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $11, $13}' >oik_lanc_oikCDS_20231218.out
 
 # query CDS annotation <- -> query gene annotation
 # query coord, strand, ref coord, geneID, strand, query whole gene coord
