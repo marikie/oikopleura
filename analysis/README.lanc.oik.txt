@@ -1,115 +1,60 @@
-- oik_lanc_intersect_oik_anno_20231110.out
-  - $1: chromosome name of oik (aligned part)
-    $2: start coord (inbetween)
-    $3: end coord (inbetween)
-    $4: strand
-    $5: chromosome name of lancelet (aligned part)
-    $6: start coord (inbetween)
-    $7: end coord (inbetween)
-    $8: chromosome name of oik (annotation)
-    $9: start coord (inbetween)
-    $10: end coord (inbetween)
-    $11: geneID
-    $12: .
-    $13: strand
+lanc_oik_oikCDS_oikGene_lancCDS_lancGene_consistent_20231228.out
+  - $1:  lancelet chromosome (aligned part)
+    $2:  lancelet start      (aligned part)
+    $3:  lancelet end        (aligned part)
+    $4:  oik chromosome      (aligned part)
+    $5:  oik start           (aligned part)
+    $6:  oik end             (aligned part)
+    $7:  alignment strand    (aligned part)
+    $8:  oik geneID          (overlapping annotation) 
+    $9:  oik gene strand     (overlapping annotation)
+    $10: oik whole gene chremosome  (overlapping annotation)
+    $11: oik whole gene start       (overlapping annotation)
+    $12: oik whole gene end         (overlapping annotation)
+    $13: lancelet geneID      (overlapping annotation)
+    $14: lancelet gene strand (overlapping annotation)
+    $15: lancelet whole gene chremosome  (overlapping annotation)
+    $16: lancelet whole gene start       (overlapping annotation)
+    $17: lancelet whole gene end         (overlapping annotation)
+    $18: lancelet protein description (overlapping annotation)
 
-- oik_lanc_intersect_oik_anno/
-  - multiAlnSegOnTheSameQryGene/
-    each .out 
-      - $1: oik chromosome (aligned part)
-        $2: start
-        $3: end
-        $4: strand
-        $5: lancelet chromosome (aligned part)
-        $6: start
-        $7: end
-        $8: oik chromosome (overlapping annotation)
-        $9: start
-        $10: end
-        $11: geneID
-        $12: .
-        $13: strand
-    each ref.*.out
-      - $1: lancelet chromosome (aligned part)
-        $2: start
-        $3: end
-        $4: oik chromosome (aligned part)
-        $5: start
-        $6: end
-        $7: strand
-        $8: oik chromosome (overlapping annotation) 
-        $9: start
-        $10: end
-        $11: geneID
-        $12: strand
-    - sameRefGene
-    - diffRefGene 
-      each ranno.ref.*.out
-        - $1: lancelet chromosome (aligned part)
-          $2: start
-          $3: end
-          $4: oik chromosome (aligned part)
-          $5: start
-          $6: end
-          $7: strand
-          $8: oik chromosome (overlapping annotation) 
-          $9: start
-          $10: end
-          $11: geneID
-          $12: strand
-          $13: lanc chremosome (overlapping annotation)
-          $14: start
-          $15: end
-          $16: geneID
-          $17: strand
-      each rgene.ranno.ref.*.out
-        - $1: lancelet chromosome (aligned part)
-          $2: start
-          $3: end
-          $4: oik chromosome (aligned part)
-          $5: start
-          $6: end
-          $7: strand
-          $8: oik chromosome (overlapping annotation) 
-          $9: start
-          $10: end
-          $11: geneID
-          $12: strand
-          $13: lanc chromosome (overlapping annotation)
-          $14: start
-          $15: end
-          $16: geneID
-          $17: strand
-          $18: lanc chromosome (the whole "gene" annotation)
-          $19: start
-          $20: end
-          $21: strand
-          $22: geneID
-      each qgene.qry.rgene.ranno.ref.*.out
-        - $1: oik chromosome (aligned part)
-          $2: start
-          $3: end
-          $4: strand
-          $5: lancelet chromosome (aligned part)
-          $6: start
-          $7: end
-          $8: oik chromosome (overlapping annotation) 
-          $9: start
-          $10: end
-          $11: geneID
-          $12: strand
-          $13: lanc chromosome (overlapping annotation)
-          $14: start
-          $15: end
-          $16: geneID
-          $17: strand
-          $18: lanc chromosome (the whole "gene" annotation)
-          $19: start
-          $20: end
-          $21: strand
-          $22: geneID
-          $23: oik chromosome (the whole "gene" annotation)
-          $24: start
-          $25: end
-          $26: strand
-          $27: geneID
+lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_consistent_20240108.out
+  - $1:  lancelet chromosome (aligned part)
+    $2:  lancelet start      (aligned part)
+    $3:  lancelet end        (aligned part)
+    $4:  eshark chromosome      (aligned part)
+    $5:  eshark start           (aligned part)
+    $6:  eshark end             (aligned part)
+    $7:  alignment strand    (aligned part)
+    $8:  eshark geneID          (overlapping annotation) 
+    $9:  eshark gene strand     (overlapping annotation)
+    $10: eshark whole gene chremosome  (overlapping annotation)
+    $11: eshark whole gene start       (overlapping annotation)
+    $12: eshark whole gene end         (overlapping annotation)
+    $13: lancelet geneID      (overlapping annotation)
+    $14: lancelet gene strand (overlapping annotation)
+    $15: lancelet whole gene chremosome  (overlapping annotation)
+    $16: lancelet whole gene start       (overlapping annotation)
+    $17: lancelet whole gene end         (overlapping annotation)
+    $18: eshark protein description   (overlapping annotation)
+    $19: lancelet protein description (overlapping annotation)
+
+lanc_lancGene_oik_oikGene_consistent_20240109.out
+  - $1:  lancelet chromosome (aligned part)
+    $2:  lancelet start      (aligned part)
+    $3:  lancelet end        (aligned part)
+    $4:  lancelet geneID     (overlapping annotation)
+    $5:  oik chromosome      (aligned part)
+    $6:  oik start           (aligned part)
+    $7:  oik end             (aligned part)
+    $8:  oik geneID          (overlapping annotation) 
+
+lanc_lancGene_eshk_eshkGene_consistent_20240109.out
+  - $1:  lancelet chromosome (aligned part)
+    $2:  lancelet start      (aligned part)
+    $3:  lancelet end        (aligned part)
+    $4:  lancelet geneID     (overlapping annotation)
+    $5:  eshark chromosome   (aligned part)
+    $6:  eshark start        (aligned part)
+    $7:  eshark end          (aligned part)
+    $8:  eshark geneID       (overlapping annotation) 
