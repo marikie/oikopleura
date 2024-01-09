@@ -28,4 +28,15 @@ cat eshk_lanc_eshkCDS_eshkGene_20240108.out | awk -F'\t' -v OFS="\t" '{print $5,
 bedtools intersect -wa -wb -a lanc_eshk_eshkCDS_eshkGene_20240108.out -b lanc_anno_CDS_20231219.bed >lanc_eshk_eshkCDS_eshkGene_lancCDS_20240108_tmp.out
 # remove duplicated lines and make it short
 # refcoord, qrycoord, alnStrand, qryGeneID, qryGeneStrand, qryGeneCoord, refGeneID, refGeneStrand, qryproteinDescription, refproteinDescription
-cat lanc_oik_oikCDS_oikGene_lancCDS_20231221_tmp.out | awk -F'\t' -v OFS="\t" 'x[$0]++==0' | awk -F'\t' -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $17, $16, $18}' >lanc_oik_oikCDS_oikGene_lancCDS_20231228.out
+cat lanc_eshk_eshkCDS_eshkGene_lancCDS_20240108_tmp.out | awk -F'\t' -v OFS="\t" 'x[$0]++==0' | awk -F'\t' -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $18, $17, $13, $19}' >lanc_eshk_eshkCDS_eshkGene_lancCDS_20240108.out
+
+# ref CDS anno <- -> ref gene anno
+# If $5 in the first file is equal to $13 in the second file, merge the line of the first file and the second file.
+awk -F'\t' -v OFS="\t" 'NR==FNR{a[$5]=$0; next} $13 in a {print $0, a[$13]}' lanc_anno_gene_20231128.bed lanc_eshk_eshkCDS_eshkGene_lancCDS_20240108.out | awk -F'\t' -v OFS="\t" '{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $17, $18, $19, $15, $16}' | awk -F'\t' -v OFS="\t" '{gsub(/^chr_/, "", $15)}1' >lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_20240108_tmp.out
+
+# remain only one line with the same aligned coord
+awk -F'\t' -v OFS="\t" '!a[$1,$2,$3,$4,$5,$6]++' lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_20240108_tmp.out >lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_20240108.out
+
+# separate data into
+# consistent and inconsistent
+awk -F'\t' -v OFS="\t" '{alnStrand=$7; eshkStrand=$9; lancStrand=$14; if (alnStrand == "+" && eshkStrand == lancStrand) print >> "lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_consistent_20240108.out"; else if (alnStrand != "+" && eshkStrand != lancStrand) print >> "lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_consistent_20240108.out"; else print >> "lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_inconsistent_20240108.out"}' lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_20240108.out
