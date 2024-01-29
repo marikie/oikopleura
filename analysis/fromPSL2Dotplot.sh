@@ -23,11 +23,17 @@ for file in $(ls $targetDir); do
 		basename="$(basename "$file" ".psl")"
 		ziPngFile=$basename"_zi.png"
 		ziIDPngFile=$basename"_ziID.png"
-		# zoPngFile="$(basename)_zo.png"
+		outFile=$basename".out"
+		zoPngFile=$basename"_zo.png"
 
 		# echo "$pslFile"
 		python $myDotplot --sort1=3 --strands1=1 --border-color=silver --rot1=v --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $file ../PNG/$ziPngFile
 
 		last-dotplot --sort1=3 --strands1=1 --border-color=silver --rot1=v --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $file ../PNG/$ziIDPngFile
+
+		refRange=$(awk -F'\t' '{print $15, $16, $17}' ../OUT/$outFile | sort -u | awk '{printf "-1 %s:%s-%s ", $1, $2, $3} END{print ""}')
+		qryRange=$(awk -F'\t' '{print $10, $11, $12}' ../OUT/$outFile | sort -u | awk '{printf "-2 %s:%s-%s ", $1, $2, $3} END{print ""}')
+
+		python $myDotplot --max-gap2=100 --max-gap1=100 --sort1=3 --strands1=1 --border-color=silver --border-pixels=5 --rot1=v --rot2=h --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $refRange $qryRange $file ../PNG/$zoPngFile
 	fi
 done
