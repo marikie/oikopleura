@@ -3,13 +3,15 @@ argNum=1
 
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments." 1>&2
-	echo "- path to the target directory" 1>&2 # $1
+	echo "- path to the target directory" 1>&2          # $1
+	echo "- path to the reference annotation file" 1>&2 # $2
+	echo "- path to the query annotation file" 1>&2     # $3
 	exit 1
 fi
 
 targetDir=$1
-refAnnoFile="/Users/nakagawamariko/biohazard/data/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff"
-qryAnnoFile="/Users/nakagawamariko/biohazard/data/oikopleura/OKI2018_I69_1.0.gm.gff"
+refAnnoFile=$2
+qryAnnoFile=$3
 
 cd $targetDir
 
