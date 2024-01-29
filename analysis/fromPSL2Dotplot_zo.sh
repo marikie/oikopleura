@@ -28,6 +28,6 @@ for file in $(ls $targetDir); do
 
 		qryRange=$(awk -F'\t' '{print $10, $11, $12}' ../OUT/$outFile | sort -u | awk '{printf "-2 %s:%s-%s ", $1, $2, $3} END{print ""}')
 
-		python myDotplot --max-gap2=100 --max-gap1=100 --sort1=3 --strands1=1 --border-color=silver --border-pixels=5 --rot1=v --rot2=h --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $refRange $qryRange $file ../PNG/$zoPngFile
+		python $myDotplot --max-gap2=100 --max-gap1=100 --sort1=3 --strands1=1 --border-color=silver --border-pixels=5 --rot1=v --rot2=h --labels1=2 --labels2=2 --fontsize=10 -a $refAnnoFile -b $qryAnnoFile $refRange $qryRange $file ../PNG/$zoPngFile
 	fi
 done
