@@ -1,5 +1,5 @@
 #!/bin/bash
-argNum=1
+argNum=3
 
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments." 1>&2
