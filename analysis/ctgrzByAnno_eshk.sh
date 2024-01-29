@@ -40,3 +40,32 @@ awk -F'\t' -v OFS="\t" '!a[$1,$2,$3,$4,$5,$6]++' lanc_eshk_eshkCDS_eshkGene_lanc
 # separate data into
 # consistent and inconsistent
 awk -F'\t' -v OFS="\t" '{alnStrand=$7; eshkStrand=$9; lancStrand=$14; if (alnStrand == "+" && eshkStrand == lancStrand) print >> "lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_consistent_20240108.out"; else if (alnStrand != "+" && eshkStrand != lancStrand) print >> "lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_consistent_20240108.out"; else print >> "lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_inconsistent_20240108.out"}' lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_20240108.out
+
+mkdir eshk2lanc_20240122
+cd eshk2lanc_20240122
+# separate files based on the query geneID
+cat ../lanc_eshk_eshkCDS_eshkGene_lancCDS_lancGene_consistent_20240108.out | awk -F'\t' -v OFS="\t" '{file=$8".out"; print >> file; close(file)}'
+
+# Separate files under a directory into two different directories
+# single: files with only one line
+# multiple: files with equal to or more than two lines
+bash ~/biohazard/oikopleura/analysis/singleLinesOrMultiLines.sh ~/biohazard/data/lanc_eshk_last/eshk2lanc_20240122
+
+# Separate files under a directory /multiAlnSegsOnTheSameQryGene into two directories
+# diffRefGene
+# sameRefGene
+bash ~/biohazard/oikopleura/analysis/sameOrDiffRefGene.sh ~/biohazard/data/lanc_eshk_last/eshk2lanc_20240122/multiAlnSegsOnTheSameQryGene
+
+# on biohazard
+cd ~/oikopleura/lanc_eshk_last/eshk2lanc_20240122/multiAlnSegsOnTheSameQryGene/diffRefGene
+mkdir OUT
+mkdir PNG
+mkdir PSL
+mv *.out OUT
+# make PSL files
+bash ~/scripts/analysis/fromBED2PSL.sh ~/oikopleura/lanc_eshark_last/eshk2lanc_20240122/multiAlnSegsOnTheSameQryGene/diffRefGene/OUT/ ~/oikopleura/lanc_eshark_last/eshk2lanc_many2one_20240106.psl
+
+cd OUT
+mv *.psl ../PSL
+# make dotplots (zoom-in, zoom-in with ID, zoom-out)
+bash ~/scripts/analysis/fromPSL2Dotplot.sh ~/oikopleura/lanc_eshark_last/eshk2lanc_20240122/multiAlnSegsOnTheSameQryGene/diffRefGene/PSL/ ~/oikopleura/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/oikopleura/elephantShark/ncbi_dataset/data/GCF_018977255.1/genomic.gff ~/scripts/last/last-dotplot_mariko_1513.py
