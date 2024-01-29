@@ -81,14 +81,10 @@ mkdir OUT
 mkdir PNG
 mkdir PSL
 mv *.out OUT
-bash ~/scripts/analysis/fromPSL2Dotplot.sh ~/oikopleura/lanc_oik_last/oik2lanc_20231228/multiAlnSegsOnTheSameQryGene/diffRefGene/PSL/ ~/oikopleura/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/oikopleura/last/OKI2018_I69_1.0.gm.gff ~/scripts/last/last-dotplot_mariko_1513.py
 # make PSL files
 bash ~/biohazard/oikopleura/analysis/fromBED2PSL.sh ~/biohazard/data/lanc_oik_last/oik2lanc_20231228/multiAlnSegsOnTheSameQryGene/diffRefGene/OUT ~/biohazard/data/lanc_oik_last/oik2lanc_many2one_20231218.psl
 cd OUT
 mv *.psl ../PSL
 
-# make dotplot zoom-in PNG files
-bash ~/biohazard/oikopleura/analysis/fromPSL2Dotplot.sh ~/biohazard/data/lanc_oik_last/oik2lanc_20231228/multiAlnSegsOnTheSameQryGene/diffRefGene/PSL
-
-# make dotplot zoom-out PNG files
-bash ~/biohazard/oikopleura/analysis/fromPSL2Dotplot_zo.sh ~/biohazard/data/lanc_oik_last/oik2lanc_20231228/multiAlnSegsOnTheSameQryGene/diffRefGene/PSL
+# make dotplot PNG files (zoom-in, zoom-inID, zoom-out)
+bash ~/scripts/analysis/fromPSL2Dotplot.sh ~/oikopleura/lanc_oik_last/oik2lanc_20231228/multiAlnSegsOnTheSameQryGene/diffRefGene/PSL/ ~/oikopleura/lancelets/ncbi_dataset/data/GCF_000003815.2/genomic.gff ~/oikopleura/last/OKI2018_I69_1.0.gm.gff ~/scripts/last/last-dotplot_mariko_1513.py
