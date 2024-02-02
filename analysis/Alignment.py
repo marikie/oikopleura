@@ -134,7 +134,7 @@ class Alignment:
         queryLine = sLines[1]
 
         """
-        change coordinates from 0-based to inbetween
+        coordinates are 0-based (which means inbetween)
         """
         gChr = refLine[1]
         gStart = int(refLine[2])
