@@ -57,11 +57,10 @@ def getAln(mafLines):
             yield Alignment.fromMAFEntry(mafBlock)
 
 
-def getAlignmentObjsOneByOne(alignmentFile):
+def getAlignmentObjsOneByOne(alnFileHandle):
     """
     takes an alignmentFile and yield Alignment objects one by one
     """
-    alnFileHandle = open(alignmentFile)
     for mafEntry in getMAFBlock(alnFileHandle):
         yield Alignment.fromMAFEntry(mafEntry)
 
