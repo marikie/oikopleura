@@ -614,3 +614,5 @@ awk -F'\t' '{print $13, $18}' lanc_oik_oikCDS_oikGene_lancCDS_lancGene_consisten
 # count the number of nucleotides in a FASTA file
 grep -v "^>"  GCF_018977255.1_IMCB_Cmil_1.0_genomic.fna| wc -c
 
+# February 9, 2024
+lastal -P8 -D1e7 -m100 --split-f=MAF+ -p Eshk2Lanc_20240106.train F-Lanceletdb/F-Lanceletdb ../elephantShark/NW_024704754.1_1562000-1569000.fa > NW_024704754.1_1562000-1569000_normal.maf
