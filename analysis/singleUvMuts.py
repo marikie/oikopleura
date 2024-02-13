@@ -30,6 +30,7 @@ mutationDict = {
         "G": {"count": 0, "type": "transition"},
         "T": {"count": 0, "type": "transversion"},
         "-": {"count": 0, "type": "deletion"},
+        "N": {"count": 0, "type": "unknown_base"},
     },
     "C": {
         "A": {"count": 0, "type": "transversion"},
@@ -37,6 +38,7 @@ mutationDict = {
         "G": {"count": 0, "type": "transversion"},
         "T": {"count": 0, "type": "transition"},
         "-": {"count": 0, "type": "deletion"},
+        "N": {"count": 0, "type": "unknown_base"},
     },
     "G": {
         "A": {"count": 0, "type": "transversion"},
@@ -44,6 +46,7 @@ mutationDict = {
         "G": {"count": 0, "type": "no_mutation"},
         "T": {"count": 0, "type": "transversion"},
         "-": {"count": 0, "type": "deletion"},
+        "N": {"count": 0, "type": "unknown_base"},
     },
     "T": {
         "A": {"count": 0, "type": "transversion"},
@@ -51,12 +54,22 @@ mutationDict = {
         "G": {"count": 0, "type": "transversion"},
         "T": {"count": 0, "type": "no_mutation"},
         "-": {"count": 0, "type": "deletion"},
+        "N": {"count": 0, "type": "unknown_base"},
     },
     "-": {
         "A": {"count": 0, "type": "insertion"},
         "C": {"count": 0, "type": "insertion"},
         "G": {"count": 0, "type": "insertion"},
         "T": {"count": 0, "type": "insertion"},
+        "N": {"count": 0, "type": "unknown_base"},
+    },
+    "N": {
+        "A": {"count": 0, "type": "unknown_base"},
+        "C": {"count": 0, "type": "unknown_base"},
+        "G": {"count": 0, "type": "unknown_base"},
+        "T": {"count": 0, "type": "unknown_base"},
+        "-": {"count": 0, "type": "unknown_base"},
+        "N": {"count": 0, "type": "unknown_base"},
     },
 }
 
