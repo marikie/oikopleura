@@ -65,10 +65,11 @@ for aln in getAlignmentObjsOneByOne(alnFileHandle):
     qSeq = aln.rSeq.upper()
     assert len(rSeq) == len(qSeq), "rSeq and qSeq have different lengths"
     for rbase, qbase in zip(rSeq, qSeq):
-        try:
-            mutationDict[rbase][qbase]["count"] += 1
-        except KeyError:
-            mutationDict[rbase] = {qbase: {"count": 1, "type": "exception"}}
+        if rbase not in mutationDict:
+            mutationDict[rbase] = {}
+        if qbase not in mutationDict[rbase]:
+            mutationDict[rbase][qbase] = {"count": 0, "type": "exception"}
+        mutationDict[rbase][qbase]["count"] += 1
 alnFileHandle.close()
 
 # how to write to a file
