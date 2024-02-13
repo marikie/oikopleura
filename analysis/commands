@@ -616,3 +616,8 @@ grep -v "^>"  GCF_018977255.1_IMCB_Cmil_1.0_genomic.fna| wc -c
 
 # February 9, 2024
 lastal -P8 -D1e7 -m100 --split-f=MAF+ -p Eshk2Lanc_20240106.train F-Lanceletdb/F-Lanceletdb ../elephantShark/NW_024704754.1_1562000-1569000.fa > NW_024704754.1_1562000-1569000_normal.maf
+
+# February 13, 2024
+python singleUvMuts.py ~/oikopleura/lanc_oik_last/oik2lanc_many2one_20231218.maf ~/oikopleura/lanc_oik_last/mut_oik2lanc_many2one_20231218.tsv
+
+python singleUvMuts.py ~/oikopleura/lanc_eshark_last/eshk2lanc_many2one_20240106.maf ~/oikopleura/lanc_eshark_last/mut_eshk2lanc_many2one_20240106.tsv
