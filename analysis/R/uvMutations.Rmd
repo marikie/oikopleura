@@ -1,0 +1,79 @@
+---
+title: "UV mutations"
+author: "Mariko Nakagawa"
+date: "2024-02-15"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr) # will be used for data manipulation, specifically the arrange function to sort the data by type and then by mutation
+library(RColorBrewer)
+```
+
+##UV mutations
+
+```{r loadFiles, echo=FALSE}
+o_l <- read.csv("~/biohazard/data/lanc_oik_last/mut_oik2lanc_many2one_20231218.tsv", sep="\t", header=TRUE)
+e_l <- read.csv("~/biohazard/data/lanc_eshark_last/mut_eshk2lanc_many2one_20240106.tsv", sep="\t", header=TRUE)
+```
+```{r drawBarplot_braFlo2oikDio, echo=FALSE}
+# combine the 'refBase' and 'qryBase' into a new column for the mutation categories
+o_l$mutation <- paste(o_l$refBase, o_l$qryBase, sep="to")
+
+# Arrange the dataframe by 'type' and 'mutation'
+o_l <- o_l %>% arrange(type, mutation)
+
+# Now that the data is arranged, convert 'type' and 'mutation' to factors with explicit ordering
+# Ensure 'type' is a factor with all expected levels
+all_types <- c("no_mutation", "deletion", "insertion", "transition", "transversion") # Adjust based on actual data
+o_l$mutation <- factor(o_l$mutation, levels = unique(o_l$mutation))
+
+# Define your types in the order you want them to appear
+types_order <- c("no_mutation", "deletion", "insertion", "transition", "transversion")
+# Get a palette with a sufficient number of colors
+palette_colors <- brewer.pal(length(types_order), "Set1")
+# Create a named vector of colors to ensure the correct order, matching it with 'types_order'
+colors_named_vector <- setNames(palette_colors, types_order)
+
+# Right before plotting, assert the factor levels for 'type'
+o_l$type <- factor(o_l$type, levels = all_types)
+ggplot(o_l, aes(x=mutation, y=count, fill=type)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_manual(values=colors_named_vector) + 
+  theme_minimal() + 
+  labs(title="braFlo to oikDio: Mutation Counts by Type", x="Mutation (from braFlo to oikDio)", y="Count") +
+  theme(axis.text.x = element_text(angle=65, hjust=1))
+```
+```{r drawBarplot_braFlo2calMil, echo=FALSE}
+# combine the 'refBase' and 'qryBase' into a new column for the mutation categories
+e_l$mutation <- paste(e_l$refBase, e_l$qryBase, sep="to")
+
+# Arrange the dataframe by 'type' and 'mutation'
+e_l <- e_l %>% arrange(type, mutation)
+
+# Now that the data is arranged, convert 'type' and 'mutation' to factors with explicit ordering
+# Ensure 'type' is a factor with all expected levels
+all_types <- c("no_mutation", "deletion", "insertion", "transition", "transversion", "exception") # Adjust based on actual data
+e_l$mutation <- factor(e_l$mutation, levels = unique(e_l$mutation))
+
+# Define your types in the order you want them to appear
+types_order <- c("no_mutation", "deletion", "insertion", "transition", "transversion", "exception")
+# Get a palette with a sufficient number of colors
+palette_colors <- brewer.pal(length(types_order), "Set1")
+# Create a named vector of colors to ensure the correct order, matching it with 'types_order'
+colors_named_vector <- setNames(palette_colors, types_order)
+
+# Right before plotting, assert the factor levels for 'type'
+e_l$type <- factor(e_l$type, levels = all_types)
+ggplot(e_l, aes(x=mutation, y=count, fill=type)) + 
+  geom_bar(stat="identity") + 
+  scale_fill_manual(values=colors_named_vector) + 
+  theme_minimal() + 
+  labs(title="braFlo to calMil: Mutation Counts by Type", x="Mutation (from braFlo to calMil)", y="Count") +
+  theme(axis.text.x = element_text(angle=65, hjust=1))
+sessionInfo()
+```
