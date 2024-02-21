@@ -680,3 +680,6 @@ if [ ! -e $pngFile ]; then
 else
         echo "$pngFile already exists"
 fi
+
+# February 21, 2024
+./one2one.sh 20240221 ~/data/oikAlb_oikDio/ ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa oikAlb oikDio 1e7
