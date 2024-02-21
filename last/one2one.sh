@@ -67,3 +67,20 @@ if [ ! -e $o2omaf ]; then
 else
 	echo "$o2omaf already exists"
 fi
+
+# maf-convert sam
+if [ ! -e $sam ]; then
+	echo "converting maf to sam"
+	maf-convert -j1e5 -d sam $o2omaf >$sam
+else
+	echo "$sam already exists"
+fi
+
+# last-dotplot
+echo "---last-dotplot"
+if [ ! -e $pngFile ]; then
+	echo "making $pngFile"
+	last-dotplot $o2omaf $pngFile
+else
+	echo "$pngFile already exists"
+fi
