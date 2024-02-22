@@ -25,38 +25,38 @@ alnFileHandle = open(alignmentFile)
 
 mutationDict = {
     "A": {
-        "A": {"count": 0, "type": "no_mutation"},
-        "C": {"count": 0, "type": "transversion"},
-        "G": {"count": 0, "type": "transition"},
-        "T": {"count": 0, "type": "transversion"},
-        "-": {"count": 0, "type": "deletion"},
+        "A": {"count": 0, "type": "no_mutation", "ctgr": "AtoA/TtoT"},
+        "C": {"count": 0, "type": "transversion", "ctgr": "AtoC/TtoG"},
+        "G": {"count": 0, "type": "transition", "ctgr": "AtoG/TtoC"},
+        "T": {"count": 0, "type": "transversion", "ctgr": "AtoT/TtoA"},
+        "-": {"count": 0, "type": "deletion", "ctgr": "Ato-/Tto-"},
     },
     "C": {
-        "A": {"count": 0, "type": "transversion"},
-        "C": {"count": 0, "type": "no_mutation"},
-        "G": {"count": 0, "type": "transversion"},
-        "T": {"count": 0, "type": "transition"},
-        "-": {"count": 0, "type": "deletion"},
+        "A": {"count": 0, "type": "transversion", "ctgr": "CtoA/GtoT"},
+        "C": {"count": 0, "type": "no_mutation", "ctgr": "CtoC/GtoG"},
+        "G": {"count": 0, "type": "transversion", "ctgr": "CtoG/GtoC"},
+        "T": {"count": 0, "type": "transition", "ctgr": "CtoT/GtoA"},
+        "-": {"count": 0, "type": "deletion", "ctgr": "Cto-/Gto-"},
     },
     "G": {
-        "A": {"count": 0, "type": "transition"},
-        "C": {"count": 0, "type": "transversion"},
-        "G": {"count": 0, "type": "no_mutation"},
-        "T": {"count": 0, "type": "transversion"},
-        "-": {"count": 0, "type": "deletion"},
+        "A": {"count": 0, "type": "transition", "ctgr": "CtoT/GtoT"},
+        "C": {"count": 0, "type": "transversion", "ctgr": "CtoG/GtoC"},
+        "G": {"count": 0, "type": "no_mutation", "ctgr": "CtoC/GtoG"},
+        "T": {"count": 0, "type": "transversion", "ctgr": "CtoT/GtoA"},
+        "-": {"count": 0, "type": "deletion", "ctgr": "Cto-/Gto-"},
     },
     "T": {
-        "A": {"count": 0, "type": "transversion"},
-        "C": {"count": 0, "type": "transition"},
-        "G": {"count": 0, "type": "transversion"},
-        "T": {"count": 0, "type": "no_mutation"},
-        "-": {"count": 0, "type": "deletion"},
+        "A": {"count": 0, "type": "transversion", "ctgr": "TtoA/AtoT"},
+        "C": {"count": 0, "type": "transition", "ctgr": "AtoG/TtoC"},
+        "G": {"count": 0, "type": "transversion", "ctgr": "AtoC/TtoG"},
+        "T": {"count": 0, "type": "no_mutation", "ctgr": "AtoA/TtoT"},
+        "-": {"count": 0, "type": "deletion", "ctgr": "Ato-/Tto-"},
     },
     "-": {
-        "A": {"count": 0, "type": "insertion"},
-        "C": {"count": 0, "type": "insertion"},
-        "G": {"count": 0, "type": "insertion"},
-        "T": {"count": 0, "type": "insertion"},
+        "A": {"count": 0, "type": "insertion", "ctgr": "-toA/-toT"},
+        "C": {"count": 0, "type": "insertion", "ctgr": "-toC/-toG"},
+        "G": {"count": 0, "type": "insertion", "ctgr": "-toG/-toC"},
+        "T": {"count": 0, "type": "insertion", "ctgr": "-toT/-toA"},
     },
 }
 
@@ -68,7 +68,11 @@ for aln in getAlignmentObjsOneByOne(alnFileHandle):
         if rbase not in mutationDict:
             mutationDict[rbase] = {}
         if qbase not in mutationDict[rbase]:
-            mutationDict[rbase][qbase] = {"count": 0, "type": "exception"}
+            mutationDict[rbase][qbase] = {
+                "count": 0,
+                "type": "exception",
+                "ctgr": "exception",
+            }
         mutationDict[rbase][qbase]["count"] += 1
 alnFileHandle.close()
 
@@ -76,7 +80,9 @@ alnFileHandle.close()
 with open(outputFilePath, "w") as f:
     writer = csv.writer(f, delimiter="\t", lineterminator="\n")
     # how to write a header
-    writer.writerow(["refBase", "qryBase", "count", "type"])
+    writer.writerow(["refBase", "qryBase", "count", "type", "category"])
     for origBase, mutDict in mutationDict.items():
         for mutBase, info in mutDict.items():
-            writer.writerow([origBase, mutBase, info["count"], info["type"]])
+            writer.writerow(
+                [origBase, mutBase, info["count"], info["type"], info["ctgr"]]
+            )
