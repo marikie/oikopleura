@@ -683,3 +683,5 @@ fi
 
 # February 21, 2024
 ./one2one.sh 20240221 ~/data/oikAlb_oikDio/ ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa oikAlb oikDio 1e7
+./one2one.sh 20240221 ~/data/phyBuc_pomCan/ ~/genomes/phymorhynchusBuccinoides/GCA_017654935.2_ASM1765493v2_genomic.fna ~/genomes/pomaceaCanaliculata/GCA_036321745.1_ASM3632174v1_genomic.fna phyBuc pomCan 1e8
+
