@@ -39,7 +39,7 @@ mutationDict = {
         "-": {"count": 0, "type": "deletion"},
     },
     "G": {
-        "A": {"count": 0, "type": "transversion"},
+        "A": {"count": 0, "type": "transition"},
         "C": {"count": 0, "type": "transversion"},
         "G": {"count": 0, "type": "no_mutation"},
         "T": {"count": 0, "type": "transversion"},
