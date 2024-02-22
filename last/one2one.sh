@@ -63,7 +63,7 @@ fi
 echo "---last-split"
 if [ ! -e $o2omaf ]; then
 	echo "doing last-split"
-	last-split -r $m2omaf | last-postmask >o2omaf
+	last-split -r $m2omaf | last-postmask >$o2omaf
 else
 	echo "$o2omaf already exists"
 fi
