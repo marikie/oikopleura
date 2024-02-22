@@ -1,5 +1,8 @@
 #!/bin/bash
 
+module load last/1542
+lastal --version
+
 argNum=7
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
