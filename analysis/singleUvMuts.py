@@ -55,8 +55,8 @@ mutationDict = {
     "-": {
         "A": {"count": 0, "type": "insertion", "ctgr": "-toA/-toT"},
         "C": {"count": 0, "type": "insertion", "ctgr": "-toC/-toG"},
-        "G": {"count": 0, "type": "insertion", "ctgr": "-toG/-toC"},
-        "T": {"count": 0, "type": "insertion", "ctgr": "-toT/-toA"},
+        "G": {"count": 0, "type": "insertion", "ctgr": "-toC/-toG"},
+        "T": {"count": 0, "type": "insertion", "ctgr": "-toA/-toT"},
     },
 }
 
