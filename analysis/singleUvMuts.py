@@ -46,7 +46,7 @@ mutationDict = {
         "-": {"count": 0, "type": "deletion", "ctgr": "Cto-/Gto-"},
     },
     "T": {
-        "A": {"count": 0, "type": "transversion", "ctgr": "TtoA/AtoT"},
+        "A": {"count": 0, "type": "transversion", "ctgr": "AtoT/TtoA"},
         "C": {"count": 0, "type": "transition", "ctgr": "AtoG/TtoC"},
         "G": {"count": 0, "type": "transversion", "ctgr": "AtoC/TtoG"},
         "T": {"count": 0, "type": "no_mutation", "ctgr": "AtoA/TtoT"},
