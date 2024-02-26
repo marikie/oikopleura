@@ -25,11 +25,11 @@ alnFileHandle = open(alignmentFile)
 
 mutationDict = {
     "A": {
-        "A": {"count": 0, "type": "no_mutation", "ctgr": "AtoA/TtoT"},
-        "C": {"count": 0, "type": "transversion", "ctgr": "AtoC/TtoG"},
-        "G": {"count": 0, "type": "transition", "ctgr": "AtoG/TtoC"},
-        "T": {"count": 0, "type": "transversion", "ctgr": "AtoT/TtoA"},
-        "-": {"count": 0, "type": "deletion", "ctgr": "Ato-/Tto-"},
+        "A": {"count": 0, "type": "no_mutation", "ctgr": "TtoT/AtoA"},
+        "C": {"count": 0, "type": "transversion", "ctgr": "TtoG/AtoC"},
+        "G": {"count": 0, "type": "transition", "ctgr": "TtoC/AtoG"},
+        "T": {"count": 0, "type": "transversion", "ctgr": "TtoA/AtoT"},
+        "-": {"count": 0, "type": "deletion", "ctgr": "Tto-/Ato-"},
     },
     "C": {
         "A": {"count": 0, "type": "transversion", "ctgr": "CtoA/GtoT"},
@@ -46,11 +46,11 @@ mutationDict = {
         "-": {"count": 0, "type": "deletion", "ctgr": "Cto-/Gto-"},
     },
     "T": {
-        "A": {"count": 0, "type": "transversion", "ctgr": "AtoT/TtoA"},
-        "C": {"count": 0, "type": "transition", "ctgr": "AtoG/TtoC"},
-        "G": {"count": 0, "type": "transversion", "ctgr": "AtoC/TtoG"},
-        "T": {"count": 0, "type": "no_mutation", "ctgr": "AtoA/TtoT"},
-        "-": {"count": 0, "type": "deletion", "ctgr": "Ato-/Tto-"},
+        "A": {"count": 0, "type": "transversion", "ctgr": "TtoA/AtoT"},
+        "C": {"count": 0, "type": "transition", "ctgr": "TtoC/AtoG"},
+        "G": {"count": 0, "type": "transversion", "ctgr": "TtoG/AtoC"},
+        "T": {"count": 0, "type": "no_mutation", "ctgr": "TtoT/AtoA"},
+        "-": {"count": 0, "type": "deletion", "ctgr": "Tto-/Ato-"},
     },
     "-": {
         "A": {"count": 0, "type": "insertion", "ctgr": "-toA/-toT"},
