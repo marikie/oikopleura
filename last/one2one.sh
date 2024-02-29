@@ -30,6 +30,10 @@ o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
 sam="$org1Name""2""$org2Name""_one2one_$DATE.sam"
 pngFile="$org1Name""2""$org2Name""_one2one_$DATE.png"
 
+if [ ! -d $outDirPath ]; then
+	echo "making $outDirPath"
+	mkdir $outDirPath
+fi
 cd $outDirPath
 
 # lastdb
