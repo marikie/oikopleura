@@ -631,3 +631,8 @@ python singleUvMuts.py ~/biohazard/data/oikAlb_oikDio/oikAlb2oikDio_one2one_2024
 python singleUvMuts.py ~/biohazard/data/oikAlb_oikVan/oikAlb2oikVan_one2one_20240229.maf ~/biohazard/data/oikAlb_oikVan/mut_oikAlb2oikVan_one2one_20230229.tsv
 
 python singleUvMuts.py ~/biohazard/data/phyBuc_pomCan/phyBuc2pomCan_one2one_20240222.maf ~/biohazard/data/phyBuc_pomCan/mut_phyBuc2pomCan_one2one_20240226.tsv
+
+# March 8, 2024
+python triUvMuts.py ~/data/oikAlb_oikDio/oikAlb2oikDio_one2one_20240222.maf ~/data/oikAlb_oikDio/mut3_oikAlb2oikDio_one2one_20240308.tsv
+python triUvMuts.py ~/data/oikAlb_oikVan/oikAlb2oikVan_one2one_20240229.maf ~/data/oikAlb_oikVan/mut3_oikAlb2oikVan_one2one_20240308.tsv
+
