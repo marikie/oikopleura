@@ -685,3 +685,9 @@ fi
 ./one2one.sh 20240221 ~/data/oikAlb_oikDio/ ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa oikAlb oikDio 1e7
 ./one2one.sh 20240221 ~/data/phyBuc_pomCan/ ~/genomes/phymorhynchusBuccinoides/GCA_017654935.2_ASM1765493v2_genomic.fna ~/genomes/pomaceaCanaliculata/GCA_036321745.1_ASM3632174v1_genomic.fna phyBuc pomCan 1e8
 
+# March 10, 2024
+./one2one.sh 20240310 ~/data/oikDio_oikAlb/ ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna oikDio oikAlb 1e8
+
+# March 11, 2024
+./one2one.sh 20240311 ~/data/bathBro_bathSep/ ~/genomes/bathymodiolusBrooksi/GCA_963680875.1_xbBatBroo1.1_genomic.fna ~/genomes/bathymodiolusSeptemdierum/GCA_963383655.1_xbBatSept2.1_genomic.fna bathBro bathSep 1e9
+
