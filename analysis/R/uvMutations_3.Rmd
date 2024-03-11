@@ -10,7 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 require(stringr)
 ```
 ```{r plotFunc, include=FALSE}
-generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0){
+# CODE OF FROM https://github.com/kartong88/Plot-Mutation-Landscape
+
+generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0, graphTitle){
   ## Perform analysis for the trinucleotide variants
   
   ### Check which of the mutation variant is missing and add that to the named vector
@@ -65,33 +67,32 @@ generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0){
   # Convert the data to percentage
   conv.data.norm<-conv.data/sum(conv.data)*100
   
+  #print(conv.data.norm[conv.label.all.sorted])
+  #print(typeof(conv.data.norm))
+  #if(length(conv.data.norm[conv.label.all.sorted]) == 0) {
+  #  stop("The height vector for barplot is empty. Check the processing of conv.data.norm and conv.label.all.sorted.")
+  #}
+
+  #simple_test <- conv.data.norm[1:10] # Just an example to test plotting
+  #print(simple_test)
+  #print(is.vector(simple_test))
+  #print(is.matrix(simple_test))
+  
+  # Convert to a numeric vector explicitly
+  #simple_test_vector <- as.numeric(simple_test)
+
+  # Now, try plotting again
+  #barplot(simple_test_vector, col=rep(colour_array, each=1, length.out=length(simple_test_vector)))
 
   
-  ### Barplot for Trinucleotide Mutation rate (Counts)
-  #barplot(conv.data[conv.label.all.sorted], col=rep(colour_array,each=16), cex.names=0.45, las=3, names.arg=trinuc.lab.sorted, ylim=c(0,100                                                                                                                                                                   ))
-  
-  for(i in 1:6){
-    # Size of 1.2 per bar.
-    # Total size of 19.2 for 16 barplots
-    left<-(i -1)*19.2 + 0.2 # to create a bit of white space
-    right<-i* 19.2 - 0.2
-    label_mid<-19.2/2 +(i-1)*19.2
-    
-    rect(left,95,right,96, col=colour_array[i], border=NA)
-    text(x=label_mid, y=98, labels=text_array[i])
-  }
-  
-  
-  
-  
+
   ### Barplot for Trinucleotide Mutation rate (Percentage)
   # Make the PDF plot of the graph
   if(!filename==0){
-    pdf(filename, family="Arial")
-  }
-  barplot(conv.data.norm[conv.label.all.sorted], col=rep(colour_array,each=16), cex.names=0.3, las=3, names.arg=trinuc.lab.sorted,ylim=c(0,pct_yaxs_max), ylab="Percentage of Mutations (%)", xlab="Trinucleotide")
-  
-  for(i in 1:6){
+    pdf(filename)
+    barplot(as.numeric(conv.data.norm[conv.label.all.sorted]), col=rep(colour_array,each=16), cex.names=0.3, las=3, names.arg=trinuc.lab.sorted,ylim=c(0,pct_yaxs_max), ylab="Percentage of Mutations (%)", xlab="Trinucleotides", main = graphTitle)
+    
+    for(i in 1:6){
     # Size of 1.2 per bar.
     # Total size of 19.2 for 16 barplots
     left<-(i -1)*19.2 + 0.2 # to create a bit of white space
@@ -101,10 +102,25 @@ generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0){
     #rect(left,5.1,right,5.2, col=colour_array[i], border=NA)
     rect(left,0.95*pct_yaxs_max,right,0.96*pct_yaxs_max, col=colour_array[i], border=NA)
     text(x=label_mid, y=0.98*pct_yaxs_max, labels=text_array[i])
-  }
-  
-  if(!filename==0){
+    }
+    
     dev.off()
   }
 }
+```
+```{r loadFiles, include=FALSE}
+file_path <- "~/biohazard/data/oikAlb_oikDio/mut3_oikAlb2oikDio_one2one_20240308.tsv"
+data <- read.csv(file_path, sep="\t", header=TRUE)
+title <- "oikAlb-oikDio"
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(title, ".pdf"), graphTitle=title)
+
+file_path <- "~/biohazard/data/oikAlb_oikVan/mut3_oikAlb2oikVan_one2one_20240308.tsv"
+data <- read.csv(file_path, sep="\t", header = TRUE)
+title <- "oikAlb-oikVan"
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(title, ".pdf"), graphTitle = title)
+
+file_path <- "~/biohazard/data/phyBuc_pomCan/mut3_phyBuc2pomCan_one2one_20240308.tsv"
+data <- read.csv(file_path, sep="\t", header = TRUE)
+title <- "phyBuc-pomCan"
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(title, ".pdf"), graphTitle = title)
 ```
