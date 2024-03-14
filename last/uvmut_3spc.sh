@@ -38,7 +38,10 @@ bash ~/scripts/one2one.sh $DATE $outDirPath $org2FASTA $org1FASTA $org2Name $org
 bash ~/scripts/one2one.sh $DATE $outDirPath $org2FASTA $org3FASTA $org2Name $org3Name
 
 # maf-join the two .maf files
-maf-sort $o2oma21 >$o2omaf21
+maf-sort $o2oma21 >$o2omaf21_sorted
+maf-sort $o2oma23 >$o2omaf23_sorted
+maf-join $o2omaf21_sorted $o2omaf23_sorted >$joinedFile
+
 # make a .tsv file about single-base mutations
 echo "making a .tsv file about single-base mutations"
 if [ ! -e $mutFile ]; then
