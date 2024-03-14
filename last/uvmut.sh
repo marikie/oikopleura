@@ -6,30 +6,35 @@ lastal --version
 argNum=7
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
-	echo "- today's date" 1>&2                                                 # $1
-	echo "- path to the output dir" 1>&2                                       # $2
-	echo "- path to the org1 reference fasta file" 1>&2                        # $3
-	echo "- path to the org2 reference fasta file" 1>&2                        # $4
-	echo "- org1 name" 1>&2                                                    # $5
-	echo "- org2 name" 1>&2                                                    # $6
-	echo "- -D option number (the length of the query sequence e.g. 1e8)" 1>&2 # $7
+	echo "- today's date" 1>&2                                           # $1
+	echo "- path to the org1 reference fasta file" 1>&2                  # $2
+	echo "- path to the org2 reference fasta file" 1>&2                  # $3
+	echo "- org1 name" 1>&2                                              # $4
+	echo "- org2 name" 1>&2                                              # $5
+	echo "- path to the dir where you want to place the output dir" 1>&2 # $6
 	exit 1
 fi
 
 DATE=$1
-outDirPath=$2
-org1FASTA=$3
-org2FASTA=$4
-org1Name=$5
-org2Name=$6
-Dopt=$7
+org1FASTA=$2
+org2FASTA=$3
+org1Name=$4
+org2Name=$5
+outDirPath=$6"/$org1Name_$org2Name"
 dbName="$org1Name""db_$DATE"
 trainFile="$org1Name""2""$org2Name""_one2one_$DATE.train"
 m2omaf="$org1Name""2""$org2Name""_many2one_$DATE.maf"
 o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
 sam="$org1Name""2""$org2Name""_one2one_$DATE.sam"
 pngFile="$org1Name""2""$org2Name""_one2one_$DATE.png"
-tsvFile="mut3_"$(echo $o2omaf | sed -e "s/.maf//")".tsv"
+mutFile="mut_"$(echo $o2omaf | sed -e "s/.maf//")".tsv"
+mut3File="mut3_"$(echo $o2omaf | sed -e "s/.maf//")".tsv"
+
+# get the approximate length of the query sequence
+reslut=$(grep -v "^>" $org2FASTA | wc -c)
+power=$(echo "scale=10; l($result) / l(10)" | bc -l)
+num=$(echo "scale=0; $power/1" | bc)
+Dopt="1e$num"
 
 if [ ! -d $outDirPath ]; then
 	echo "making $outDirPath"
@@ -93,10 +98,18 @@ else
 	echo "$pngFile already exists"
 fi
 
+# make a .tsv file about single-base mutations
+echo "making a .tsv file about single-base mutations"
+if [ ! -e $mutFile ]; then
+	python ~/scripts/analysis/singleUvMuts.py $o2omaf $mutFile
+else
+	echo "$mutFile already exists"
+fi
+
 # make a .tsv file about trinucleotide mutations
 echo "making a .tsv trinucleotide mutation file"
-if [ ! -e $tsvFile ]; then
-	python ~/scripts/analysis/triUvMuts.py $o2omaf $tsvFile
+if [ ! -e $mut3File ]; then
+	python ~/scripts/analysis/triUvMuts.py $o2omaf $mut3File
 else
-	echo "$tsvFile already exists"
+	echo "$mut3File already exists"
 fi
