@@ -110,17 +110,32 @@ generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0, graphTitle){
 ```
 ```{r loadFiles, include=FALSE}
 file_path <- "~/biohazard/data/oikAlb_oikDio/mut3_oikAlb2oikDio_one2one_20240308.tsv"
+dir_path <- "~/biohazard/data/oikAlb_oikDio/"
 data <- read.csv(file_path, sep="\t", header=TRUE)
 title <- "oikAlb-oikDio"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(title, ".pdf"), graphTitle=title)
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle=title)
 
 file_path <- "~/biohazard/data/oikAlb_oikVan/mut3_oikAlb2oikVan_one2one_20240308.tsv"
+dir_path <- "~/biohazard/data/oikAlb_oikVan/"
 data <- read.csv(file_path, sep="\t", header = TRUE)
 title <- "oikAlb-oikVan"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(title, ".pdf"), graphTitle = title)
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
 
 file_path <- "~/biohazard/data/phyBuc_pomCan/mut3_phyBuc2pomCan_one2one_20240308.tsv"
+dir_path <- "~/biohazard/data/phyBuc_pomCan/"
 data <- read.csv(file_path, sep="\t", header = TRUE)
 title <- "phyBuc-pomCan"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(title, ".pdf"), graphTitle = title)
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+
+file_path <- "~/biohazard/data/oikDio_oikAlb/mut3_oikDio2oikAlb_one2one_20240310.tsv"
+dir_path <- "~/biohazard/data/oikDio_oikAlb/"
+data <- read.csv(file_path, sep="\t", header = TRUE)
+title <- "oikDio_oikAlb"
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+
+file_path <- "~/biohazard/data/bathBro_bathSep/mut3_bathBro2bathSep_one2one_20240311.tsv"
+dir_path <- "~/biohazard/data/bathBro_bathSep/"
+data <- read.csv(file_path, sep="\t", header = TRUE)
+title <- "bathBro-bathSep"
+generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
 ```
