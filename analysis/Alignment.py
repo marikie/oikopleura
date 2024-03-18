@@ -144,9 +144,9 @@ class Alignment:
         gSeq = refLine[6]
 
         rID = queryLine[1]
-        rStrand = queryLine[4]
         rStart = int(queryLine[2])
         rEnd = rStart + int(queryLine[3])
+        rStrand = queryLine[4]
         rLength = int(queryLine[5])
         rSeq = queryLine[6]
 
@@ -258,3 +258,44 @@ class Alignment:
             other.rEnd,
             other.rStrand,
         )
+
+
+class JoinedAlignment:
+    def __init__(self, **kwargs):
+        """
+        coordinates are in inbetween coordinates
+        """
+        self.totalGenomes = len(kwargs["sLines"])
+        for i, sline in enumerate(kwargs["sLines"]):
+            chr_name = "gChr" + str(i + 1)
+            exec("self.{} = {}".format(chr_name, sline[1]))
+
+            start_name = "gStart" + str(i + 1)
+            exec("self.{} = int({})".format(start_name, sline[2]))
+
+            end_name = "gEnd" + str(i + 1)
+            exec(
+                "self.{} = int({})".format(end_name, str(int(sline[2]) + int(sline[3])))
+            )
+
+            strand_name = "gStrand" + str(i + 1)
+            exec("self.{} = {}".format(strand_name, sline[4]))
+
+            length_name = "gLength" + str(i + 1)
+            exec("self.{} = int({})".format(length_name, sline[5]))
+
+            seq_name = "gSeq" + str(i + 1)
+            exec("self.{} = {}".format(seq_name, sline[6]))
+
+    @classmethod
+    def fromMAFEntry(cls, mafEntry):
+        # mafEntry becomes
+        # [['a', 'score=...', ...],['s','chr', ...],['s',...]]
+        lines = list(map(str.split, mafEntry))
+        """
+        get "s" lines info
+        """
+        sLines = [i for i in lines if i[0] == "s"]
+        if not sLines:
+            raise Exception("empty alignment")
+        return cls(sLines=sLines)
