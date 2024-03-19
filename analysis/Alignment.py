@@ -268,24 +268,22 @@ class JoinedAlignment:
         self.totalGenomes = len(kwargs["sLines"])
         for i, sline in enumerate(kwargs["sLines"]):
             chr_name = "gChr" + str(i + 1)
-            exec("self.{} = {}".format(chr_name, sline[1]))
+            exec("self.{} = '{}'".format(chr_name, sline[1]))
 
             start_name = "gStart" + str(i + 1)
-            exec("self.{} = int({})".format(start_name, sline[2]))
+            exec("self.{} = {}".format(start_name, sline[2]))
 
             end_name = "gEnd" + str(i + 1)
-            exec(
-                "self.{} = int({})".format(end_name, str(int(sline[2]) + int(sline[3])))
-            )
+            exec("self.{} = {}".format(end_name, str(int(sline[2]) + int(sline[3]))))
 
             strand_name = "gStrand" + str(i + 1)
-            exec("self.{} = {}".format(strand_name, sline[4]))
+            exec("self.{} = '{}'".format(strand_name, sline[4]))
 
             length_name = "gLength" + str(i + 1)
-            exec("self.{} = int({})".format(length_name, sline[5]))
+            exec("self.{} = {}".format(length_name, sline[5]))
 
             seq_name = "gSeq" + str(i + 1)
-            exec("self.{} = {}".format(seq_name, sline[6]))
+            exec("self.{} = '{}'".format(seq_name, sline[6]))
 
     @classmethod
     def fromMAFEntry(cls, mafEntry):
@@ -299,3 +297,35 @@ class JoinedAlignment:
         if not sLines:
             raise Exception("empty alignment")
         return cls(sLines=sLines)
+
+
+if __name__ == "__main__":
+    """
+    Test JoinedAlignment class
+    """
+    from Util import getJoinedAlignmentObj
+
+    alnFile = (
+        "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_joined.maf"
+    )
+    alnFileHandle = open(alnFile)
+    for joinedAln in getJoinedAlignmentObj(alnFileHandle):
+        print("totalGenomes: ", str(joinedAln.totalGenomes))
+        print("gChr1: ", joinedAln.gChr1, type(joinedAln.gChr1))
+        print("gStart1: ", joinedAln.gStart1, type(joinedAln.gStart1))
+        print("gEnd1: ", joinedAln.gEnd1, type(joinedAln.gEnd1))
+        print("gStrand1: ", joinedAln.gStrand1, type(joinedAln.gStrand1))
+        print("gLength1: ", joinedAln.gLength1, type(joinedAln.gLength1))
+        print("gSeq1: ", joinedAln.gSeq1, type(joinedAln.gSeq1))
+        print("gChr2: ", joinedAln.gChr2, type(joinedAln.gChr2))
+        print("gStart2: ", joinedAln.gStart2, type(joinedAln.gStart2))
+        print("gEnd2: ", joinedAln.gEnd2, type(joinedAln.gEnd2))
+        print("gStrand2: ", joinedAln.gStrand2, type(joinedAln.gStrand2))
+        print("gLength2: ", joinedAln.gLength2, type(joinedAln.gLength2))
+        print("gSeq2: ", joinedAln.gSeq2, type(joinedAln.gSeq2))
+        print("gChr3: ", joinedAln.gChr3, type(joinedAln.gChr3))
+        print("gStart3: ", joinedAln.gStart3, type(joinedAln.gStart3))
+        print("gEnd3: ", joinedAln.gEnd3, type(joinedAln.gEnd3))
+        print("gStrand3: ", joinedAln.gStrand3, type(joinedAln.gStrand3))
+        print("gLength3: ", joinedAln.gLength3, type(joinedAln.gLength3))
+        print("gSeq3: ", joinedAln.gSeq3, type(joinedAln.gSeq3))
