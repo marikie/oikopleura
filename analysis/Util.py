@@ -1,4 +1,5 @@
 from Alignment import Alignment
+from Alignment import JoinedAlignment
 from itertools import groupby
 
 
@@ -8,6 +9,8 @@ def resetCoordToItsStrand(aln, readStrand):
     + strand coordinates if its rStrand == '+',
     - strand coordinates if its rStrand == '-'
     """
+    rStart = None
+    rEnd = None
     if readStrand == "+":
         if aln.rStrand == "+":
             pass
@@ -55,6 +58,14 @@ def getAln(mafLines):
             mafBlock = [line for line in groupedLines]
             # print(mafBlock)
             yield Alignment.fromMAFEntry(mafBlock)
+
+
+def getJoinedAlignmentObj(alnFileHandle):
+    """
+    takes an alignmentFile and yield a JoinedAlignment object
+    """
+    for mafEntry in getMAFBlock(alnFileHandle):
+        yield JoinedAlignment.fromMAFEntry(mafEntry)
 
 
 def getAlignmentObjsOneByOne(alnFileHandle):
