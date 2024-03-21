@@ -27,7 +27,7 @@ alnFileHandle = open(joinedAlnFile)
 # initialize output file
 with open(outputFilePath, "w") as tsvfile:
     writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-    writer.writerow(["g1Tri", "g2Tri", "g3Tri", "mutation_type"])
+    writer.writerow(["g1Tri", "g2Tri", "g3Tri", "mutType"])
 
 
 def isMut(g1Tri, g2Tri, g3Tri):
@@ -97,10 +97,13 @@ for aln in getJoinedAlignmentObj(alnFileHandle):
         ):
             continue
         elif isMut(g1Tri, g2Tri, g3Tri):
-            mutType = getMutType(g1Tri, g2Tri, g3Tri)
-            with open(outputFilePath, "a") as tsvfile:
-                writer = csv.writer(tsvfile, delimiter="\t")
-                writer.writerow([g1Tri, g2Tri, g3Tri, mutType])
+            try:
+                mutType = getMutType(g1Tri, g2Tri, g3Tri)
+                with open(outputFilePath, "a") as tsvfile:
+                    writer = csv.writer(tsvfile, delimiter="\t")
+                    writer.writerow([g1Tri, g2Tri, g3Tri, mutType])
+            except Exception:
+                print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
         else:
             continue
 
