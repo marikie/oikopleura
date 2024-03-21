@@ -26,7 +26,7 @@ alnFileHandle = open(alignmentFile)
 # how to initialize output file
 with open(outputFilePath, "w") as tsvfile:
     writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-    writer.writerow(["refTri", "qryTri", "mutation_type"])
+    writer.writerow(["refTri", "qryTri", "mutType"])
 
 
 def getMutType(rTri, qTri):

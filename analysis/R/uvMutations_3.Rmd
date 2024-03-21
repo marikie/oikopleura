@@ -34,7 +34,7 @@ generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0, graphTitle){
   
   
   
-  conv.data<-table(toupper(mutlist$mutation_type))
+  conv.data<-table(toupper(mutlist$mutType))
   
   # Set missing mutations as value of zero
   conv.data[conv.combi[!(conv.combi %in% names(conv.data))]] = 0
