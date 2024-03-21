@@ -63,13 +63,13 @@ def getMutType(g1Tri, g2Tri, g3Tri):
 
     if majority not in set(["C", "T"]):
         mutType = (
-            bindDict[g1Tri[0]]
+            bindDict[g1Tri[2]]
             + "["
             + bindDict[majority]
             + ">"
             + bindDict[minority]
             + "]"
-            + bindDict[g1Tri[2]]
+            + bindDict[g1Tri[0]]
         )
     else:
         mutType = g1Tri[0] + "[" + majority + ">" + minority + "]" + g1Tri[2]

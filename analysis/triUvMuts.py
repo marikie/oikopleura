@@ -34,8 +34,8 @@ def getMutType(rTri, qTri):
     rTri_type = ""
     qTri_type = ""
     if rTri[1] not in set(["C", "T"]):
-        rTri_type = bindDict[rTri[0]] + bindDict[rTri[1]] + bindDict[rTri[2]]
-        qTri_type = bindDict[qTri[0]] + bindDict[qTri[1]] + bindDict[qTri[2]]
+        rTri_type = bindDict[rTri[2]] + bindDict[rTri[1]] + bindDict[rTri[0]]
+        qTri_type = bindDict[qTri[2]] + bindDict[qTri[1]] + bindDict[qTri[0]]
     else:
         rTri_type = rTri
         qTri_type = qTri
