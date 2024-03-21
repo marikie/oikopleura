@@ -1,6 +1,7 @@
 """
 Input:
     - an alignment .maf file
+    - outputFilePath
 Output:
     - a tsv file with the following columns:
     - original trinucleotides
@@ -66,3 +67,5 @@ for aln in getAlignmentObjsOneByOne(alnFileHandle):
                 writer.writerow([rTri, qTri, mutType])
         else:
             continue
+
+alnFileHandle.close()
