@@ -8,11 +8,12 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 require(stringr)
+library(RColorBrewer)
 ```
 ```{r plotFunc, include=FALSE}
-# CODE OF FROM https://github.com/kartong88/Plot-Mutation-Landscape
+# MODIFIED CODE OF FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
-generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0, graphTitle){
+generate_plot<-function(mutlist, filename=0, graphTitle){
   ## Perform analysis for the trinucleotide variants
   
   ### Check which of the mutation variant is missing and add that to the named vector
@@ -60,13 +61,15 @@ generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0, graphTitle){
   
   
   # Labels information for subsequent barplot
-  colour_array<-c("red","blue","green","yellow", "purple", "black")
+  colour_array <- brewer.pal(6, "Dark2")
+  #colour_array<-c("red","blue","green","yellow", "purple", "black")
   text_array=c("C>A","C>G","C>T","T>A","T>C","T>G")
   
   
   # Convert the data to percentage
   conv.data.norm<-conv.data/sum(conv.data)*100
-  
+  pct_yaxs_max <- ceiling(max(as.numeric(conv.data.norm[conv.label.all.sorted])))
+  #print(conv.data.norm)
   #print(conv.data.norm[conv.label.all.sorted])
   #print(typeof(conv.data.norm))
   #if(length(conv.data.norm[conv.label.all.sorted]) == 0) {
@@ -109,33 +112,40 @@ generate_plot<-function(mutlist, pct_yaxs_max = 5.5, filename=0, graphTitle){
 }
 ```
 ```{r loadFiles, include=FALSE}
-file_path <- "~/biohazard/data/oikAlb_oikDio/mut3_oikAlb2oikDio_one2one_20240308.tsv"
-dir_path <- "~/biohazard/data/oikAlb_oikDio/"
-data <- read.csv(file_path, sep="\t", header=TRUE)
-title <- "oikAlb-oikDio"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle=title)
+#file_path <- "~/biohazard/data/oikAlb_oikDio_oikVan/mut3_joined_oikAlb_oikDio_oikVan_20240321.tsv"
+#dir_path <- "~/biohazard/data/oikAlb_oikDio_oikVan/"
+#data <- read.csv(file_path, sep="\t", header=TRUE)
+#title <- basename(dir_path)
+#title <- "oikAlb-oikDio, oikAlb-oikVan"
+#generate_plot(mutlist = data, filename = paste0(dir_path, title, ".pdf"), graphTitle=title)
 
-file_path <- "~/biohazard/data/oikAlb_oikVan/mut3_oikAlb2oikVan_one2one_20240308.tsv"
-dir_path <- "~/biohazard/data/oikAlb_oikVan/"
-data <- read.csv(file_path, sep="\t", header = TRUE)
-title <- "oikAlb-oikVan"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+#file_path <- "~/biohazard/data/oikAlb_oikDio/mut3_oikAlb2oikDio_one2one_20240308.tsv"
+#dir_path <- "~/biohazard/data/oikAlb_oikDio/"
+#data <- read.csv(file_path, sep="\t", header=TRUE)
+#title <- "oikAlb-oikDio"
+#generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle=title)
 
-file_path <- "~/biohazard/data/phyBuc_pomCan/mut3_phyBuc2pomCan_one2one_20240308.tsv"
-dir_path <- "~/biohazard/data/phyBuc_pomCan/"
-data <- read.csv(file_path, sep="\t", header = TRUE)
-title <- "phyBuc-pomCan"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+#file_path <- "~/biohazard/data/oikAlb_oikVan/mut3_oikAlb2oikVan_one2one_20240308.tsv"
+#dir_path <- "~/biohazard/data/oikAlb_oikVan/"
+#data <- read.csv(file_path, sep="\t", header = TRUE)
+#title <- "oikAlb-oikVan"
+#generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
 
-file_path <- "~/biohazard/data/oikDio_oikAlb/mut3_oikDio2oikAlb_one2one_20240310.tsv"
-dir_path <- "~/biohazard/data/oikDio_oikAlb/"
-data <- read.csv(file_path, sep="\t", header = TRUE)
-title <- "oikDio_oikAlb"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+#file_path <- "~/biohazard/data/phyBuc_pomCan/mut3_phyBuc2pomCan_one2one_20240308.tsv"
+#dir_path <- "~/biohazard/data/phyBuc_pomCan/"
+#data <- read.csv(file_path, sep="\t", header = TRUE)
+#title <- "phyBuc-pomCan"
+#generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
 
-file_path <- "~/biohazard/data/bathBro_bathSep/mut3_bathBro2bathSep_one2one_20240311.tsv"
-dir_path <- "~/biohazard/data/bathBro_bathSep/"
-data <- read.csv(file_path, sep="\t", header = TRUE)
-title <- "bathBro-bathSep"
-generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+#file_path <- "~/biohazard/data/oikDio_oikAlb/mut3_oikDio2oikAlb_one2one_20240310.tsv"
+#dir_path <- "~/biohazard/data/oikDio_oikAlb/"
+#data <- read.csv(file_path, sep="\t", header = TRUE)
+#title <- "oikDio_oikAlb"
+#generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
+
+#file_path <- "~/biohazard/data/bathBro_bathSep/mut3_bathBro2bathSep_one2one_20240311.tsv"
+#dir_path <- "~/biohazard/data/bathBro_bathSep/"
+#data <- read.csv(file_path, sep="\t", header = TRUE)
+#title <- "bathBro-bathSep"
+#generate_plot(mutlist = data, pct_yaxs_max = 5.5, filename = paste0(dir_path, title, ".pdf"), graphTitle = title)
 ```
