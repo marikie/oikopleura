@@ -3,7 +3,7 @@
 module load last/1542
 lastal --version
 
-argNum=7
+argNum=6
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
 	echo "- today's date" 1>&2                                                   # $1
