@@ -35,8 +35,8 @@ mutFile="mut_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
 mut3File="mut3_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
 mut3Graph="$org1Name""_""$org2Name""_""$org3Name"".pdf"
 
-bash ~/scripts/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
-bash ~/scripts/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
+bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
+bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 
 # maf-join the two .maf files
 maf-sort $o2oma12 >$o2omaf12_sorted
