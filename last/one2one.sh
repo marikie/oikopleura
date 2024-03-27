@@ -1,6 +1,6 @@
 #!/bin/bash
 
-module load last/1542
+# module load last/1542
 lastal --version
 
 argNum=6
@@ -45,6 +45,9 @@ echo "trainFile: $trainFile"
 echo "m2omaf: $m2omaf"
 echo "o2omaf: $o2omaf"
 echo "pngFile: $pngFile"
+echo "result: $result"
+echo "power: $power"
+echo "num: $num"
 echo "Dopt: $Dopt"
 
 if [ ! -d $outDirPath ]; then
