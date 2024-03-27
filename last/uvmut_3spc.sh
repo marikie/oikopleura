@@ -3,7 +3,7 @@
 module load last/1542
 lastal --version
 
-argNum=7
+argNum=8
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
 	echo "You'll get one-to-one alignments of org1-org2 and org1-org3.\n The top genome of each alignment .maf file will be org1." 1>&2
