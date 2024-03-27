@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # module load last/1542
-lastal --version
+# lastal --version
 
 argNum=6
 if [ $# -ne $argNum ]; then
@@ -29,7 +29,7 @@ o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
 pngFile="$org1Name""2""$org2Name""_one2one_$DATE.png"
 
 # get the approximate length of the query sequence
-reslut=$(grep -v "^>" $org2FASTA | wc -c)
+result=$(grep -v "^>" $org2FASTA | wc -c)
 power=$(echo "scale=10; l($result) / l(10)" | bc -l)
 num=$(echo "scale=0; $power/1" | bc)
 Dopt="1e$num"
