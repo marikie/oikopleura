@@ -35,6 +35,23 @@ mutFile="mut_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
 mut3File="mut3_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
 mut3Graph="$org1Name""_""$org2Name""_""$org3Name"".pdf"
 
+echo "Date: $DATE"
+echo "org1FASTA: $org1FASTA"
+echo "org2FASTA: $org2FASTA"
+echo "org3FASTA: $org3FASTA"
+echo "org1Name: $org1Name"
+echo "org2Name: $org2Name"
+echo "org3Name: $org3Name"
+echo "outDirPath: $outDirPath"
+echo "o2omaf12: $o2omaf12"
+echo "o2omaf13: $o2omaf13"
+echo "o2omaf12_sorted: $o2omaf12_sorted"
+echo "o2omaf13_sorted: $o2omaf13_sorted"
+echo "joinedFile: $joinedFile"
+echo "mutFile: $mutFile"
+echo "mut3File: $mut3File"
+echo "mut3Graph: $mut3Graph"
+
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 

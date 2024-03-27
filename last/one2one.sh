@@ -34,6 +34,19 @@ power=$(echo "scale=10; l($result) / l(10)" | bc -l)
 num=$(echo "scale=0; $power/1" | bc)
 Dopt="1e$num"
 
+echo "Date: $DATE"
+echo "outDirPath: $outDirPath"
+echo "org1FASTA: $org1FASTA"
+echo "org2FASTA: $org2FASTA"
+echo "org1Name: $org1Name"
+echo "org2Name: $org2Name"
+echo "dbName: $dbName"
+echo "trainFile: $trainFile"
+echo "m2omaf: $m2omaf"
+echo "o2omaf: $o2omaf"
+echo "pngFile: $pngFile"
+echo "Dopt: $Dopt"
+
 if [ ! -d $outDirPath ]; then
 	echo "making $outDirPath"
 	mkdir $outDirPath
