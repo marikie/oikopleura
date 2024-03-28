@@ -34,6 +34,7 @@ joinedFile="$org1Name""_""$org2Name""_""$org3Name""_$DATE.maf"
 mutFile="mut_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
 mut3File="mut3_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
 mut3Graph="$org1Name""_""$org2Name""_""$org3Name"".pdf"
+mut3GraphOut="$org1Name""_""$org2Name""_""$org3Name"".out"
 
 echo "Date: $DATE"
 echo "org1FASTA: $org1FASTA"
@@ -51,6 +52,7 @@ echo "joinedFile: $joinedFile"
 echo "mutFile: $mutFile"
 echo "mut3File: $mut3File"
 echo "mut3Graph: $mut3Graph"
+echo "mut3GraphOut: $mut3GraphOut"
 
 if [ ! -d $outDirPath ]; then
 	echo "---making $outDirPath"
@@ -98,7 +100,7 @@ fi
 # make a graph of the trinucleotide mutations
 echo "---making a graph of the trinucleotide mutations"
 if [ ! -e $mut3Graph ]; then
-	Rscript ~/scripts/analysis/R/uvMutations_3.R $mut3File $outDirPath
+	Rscript ~/scripts/analysis/R/uvMutations_3.R $mut3File $outDirPath >$mut3GraphOut
 else
 	echo "$mut3Graph already exists"
 fi
