@@ -59,6 +59,12 @@ generate_plot<-function(mutlist, filename=0, graphTitle){
   # Convert the data to percentage
   conv.data.norm<-conv.data/sum(conv.data)*100
   pct_yaxs_max <- ceiling(max(as.numeric(conv.data.norm[conv.label.all.sorted])))
+  top_5 <- sort(conv.data.norm, decreasing = TRUE)[1:5]
+  worst_5 <- sort(conv.data.norm)[1:5]
+  print("top 5:")
+  print(top_5)
+  print("worst 5:")
+  print(worst_5)
   #print(conv.data.norm)
   #print(conv.data.norm[conv.label.all.sorted])
   #print(typeof(conv.data.norm))
@@ -107,13 +113,13 @@ args <- commandArgs(trailingOnly = TRUE)
 # Access the arguments
 file_path <- args[1]
 dir_path <- args[2]
-print(file_path)
-print(dir_path)
+#print(file_path)
+#print(dir_path)
 data <- read.csv(file_path, sep="\t", header=TRUE)
 dirname <- basename(dir_path)
-print(dirname)
+#print(dirname)
 spc <- str_split(dirname, "_", simplify = TRUE)
-print(spc)
+#print(spc)
 title <- paste0(spc[1,1], "-", spc[1,2], ", ", spc[1,1], "-", spc[1,3])
-print(title)
+#print(title)
 generate_plot(mutlist = data, filename = paste0(dir_path, "/", dirname, ".pdf"), graphTitle=title)
