@@ -52,6 +52,12 @@ echo "mutFile: $mutFile"
 echo "mut3File: $mut3File"
 echo "mut3Graph: $mut3Graph"
 
+if [ ! -d $outDirPath ]; then
+	echo "making $outDirPath"
+	mkdir $outDirPath
+fi
+cd $outDirPath
+
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 
@@ -71,7 +77,7 @@ maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
 # make a .tsv file about trinucleotide mutations
 echo "making a .tsv trinucleotide mutation file"
 if [ ! -e $mut3File ]; then
-	python ~/scripts/analysis/triUvMuts_joined.py $o2omaf $mut3File
+	python ~/scripts/analysis/triUvMuts_joined.py $joinedFile $outDirPath"/"$mut3File
 else
 	echo "$mut3File already exists"
 fi
@@ -79,7 +85,7 @@ fi
 # make a graph of the trinucleotide mutations
 echo "making a graph of the trinucleotide mutations"
 if [ ! -e $mut3Graph ]; then
-	Rscript ~/scripts/analysis/R/uvmut3spc.R $mut3File $outDirPath
+	Rscript ~/scripts/analysis/R/uvMutations_3.R $mut3File $outDirPath
 else
 	echo "$mut3Graph already exists"
 fi
