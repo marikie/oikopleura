@@ -63,9 +63,21 @@ bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name
 
 # maf-join the two .maf files
 echo "---maf-joining the two .maf files"
-maf-sort $o2omaf12 >$o2omaf12_sorted
-maf-sort $o2omaf13 >$o2omaf13_sorted
-maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
+if [ ! -e $o2omaf12_sorted ]; then
+	maf-sort $o2omaf12 >$o2omaf12_sorted
+else
+	echo "$o2omaf12_sorted already exists"
+fi
+if [ ! -e $o2omaf13_sorted ]; then
+	maf-sort $o2omaf13 >$o2omaf13_sorted
+else
+	echo "$o2omaf13_sorted already exists"
+fi
+if [ ! -e $joinedFile ]; then
+	maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
+else
+	echo "$joinedFile already exists"
+fi
 
 # make a .tsv file about single-base mutations
 # echo "making a .tsv file about single-base mutations"
