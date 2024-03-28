@@ -6,7 +6,7 @@ lastal --version
 argNum=8
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
-	echo "You'll get one-to-one alignments of org1-org2 and org1-org3.\n The top genome of each alignment .maf file will be org1." 1>&2
+	echo "You'll get one-to-one alignments of org1-org2 and org1-org3. The top genome of each alignment .maf file will be org1." 1>&2
 	echo "- today's date" 1>&2                                           # $1
 	echo "- path to the org1 reference fasta file" 1>&2                  # $2
 	echo "- path to the org2 reference fasta file" 1>&2                  # $3
@@ -56,8 +56,8 @@ bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 
 # maf-join the two .maf files
-maf-sort $o2oma12 >$o2omaf12_sorted
-maf-sort $o2oma13 >$o2omaf13_sorted
+maf-sort $o2omaf12 >$o2omaf12_sorted
+maf-sort $o2omaf13 >$o2omaf13_sorted
 maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
 
 # make a .tsv file about single-base mutations
