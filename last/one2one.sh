@@ -104,10 +104,10 @@ fi
 # fi
 
 # last-dotplot
-echo "---last-dotplot"
-if [ ! -e $pngFile ]; then
-	echo "making $pngFile"
-	last-dotplot $o2omaf $pngFile
-else
-	echo "$pngFile already exists"
-fi
+# echo "---last-dotplot"
+# if [ ! -e $pngFile ]; then
+# 	echo "making $pngFile"
+# 	last-dotplot $o2omaf $pngFile
+# else
+# 	echo "$pngFile already exists"
+# fi
