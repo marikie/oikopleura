@@ -98,7 +98,7 @@ fi
 # make a graph of the trinucleotide mutations
 echo "---making a graph of the trinucleotide mutations"
 if [ ! -e $mut3Graph ]; then
-	Rscript ~/scripts/analysis/R/uvMutations_3.R $mut3File $outDirPath
+	Rscript ~/scripts/analysis/R/uvMutations_3.R "./"$mut3File $outDirPath
 else
 	echo "$mut3Graph already exists"
 fi
