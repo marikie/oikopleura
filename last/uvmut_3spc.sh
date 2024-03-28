@@ -62,6 +62,7 @@ bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 
 # maf-join the two .maf files
+echo "maf-joining the two .maf files"
 maf-sort $o2omaf12 >$o2omaf12_sorted
 maf-sort $o2omaf13 >$o2omaf13_sorted
 maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
