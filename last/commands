@@ -691,3 +691,6 @@ fi
 # March 11, 2024
 ./one2one.sh 20240311 ~/data/bathBro_bathSep/ ~/genomes/bathymodiolusBrooksi/GCA_963680875.1_xbBatBroo1.1_genomic.fna ~/genomes/bathymodiolusSeptemdierum/GCA_963383655.1_xbBatSept2.1_genomic.fna bathBro bathSep 1e9
 
+# March 27, 2024
+./uvmut_3spc.sh 20240327 ~/genomes/gigantidasPlatifrons/GCA_002080005.1_Bpl_v1.0_genomic.fna ~/genomes/bathymodiolusSeptemdierum/GCA_963383655.1_xbBatSept2.1_genomic.fna ~/genomes/bathymodiolusBrooksi/GCA_963680875.1_xbBatBroo1.1_genomic.fna gPla bSep bBro ~/data
+
