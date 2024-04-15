@@ -200,29 +200,29 @@ if __name__ == "__main__":
     ###################
     # parse arguments
     ###################
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument(
-    #     "joinedAlignmentFile",
-    #     help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup)",
-    # )
-    # parser.add_argument(
-    #     "outputFilePath",
-    #     help="a tsv file with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
-    # )
-    # args = parser.parse_args()
-    # joinedAlnFile = args.joinedAlignmentFile
-    # outputFilePath = args.outputFilePath
-    # alnFileHandle = open(joinedAlnFile)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "joinedAlignmentFile",
+        help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup)",
+    )
+    parser.add_argument(
+        "outputFilePath",
+        help="a tsv file with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
+    )
+    args = parser.parse_args()
+    joinedAlnFile = args.joinedAlignmentFile
+    outputFilePath = args.outputFilePath
+    alnFileHandle = open(joinedAlnFile)
 
     ###################
     # test
     ###################
-    alnFileHandle = open(
-        "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_joined.maf"
-    )
-    outputFilePath = (
-        "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_20240410.tsv"
-    )
+    # alnFileHandle = open(
+    #     "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_joined.maf"
+    # )
+    # outputFilePath = (
+    #     "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_20240410.tsv"
+    # )
 
     ###################
     # main
