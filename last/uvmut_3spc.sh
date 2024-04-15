@@ -6,7 +6,7 @@ lastal --version
 argNum=8
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
-	echo "You'll get one-to-one alignments of org1-org2 and org1-org3. The top genome of each alignment .maf file will be org1." 1>&2
+	echo "You'll get one-to-one alignments of org1-org2 and org1-org3. The top genome of each alignment .maf file will be org1. org1 should be in the outgroup." 1>&2
 	echo "- today's date" 1>&2                                           # $1
 	echo "- path to the org1 reference fasta file" 1>&2                  # $2
 	echo "- path to the org2 reference fasta file" 1>&2                  # $3
@@ -100,7 +100,7 @@ fi
 # make a graph of the trinucleotide mutations
 echo "---making a graph of the trinucleotide mutations"
 if [ ! -e $mut3Graph ]; then
-	Rscript ~/scripts/analysis/R/uvMutations_3.R $mut3File $outDirPath >$mut3GraphOut
+	Rscript ~/scripts/analysis/R/uvMutations_3_smallinput.R $mut3File $outDirPath >$mut3GraphOut
 else
 	echo "$mut3Graph already exists"
 fi
