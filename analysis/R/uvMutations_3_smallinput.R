@@ -58,16 +58,16 @@ generate_plot<-function(file_path, filename=0, graphTitle){
   
   # Convert the data to percentage
   #print(conv.data)
-  conv.data.norm<-conv.data["mutNum",]/conv.data["totalRootNum",]*100
-  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted]))))
+  conv.data.norm<-as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",]*100)
+  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted]))))+ 5
   top_5 <- sort(conv.data.norm, decreasing = TRUE)[1:5]
   worst_5 <- sort(conv.data.norm)[1:5]
   print("top 5:")
   print(top_5)
   print("worst 5:")
   print(worst_5)
-  print(conv.data.norm)
   print(pct_yaxs_max)
+  #print(conv.data.norm)
   #print(conv.data.norm[conv.label.all.sorted])
   #print(typeof(conv.data.norm))
   #if(length(conv.data.norm[conv.label.all.sorted]) == 0) {
@@ -91,7 +91,7 @@ generate_plot<-function(file_path, filename=0, graphTitle){
   # Make the PDF plot of the graph
   if(!filename==0){
     pdf(filename)
-    barplot(as.numeric(conv.data.norm[conv.label.all.sorted]), col=rep(colour_array,each=16), cex.names=0.3, las=3, names.arg=trinuc.lab.sorted,ylim=c(0,pct_yaxs_max), ylab="Percentage of Mutations/totalNumOfRootTrinuc (%)", xlab="Trinucleotides", main = graphTitle)
+    barplot(as.numeric(conv.data.norm[conv.label.all.sorted]), col=rep(colour_array,each=16), cex.names=0.3, las=3, names.arg=trinuc.lab.sorted,ylim=c(0,pct_yaxs_max), ylab="Percentage of #Mutations/#totalRootTrinucs (%)", xlab="Trinucleotides", main = graphTitle)
     
     for(i in 1:6){
       # Size of 1.2 per bar.
