@@ -5,33 +5,13 @@ Input:
     - outputFilePath
 Output:
     - a tsv file with the following columns:
-        - trinucleotides of genome 1 (the outgroup)
-        - trinucleotides of genome 2
-        - trinucleotides of genome 3
         - mutation type
+        - mutNum
+        - totalRootNum
 """
 import argparse
 import csv
 from Util import getJoinedAlignmentObj
-
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "joinedAlignmentFile",
-    help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup)",
-)
-parser.add_argument(
-    "outputFilePath",
-    help="a tsv file with the following columns: trinucleotides of genome 1, trinucleotides of genome 2, trinucleotides of genome 3, mutation type (96 types)",
-)
-args = parser.parse_args()
-joinedAlnFile = args.joinedAlignmentFile
-outputFilePath = args.outputFilePath
-alnFileHandle = open(joinedAlnFile)
-
-# initialize output file
-with open(outputFilePath, "w") as tsvfile:
-    writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-    writer.writerow(["g1Tri", "g2Tri", "g3Tri", "mutType"])
 
 
 #############
@@ -157,51 +137,94 @@ def add2MutDict(mutDict, mutTypeList):
 ###################
 # main procedures
 ###################
+def main(alnFileHandle, outputFilePath):
+    # prepare mutDict
+    letters = ["A", "C", "G", "T"]
+    conversion = ["C>A", "C>G", "C>T", "T>A", "T>C", "T>G"]
+    mutDict = {}
+    for i in range(len(letters)):
+        for j in range(len(conversion)):
+            for k in range(len(letters)):
+                mtype = letters[i] + "[" + conversion[j] + "]" + letters[k]
+                if mtype not in mutDict:
+                    mutDict[mtype] = {}
+                mutDict[mtype]["mutNum"] = 0
+                mutDict[mtype]["totalRootNum"] = 0
 
-# prepare mutDict
-letters = ["A", "C", "G", "T"]
-conversion = ["C>A", "C>G", "C>T", "T>A", "T>C", "T>G"]
-mutDict = {}
-for i in range(len(letters)):
-    for j in range(len(conversion)):
-        for k in range(len(letters)):
-            mutDict[letters[i] + "[" + conversion[j] + "]" + letters[k]]["mutNum"] = 0
-            mutDict[letters[i] + "[" + conversion[j] + "]" + letters[k]][
-                "totalRootNum"
-            ] = 0
+    for aln in getJoinedAlignmentObj(alnFileHandle):
+        gSeq1 = aln.gSeq1.upper()
+        gSeq2 = aln.gSeq2.upper()
+        gSeq3 = aln.gSeq3.upper()
+        assert (
+            len(gSeq1) == len(gSeq2)
+            and len(gSeq1) == len(gSeq3)
+            and len(gSeq2) == len(gSeq3)
+        ), "gSeq1, gSeq2, and gSeq3 should have the same length"
+        for i in range(len(gSeq1) - 2):
+            g1Tri = gSeq1[i : i + 3]
+            g2Tri = gSeq2[i : i + 3]
+            g3Tri = gSeq3[i : i + 3]
+            if not (
+                all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g1Tri)))
+                and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g2Tri)))
+                and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g3Tri)))
+            ):
+                continue
+            elif noMut(g1Tri, g2Tri, g3Tri):
+                add2totalNum(mutDict, g1Tri, g2Tri, g3Tri)
+            elif isMut(g1Tri, g2Tri, g3Tri):
+                try:
+                    mutTypeList = getMutTypeList(g1Tri, g2Tri, g3Tri)
+                    add2MutDict(mutDict, mutTypeList)
+                except Exception:
+                    print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
+            else:
+                continue
+
+    alnFileHandle.close()
+
+    with open(outputFilePath, "w") as tsvfile:
+        writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+        writer.writerow(["mutType", "mutNum", "totalRootNum"])
+        for mutType, info in mutDict.items():
+            writer.writerow(
+                [
+                    mutType,
+                    info["mutNum"],
+                    info["totalRootNum"],
+                ]
+            )
 
 
-for aln in getJoinedAlignmentObj(alnFileHandle):
-    gSeq1 = aln.gSeq1.upper()
-    gSeq2 = aln.gSeq2.upper()
-    gSeq3 = aln.gSeq3.upper()
-    assert (
-        len(gSeq1) == len(gSeq2)
-        and len(gSeq1) == len(gSeq3)
-        and len(gSeq2) == len(gSeq3)
-    ), "gSeq1, gSeq2, and gSeq3 should have the same length"
-    for i in range(len(gSeq1) - 2):
-        g1Tri = gSeq1[i : i + 3]
-        g2Tri = gSeq2[i : i + 3]
-        g3Tri = gSeq3[i : i + 3]
-        if not (
-            all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g1Tri)))
-            and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g2Tri)))
-            and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g3Tri)))
-        ):
-            continue
-        elif noMut(g1Tri, g2Tri, g3Tri):
-            add2totalNum(mutDict, g1Tri, g2Tri, g3Tri)
-        else:
-            assert isMut(g1Tri, g2Tri, g3Tri), "not a mutation"
-            try:
-                mutTypeList = getMutTypeList(g1Tri, g2Tri, g3Tri)
-                add2MutDict(mutDict, mutTypeList)
-            except Exception:
-                print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
+if __name__ == "__main__":
+    ###################
+    # parse arguments
+    ###################
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument(
+    #     "joinedAlignmentFile",
+    #     help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup)",
+    # )
+    # parser.add_argument(
+    #     "outputFilePath",
+    #     help="a tsv file with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
+    # )
+    # args = parser.parse_args()
+    # joinedAlnFile = args.joinedAlignmentFile
+    # outputFilePath = args.outputFilePath
+    # alnFileHandle = open(joinedAlnFile)
 
-alnFileHandle.close()
+    ###################
+    # test
+    ###################
+    alnFileHandle = open(
+        "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_joined.maf"
+    )
+    outputFilePath = (
+        "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_20240410.tsv"
+    )
 
-with open(outputFilePath, "a") as tsvfile:
-    writer = csv.writer(tsvfile, delimiter="\t")
-    writer.writerow([g1Tri, g2Tri, g3Tri, mutType])
+    ###################
+    # main
+    ###################
+    main(alnFileHandle, outputFilePath)
