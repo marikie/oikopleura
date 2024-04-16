@@ -31,7 +31,7 @@ generate_plot<-function(file_path, filename=0, graphTitle){
  
   
   conv.data<-setNames(data.frame(t(data[,-1])), data[,1])
-  print(conv.data)
+  #print(conv.data)
   
   
   # Set missing mutations as value of zero
@@ -57,16 +57,31 @@ generate_plot<-function(file_path, filename=0, graphTitle){
   text_array=c("C>A","C>G","C>T","T>A","T>C","T>G")
   
   # Convert the data to percentage
+  ## Calculate the new row and add it
+  ## Add Mutation Percentage
+  mutation_percentage <- as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",])*100
+  conv.data <- rbind(conv.data, MutationPercentage = mutation_percentage)
   #print(conv.data)
+  
   conv.data.norm<-as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",]*100)
-  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted]))))+ 5
-  top_5 <- sort(conv.data.norm, decreasing = TRUE)[1:5]
-  worst_5 <- sort(conv.data.norm)[1:5]
-  print("top 5:")
-  print(top_5)
-  print("worst 5:")
-  print(worst_5)
-  print(pct_yaxs_max)
+  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted])))) + 5
+
+  # Sorting columns directly based on 'MutationPercentage' row values
+  # Get the order of indices based on 'MutationPercentage' values
+  col_order <- order(as.numeric(conv.data["MutationPercentage", ]), decreasing = TRUE)
+  # Reorder the columns based on sorted indices
+  conv.data.sorted <- conv.data[, col_order]
+  # Print the sorted data frame
+  print("Data sorted by Mutation Percentage:")
+  print(conv.data.sorted)
+  
+  #top_5 <- sort(conv.data.norm, decreasing = TRUE)[1:5]
+  #worst_5 <- sort(conv.data.norm)[1:5]
+  #print("top 5:")
+  #print(top_5)
+  #print("worst 5:")
+  #print(worst_5)
+  #print(pct_yaxs_max)
   #print(conv.data.norm)
   #print(conv.data.norm[conv.label.all.sorted])
   #print(typeof(conv.data.norm))
