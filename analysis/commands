@@ -645,3 +645,6 @@ python triUvMuts.py ~/data/bathBro_bathSep/bathBro2bathSep_one2one_20240311.maf 
 # March 25, 2024
 python triUvMuts_joined.py ~/biohazard/data/oikAlb_oikDio_oikVan/oikAlb_oikDio_oikVan_joined_20240318.maf ~/biohazard/data/oikAlb_oikDio_oikVan/mut3_joined_oikAlb_oikDio_oikVan_20240321.tsv
 
+# April 16, 2024
+python ~/biohazard/scripts/analysis/triUvMuts_joined.py gPla_bSep_bBro.maf ./mut3_gPla_bSep_bBro_20240416.tsv
+
