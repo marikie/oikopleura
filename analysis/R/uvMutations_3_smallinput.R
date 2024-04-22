@@ -3,7 +3,7 @@ library(RColorBrewer)
 
 # MODIFIED THE CODE FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
-generate_plot<-function(file_path, filename=0, graphTitle){
+generate_plot<-function(file_path, filename=0, filename100=0, graphTitle){
   ## Perform analysis for the trinucleotide variants
   
   ### Check which of the mutation variant is missing and add that to the named vector
@@ -122,6 +122,28 @@ generate_plot<-function(file_path, filename=0, graphTitle){
     
     dev.off()
   }
+  
+  pct_yaxs_max = 100
+  ### Barplot for Trinucleotide Mutation rate (Percentage)
+  # Make the PDF plot of the graph
+  if(!filename100==0){
+    pdf(filename100)
+    barplot(as.numeric(conv.data.norm[conv.label.all.sorted]), col=rep(colour_array,each=16), cex.names=0.3, las=3, names.arg=trinuc.lab.sorted,ylim=c(0,pct_yaxs_max), ylab="Percentage of #Mutations/#totalRootTrinucs (%)", xlab="Trinucleotides", main = graphTitle)
+    
+    for(i in 1:6){
+      # Size of 1.2 per bar.
+      # Total size of 19.2 for 16 barplots
+      left<-(i -1)*19.2 + 0.2 # to create a bit of white space
+      right<-i* 19.2 - 0.2
+      label_mid<-19.2/2 +(i-1)*19.2
+      
+      #rect(left,5.1,right,5.2, col=colour_array[i], border=NA)
+      rect(left,0.95*pct_yaxs_max,right,0.96*pct_yaxs_max, col=colour_array[i], border=NA)
+      text(x=label_mid, y=0.98*pct_yaxs_max, labels=text_array[i])
+    }
+    
+    dev.off()
+  }
 }
 
 
@@ -139,4 +161,4 @@ spc <- str_split(dirname, "_", simplify = TRUE)
 #print(spc)
 title <- paste0(spc[1,1], "-", spc[1,2], ", ", spc[1,1], "-", spc[1,3])
 #print(title)
-generate_plot(file_path, filename = paste0(dir_path, "/", dirname, ".pdf"), graphTitle=title)
+generate_plot(file_path, filename = paste0(dir_path, "/", dirname, ".pdf"), filename100=paste0(dir_path, "/", dirname, "_100.pdf"), graphTitle=title)
