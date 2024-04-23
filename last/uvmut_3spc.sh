@@ -104,3 +104,5 @@ if [ ! -e $mut3Graph ]; then
 else
 	echo "$mut3Graph already exists"
 fi
+
+bash ~/scripts/last/one2one.sh $DATE $outDirPath $org2FASTA $org3FASTA $org2Name $org3Name
