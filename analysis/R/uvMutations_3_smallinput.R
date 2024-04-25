@@ -66,6 +66,24 @@ generate_plot<-function(file_path, filename=0, filename100=0, graphTitle){
   conv.data.norm<-as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",]*100)
   pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted])))) + 5
 
+  # Transform each column name according to the specified pattern
+  transformed_names <- sapply(colnames(conv.data), function(name) {
+    # Split the name into a character vector
+    char_vector <- strsplit(name, "")[[1]]
+    # Check if the length of char_vector is less than 7
+    if (length(char_vector) < 7) {
+      return(name)  # Return original name if it's too short
+    }
+    # Extract characters based on the specified positions
+    original_chars <- char_vector[c(1, 3, 7)]
+    final_chars <- char_vector[c(1, 5, 7)]
+    # Combine into the new format
+    result <- paste(paste(original_chars, collapse = ""), " → ", paste(final_chars, collapse = ""), sep = "")
+    return(result)
+  })
+  # Update the column names of the data frame
+  colnames(conv.data) <- transformed_names
+
   # Sorting columns directly based on 'MutationPercentage' row values
   # Get the order of indices based on 'MutationPercentage' values
   col_order <- order(as.numeric(conv.data["MutationPercentage", ]), decreasing = TRUE)
@@ -74,33 +92,19 @@ generate_plot<-function(file_path, filename=0, filename100=0, graphTitle){
   # Print the sorted data frame
   print("Data sorted by Mutation Percentage:")
   print(conv.data.sorted)
-  
-  #top_5 <- sort(conv.data.norm, decreasing = TRUE)[1:5]
-  #worst_5 <- sort(conv.data.norm)[1:5]
-  #print("top 5:")
-  #print(top_5)
-  #print("worst 5:")
-  #print(worst_5)
-  #print(pct_yaxs_max)
-  #print(conv.data.norm)
-  #print(conv.data.norm[conv.label.all.sorted])
-  #print(typeof(conv.data.norm))
-  #if(length(conv.data.norm[conv.label.all.sorted]) == 0) {
-  #  stop("The height vector for barplot is empty. Check the processing of conv.data.norm and conv.label.all.sorted.")
-  #}
-  
-  #simple_test <- conv.data.norm[1:10] # Just an example to test plotting
-  #print(simple_test)
-  #print(is.vector(simple_test))
-  #print(is.matrix(simple_test))
-  
-  # Convert to a numeric vector explicitly
-  #simple_test_vector <- as.numeric(simple_test)
-  
-  # Now, try plotting again
-  #barplot(simple_test_vector, col=rep(colour_array, each=1, length.out=length(simple_test_vector)))
-  
-  
+
+  cat("\n\nTop 10:\n")
+  print(conv.data.sorted[,1:10])
+  cat("\n\nWorst 10:\n")
+  print(conv.data.sorted[, (ncol(conv.data.sorted)-9):ncol(conv.data.sorted)])
+  # Get the reverse order of indices based on 'MutationPercentage' values
+  col_order_rev <- order(as.numeric(conv.data["MutationPercentage", ]))
+  # Reorder the columns based on sorted indices
+  conv.data.revsorted <- conv.data[, col_order_rev]
+  cat("\n\nWorst 10 (rev):\n")
+  # Reverse-sort the data frame 'conv.data.sorted' based on the third row
+  print(conv.data.revsorted[,1:10])
+
   
   ### Barplot for Trinucleotide Mutation rate (Percentage)
   # Make the PDF plot of the graph
@@ -150,8 +154,8 @@ generate_plot<-function(file_path, filename=0, filename100=0, graphTitle){
 args <- commandArgs(trailingOnly = TRUE)
 
 # Access the arguments
-file_path <- args[1]
-dir_path <- args[2]
+file_path <- args[1] # File path for the input data, .tsv file
+dir_path <- args[2] # Directory path for the output data, directory of spc1_spc2_spc3
 #print(file_path)
 #print(dir_path)
 #data <- read.csv(file_path, sep="\t", header=TRUE)
