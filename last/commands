@@ -700,4 +700,8 @@ fi
 # April 22, 2024
 ./uvmut_3spc.sh 20240422 ~/genomes/ulvaProlifera/GCA_023078555.1_ASM2307855v1_genomic.fna ~/genomes/ulvaMutabilis/GCA_900538255.1_Ulvmu_WT_fa_genomic.fna ~/genomes/ulvaCompressa/GCA_024500015.1_ASM2450001v1_genomic.fna uPro uMut uCom ~/data
 
+# April 23, 2024
+./uvmut_3spc.sh 20240423 ~/genomes/ostreococcusMediterraneus/GCA_012295225.1_ASM1229522v1_genomic.fna ~/genomes/ostreococcusTauri/GCF_000214015.3_version_140606_genomic.fna ~/genomes/ostreococcusLucimarinus/GCF_000092065.1_ASM9206v1_genomic.fna ostMed ostTau ostLuc ~/data
+
+./uvmut_3spc.sh 20240423 ~/genomes/protothecaCutis/GCA_002897115.2_JCM_15793_assembly_v001_genomic.fna ~/genomes/protothecaCiferrii/GCA_003613005.1_ASM361300v1_genomic.fna ~/genomes/protothecaBovis/GCA_003612995.1_ASM361299v1_genomic.fna proCut proCif proBov ~/data
 
