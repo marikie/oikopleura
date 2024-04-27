@@ -31,10 +31,10 @@ o2omaf13="$org1Name""2""$org3Name""_one2one_$DATE.maf"
 o2omaf12_sorted="$org1Name""2""$org2Name""_one2one_$DATE""_sorted.maf"
 o2omaf13_sorted="$org1Name""2""$org3Name""_one2one_$DATE""_sorted.maf"
 joinedFile="$org1Name""_""$org2Name""_""$org3Name""_$DATE.maf"
-mutFile="mut_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
-mut3File="mut3_"$(echo $joinedFile | sed -e "s/.maf//")".tsv"
-mut3Graph="$org1Name""_""$org2Name""_""$org3Name"".pdf"
-mut3GraphOut="$org1Name""_""$org2Name""_""$org3Name"".out"
+mutFile="mut_"$(echo $joinedFile | sed -e "s/.maf//")"_$DATE.tsv"
+mut3File="mut3_"$(echo $joinedFile | sed -e "s/.maf//")"_$DATE.tsv"
+mut3Graph="$org1Name""_""$org2Name""_""$org3Name""_$DATE.pdf"
+mut3GraphOut="$org1Name""_""$org2Name""_""$org3Name""_$DATE.out"
 
 echo "Date: $DATE"
 echo "org1FASTA: $org1FASTA"
@@ -60,8 +60,9 @@ if [ ! -d $outDirPath ]; then
 fi
 cd $outDirPath
 
-bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
-bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
+bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name &
+bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name &
+wait
 
 # maf-join the two .maf files
 echo "---maf-joining the two .maf files"
