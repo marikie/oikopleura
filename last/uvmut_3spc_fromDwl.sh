@@ -44,28 +44,12 @@ echo "org1ShortName: $org1ShortName"
 echo "org2ShortName: $org2ShortName"
 echo "org3ShortName: $org3ShortName"
 
-# move files and delete unnecessary directories
-function processGenomeData() {
-    local orgFullName=$1
-    local orgID=$2
-
-    cd ~/genomes/"$orgFullName"
-    unzip ncbi_dataset.zip
-    cd ncbi_dataset/data
-    mv $(ls -p | grep -v /) ~/genomes/"$orgFullName"
-    cd "$orgID"
-    mv * ~/genomes/"$orgFullName"
-    cd ~/genomes/"$orgFullName"
-    rm -r ncbi_dataset
-}
 
 # download from NCBIdatase
 if [ ! -e ~/genomes/$org1FullName/ncbi_dataset.zip ]; then
     echo "Downloading $org1FullName from NCBIdataset"
     cd ~/genomes/$org1FullName
     datasets download genome accession $org1ID --include gff3,rna,cds,protein,genome,seq-report &   
-    echo "move files and delete unnecessary directories"
-    processGenomeData $org1FullName $org1ID
 else
     echo "$org1FullName already downloaded"
 fi
@@ -73,8 +57,6 @@ if [ ! -e ~/genomes/$org2FullName/ncbi_dataset.zip ]; then
     echo "Downloading $org2FullName from NCBIdataset"
     cd ~/genomes/$org2FullName
     datasets download genome accession $org2ID --include gff3,rna,cds,protein,genome,seq-report &
-    echo "move files and delete unnecessary directories"
-    processGenomeData $org2FullName $org2ID
 else
     echo "$org2FullName already downloaded"
 fi
@@ -82,11 +64,31 @@ if [ ! -e ~/genomes/$org3FullName/ncbi_dataset.zip ]; then
     echo "Downloading $org3FullName from NCBIdataset"
     cd ~/genomes/$org3FullName
     datasets download genome accession $org3ID --include gff3,rna,cds,protein,genome,seq-report &
-    echo "move files and delete unnecessary directories"
-    processGenomeData $org3FullName $org3ID
 else
     echo "$org3FullName already downloaded"
 fi
+wait
+
+# move files and delete unnecessary directories
+echo "move files and delete unnecessary directories"
+function processGenomeData() {
+    local orgFullName=$1
+    local orgID=$2
+
+    cd ~/genomes/"$orgFullName"
+    if [ ! -e *.fna ]; then
+        unzip ncbi_dataset.zip
+        cd ncbi_dataset/data
+        mv $(ls -p | grep -v /) ~/genomes/"$orgFullName"
+        cd "$orgID"
+        mv * ~/genomes/"$orgFullName"
+        cd ~/genomes/"$orgFullName"
+        rm -r ncbi_dataset
+    fi
+}
+processGenomeData $org1FullName $org1ID &
+processGenomeData $org2FullName $org2ID &
+processGenomeData $org3FullName $org3ID &
 wait
 
 org1FASTA="~/genomes/$org1FullName/$(ls ~/genomes/$org1FullName | grep $org1ID)"
