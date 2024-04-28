@@ -22,6 +22,14 @@ org1FullName=$5
 org2FullName=$6
 org3FullName=$7
 
+echo "Date: $DATE"
+echo "org1ID: $org1ID"
+echo "org2ID: $org2ID"
+echo "org3ID: $org3ID"
+echo "org1FullName: $org1FullName"
+echo "org2FullName: $org2FullName"
+echo "org3FullName: $org3FullName"
+
 cd ~/genomes
 mkdir $org1FullName
 mkdir $org2FullName
@@ -32,29 +40,42 @@ org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z
 org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 
+echo "org1ShortName: $org1ShortName"
+echo "org2ShortName: $org2ShortName"
+echo "org3ShortName: $org3ShortName"
+
 # download from NCBIdataset
+echo "Downloading from NCBIdataset"
 cd ~/genomes/$org1FullName
-# Mytilus trossulus (common blue mussel)
 datasets download genome accession $org1ID --include gff3,rna,cds,protein,genome,seq-report &   
 cd ~/genomes/$org2FullName
-# Mytilus edulis (edible mussel)
 datasets download genome accession $org2ID --include gff3,rna,cds,protein,genome,seq-report &
 cd ~/genomes/$org3FullName
-# Mytilus galloprovincialis (Mediterranean mussel)
 datasets download genome accession $org3ID --include gff3,rna,cds,protein,genome,seq-report &
 wait
 
 # move files and delete unnecessary directories
-cd ~/genomes/$org1FullName
-unzip ncbi_dataset.zip
-cd ncbi_dataset/data
-mv $(ls -p | grep -v /) ~/genomes/$org1FullName 
-cd $org1ID
-mv * ~/genomes/$org1FullName
-cd ~/genomes/$org1FullName
-rm -r ncbi_dataset
+function processGenomeData() {
+    local orgFullName=$1
+    local orgID=$2
 
+    cd ~/genomes/"$orgFullName"
+    unzip ncbi_dataset.zip
+    cd ncbi_dataset/data
+    mv $(ls -p | grep -v /) ~/genomes/"$orgFullName"
+    cd "$orgID"
+    mv * ~/genomes/"$orgFullName"
+    cd ~/genomes/"$orgFullName"
+    rm -r ncbi_dataset
+}
+echo "move files and delete unnecessary directories"
+processGenomeData $org1FullName $org1ID
+processGenomeData $org2FullName $org2ID
+processGenomeData $org3FullName $org3ID
 
-bash ~/scripts/last/one2one.sh $DATE $org1ShortName $org2ShortName $org1FASTA $org2FASTA $org1Name $org2Name &
-bash ~/scripts/last/one2one.sh $DATE $org1ShortName $org3ShortName $org1FASTA $org3FASTA $org1Name $org3Name &
-wait
+org1FASTA="~/genomes/$org1FullName/$(ls ~/genomes/$org1FullName | grep .fna)"
+org2FASTA="~/genomes/$org2FullName/$(ls ~/genomes/$org2FullName | grep .fna)"
+org3FASTA="~/genomes/$org3FullName/$(ls ~/genomes/$org3FullName | grep .fna)"
+
+bash ~/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName ~/data
+
