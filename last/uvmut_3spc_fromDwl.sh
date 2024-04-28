@@ -82,7 +82,7 @@ function processGenomeData() {
     local orgID=$2
 
     cd ~/genomes/"$orgFullName"
-    if [ ! -e *.fna ]; then
+    if [ -z "$(ls *.fna 2>/dev/null)" ]; then
         unzip ncbi_dataset.zip
         cd ncbi_dataset/data
         mv $(ls -p | grep -v /) ~/genomes/"$orgFullName"
