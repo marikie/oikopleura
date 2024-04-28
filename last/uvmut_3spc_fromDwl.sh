@@ -31,9 +31,15 @@ echo "org2FullName: $org2FullName"
 echo "org3FullName: $org3FullName"
 
 cd ~/genomes
-mkdir $org1FullName
-mkdir $org2FullName
-mkdir $org3FullName
+if [ ! -d $org1FullName ]; then
+    mkdir $org1FullName
+fi
+if [ ! -d $org2FullName ]; then
+    mkdir $org2FullName
+fi
+if [ ! -d $org3FullName ]; then
+    mkdir $org3FullName
+fi
 
 # make short names
 org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
@@ -99,4 +105,5 @@ echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
 echo "Running uvmut_3spc.sh"
+echo "bash ~/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName ~/data"
 bash ~/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName ~/data
