@@ -44,16 +44,6 @@ echo "org1ShortName: $org1ShortName"
 echo "org2ShortName: $org2ShortName"
 echo "org3ShortName: $org3ShortName"
 
-# download from NCBIdataset
-echo "Downloading from NCBIdataset"
-cd ~/genomes/$org1FullName
-datasets download genome accession $org1ID --include gff3,rna,cds,protein,genome,seq-report &   
-cd ~/genomes/$org2FullName
-datasets download genome accession $org2ID --include gff3,rna,cds,protein,genome,seq-report &
-cd ~/genomes/$org3FullName
-datasets download genome accession $org3ID --include gff3,rna,cds,protein,genome,seq-report &
-wait
-
 # move files and delete unnecessary directories
 function processGenomeData() {
     local orgFullName=$1
@@ -68,14 +58,43 @@ function processGenomeData() {
     cd ~/genomes/"$orgFullName"
     rm -r ncbi_dataset
 }
-echo "move files and delete unnecessary directories"
-processGenomeData $org1FullName $org1ID
-processGenomeData $org2FullName $org2ID
-processGenomeData $org3FullName $org3ID
 
-org1FASTA="~/genomes/$org1FullName/$(ls ~/genomes/$org1FullName | grep .fna)"
-org2FASTA="~/genomes/$org2FullName/$(ls ~/genomes/$org2FullName | grep .fna)"
-org3FASTA="~/genomes/$org3FullName/$(ls ~/genomes/$org3FullName | grep .fna)"
+# download from NCBIdatase
+if [ ! -e ~/genomes/$org1FullName/ncbi_dataset.zip ]; then
+    echo "Downloading $org1FullName from NCBIdataset"
+    cd ~/genomes/$org1FullName
+    datasets download genome accession $org1ID --include gff3,rna,cds,protein,genome,seq-report &   
+    echo "move files and delete unnecessary directories"
+    processGenomeData $org1FullName $org1ID
+else
+    echo "$org1FullName already downloaded"
+fi
+if [ ! -e ~/genomes/$org2FullName/ncbi_dataset.zip ]; then
+    echo "Downloading $org2FullName from NCBIdataset"
+    cd ~/genomes/$org2FullName
+    datasets download genome accession $org2ID --include gff3,rna,cds,protein,genome,seq-report &
+    echo "move files and delete unnecessary directories"
+    processGenomeData $org2FullName $org2ID
+else
+    echo "$org2FullName already downloaded"
+fi
+if [ ! -e ~/genomes/$org3FullName/ncbi_dataset.zip ]; then
+    echo "Downloading $org3FullName from NCBIdataset"
+    cd ~/genomes/$org3FullName
+    datasets download genome accession $org3ID --include gff3,rna,cds,protein,genome,seq-report &
+    echo "move files and delete unnecessary directories"
+    processGenomeData $org3FullName $org3ID
+else
+    echo "$org3FullName already downloaded"
+fi
+wait
 
+org1FASTA="~/genomes/$org1FullName/$(ls ~/genomes/$org1FullName | grep $org1ID)"
+org2FASTA="~/genomes/$org2FullName/$(ls ~/genomes/$org2FullName | grep $org2ID)"
+org3FASTA="~/genomes/$org3FullName/$(ls ~/genomes/$org3FullName | grep $org3ID)"
+echo "org1FASTA: $org1FASTA"
+echo "org2FASTA: $org2FASTA"
+echo "org3FASTA: $org3FASTA"
+
+echo "Running uvmut_3spc.sh"
 bash ~/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName ~/data
-
