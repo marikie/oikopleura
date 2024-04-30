@@ -60,7 +60,9 @@ if [ ! -d $outDirPath ]; then
 fi
 cd $outDirPath
 
+echo "---running one2one for org1-org2"
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
+echo "---running one2one for org1-org3"
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 
 # maf-join the two .maf files
