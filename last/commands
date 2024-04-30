@@ -705,3 +705,6 @@ fi
 
 ./uvmut_3spc.sh 20240423 ~/genomes/protothecaCutis/GCA_002897115.2_JCM_15793_assembly_v001_genomic.fna ~/genomes/protothecaCiferrii/GCA_003613005.1_ASM361300v1_genomic.fna ~/genomes/protothecaBovis/GCA_003612995.1_ASM361299v1_genomic.fna proCut proCif proBov ~/data
 
+# April 28, 2024
+./uvmut_3spc.sh 20240428 ~/genomes/mytilusTrossulus/GCF_036588685.1_PNRI_Mtr1.1.1.hap1_genomic.fna ~/genomes/mytilusEdulis/GCA_019925275.1_PEIMed_genomic.fna ~/genomes/mytilusGalloprovincialis/GCA_037788925.1_MytGallo_primary_0.1_genomic.fna mytTro mytEdu mytGal ~/data
+
