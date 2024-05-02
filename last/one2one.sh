@@ -72,7 +72,7 @@ fi
 echo "--last-train"
 if [ ! -e $trainFile ]; then
 	echo "doing last-train"
-	last-train -P8 --revsym $dbName/$dbName $org2FASTA >$trainFile
+	last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile
 else
 	echo "$trainFile already exists"
 fi
@@ -81,7 +81,7 @@ fi
 echo "---lastal"
 if [ ! -e $m2omaf ]; then
 	echo "doing lastal"
-	lastal -P8 -D$Dopt --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
+	lastal -P8 -D$Dopt -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
 else
 	echo "$m2omaf already exists"
 fi
