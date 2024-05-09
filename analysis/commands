@@ -648,3 +648,9 @@ python triUvMuts_joined.py ~/biohazard/data/oikAlb_oikDio_oikVan/oikAlb_oikDio_o
 # April 16, 2024
 python ~/biohazard/scripts/analysis/triUvMuts_joined.py gPla_bSep_bBro.maf ./mut3_gPla_bSep_bBro_20240416.tsv
 
+# May 9, 2024
+python triUvMuts_joined.py ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240428.maf ~/biohazard/data/mytTro_mytEdu_mytGal/mut3_mytTro_mytEdu_mytGal_20240509.tsv
+python triUvMuts_joined.py ~/data/ulvPro_ulvMut_ulvCom/uPro_uMut_uCom_20240422.maf ~/data/ulvPro_ulvMut_ulvCom/mut3_uPro_uMut_uCom_20240509.tsv
+python triUvMuts_joined.py ~/data/gigPla_batSep_batBro/gPla_bSep_bBro.maf ~/data/gigPla_batSep_batBro/mut3_gigPla_batSep_batBro_20240509.tsv
+python triUvMuts_joined.py ~/data/ostMed_ostTau_ostLuc/ostMed_ostTau_ostLuc_20240423.maf ~/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240509.tsv
+python triUvMuts_joined.py ~/data/proCut_proCif_proBov/proCut_proCif_proBov_20240423.maf ~/data/proCut_proCif_proBov/mut3_proCut_proCif_proBov_20240509.tsv
