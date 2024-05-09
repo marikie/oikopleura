@@ -186,12 +186,13 @@ def main(alnFileHandle, outputFilePath):
     with open(outputFilePath, "w") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
         writer.writerow(["mutType", "mutNum", "totalRootNum"])
-        for mutType, info in mutDict.items():
+        mutTypeList = sorted(list(mutDict.keys()), key=lambda x: (x[2], x[4], x[0], x[6] ))
+        for mutType in mutTypeList:
             writer.writerow(
                 [
                     mutType,
-                    info["mutNum"],
-                    info["totalRootNum"],
+                    mutDict[mutType]["mutNum"],
+                    mutDict[mutType]["totalRootNum"],
                 ]
             )
 
