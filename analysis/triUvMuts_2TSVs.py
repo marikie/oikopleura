@@ -18,7 +18,7 @@ from Util import getJoinedAlignmentObj
 #############
 # functions
 #############
-def isMut(g1Tri, g2Tri, g3Tri):
+def isMutSig(g1Tri, g2Tri, g3Tri):
     if not (
         (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0])
         and (g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2])
@@ -64,13 +64,58 @@ def revMutType(gTri, ori, mut):
         + revDict[gTri[0]]
     )
 
+def ori(mutType):
+    return mutType[0] + mutType[2] + mutType[6]
 
-def getMutTypeList(g1Tri, g2Tri, g3Tri):
+
+def add2totalNum(mutDict, triNuc):
+    if triNuc[1] == "A" or triNuc[1] == "G":
+        oriNuc = rev(triNuc)
+    else:
+        oriNuc = triNuc
+
+    for key in mutDict.keys():
+        if ori(key) == triNuc:
+            mutDict[key]["totalRootNum"] += 1
+
+# def add2Dicts(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
+#     if noMut(g1Tri, g2Tri, g3Tri):
+#         triNuc = g1Tri
+#         add2totalNum(mutDict2, triNuc)
+#         add2totalNum(mutDict3, g1Tri, g2Tri, g3Tri)
+#     elif isMutSig(g1Tri, g2Tri, g3Tri):
+#         try:
+#             add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3)
+#         except Exception:
+#             print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
+#     elif isNonSigMut(g1Tri, g2Tri, g3Tri):
+#         try:
+#             #! NEED TO CONSIDER
+#             add2totalNum(mutDict2, g1Tri, g2Tri, g3Tri)
+#             add2totalNum(mutDict3, g1Tri, g2Tri, g3Tri)
+#         except Exception:
+#             print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
+#     else:
+#         continue
+
+
+def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
+    """
+    If the mutation happened on genome2,
+    add the mutation count to mutDict2 (N[majority > minority]N),
+    add the total count to mutDict2 (N(majority)N),
+    and add the total count to mutDict3 (N(majority)N).
+    If the mutation happened on genome3,
+    add the mutation count to mutDict3 (N[majority > minority]N),
+    add the total count to mutDict3 (N(majority)N),
+    and add the total count to mutDict2 (N(majority)N).
+    If the mutation happend on genome1,
+    do nothing.
+    """
     assert (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0]) and (
         g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2]
-    ), "edge bases are not the same"
+    ), "edge bases are not the same (not a mutational signature)"
 
-    mutTypeList = []
     middleList = [g1Tri[1], g2Tri[1], g3Tri[1]]
     majority = ""
     minority = ""
@@ -83,56 +128,37 @@ def getMutTypeList(g1Tri, g2Tri, g3Tri):
         else:
             raise (Exception)
 
-    # minority > majority or majority > minority
+    # ambiguous: minority > majority or majority > minority
     if g1Tri[1] == minority:
-        # minority > majority
-        if minority in set(["C", "T"]):
-            mutTypeList.append(mutType(g1Tri, minority, majority))
-        else:
-            mutTypeList.append(revMutType(g1Tri, minority, majority))
-
-        # majority > minority
+        pass
+    # majority > minority on mutDict2
+    elif g2Tri[1] == minority:
         if majority in set(["C", "T"]):
-            mutTypeList.append(mutType(g1Tri, majority, minority))
+            # mutation count
+            mutDict2[mutType(g2Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is g1Tri)
+            add2totalNum(mutDict2, g1Tri)
+            add2totalNum(mutDict3, g1Tri)
         else:
-            mutTypeList.append(revMutType(g1Tri, majority, minority))
-
-    # majority > minority
-    else:
+            # mutation count
+            mutDict2[revMutType(g2Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is rev(g1Tri))
+            add2totalNum(mutDict2, rev(g1Tri))
+            add2totalNum(mutDict3, rev(g1Tri))
+    # majority > minority on mutDict3
+    elif g3Tri[1] == minority:
         if majority in set(["C", "T"]):
-            mutTypeList.append(mutType(g1Tri, majority, minority))
+            # mutation count
+            mutDict3[mutType(g3Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is g1Tri)
+            add2totalNum(mutDict2, g1Tri)
+            add2totalNum(mutDict3, g1Tri)
         else:
-            mutTypeList.append(revMutType(g1Tri, majority, minority))
-
-    return mutTypeList
-
-
-def ori(mutType):
-    return mutType[0] + mutType[2] + mutType[6]
-
-
-def add2totalNum(mutDict, g1Tri, g2Tri, g3Tri):
-    assert noMut(g1Tri, g2Tri, g3Tri), "not a noMut"
-
-    if g1Tri[1] == "A" or g1Tri[1] == "G":
-        triNuc = rev(g1Tri)
-    else:
-        triNuc = g1Tri
-
-    for key in mutDict.keys():
-        if ori(key) == triNuc:
-            mutDict[key]["totalRootNum"] += 1
-
-
-def add2MutDict(mutDict, mutTypeList):
-    if len(mutTypeList) == 1:
-        mutDict[mutTypeList[0]]["mutNum"] += 1
-        mutDict[mutTypeList[0]]["totalRootNum"] += 1
-    else:
-        mutDict[mutTypeList[0]]["mutNum"] += 0.5
-        mutDict[mutTypeList[1]]["mutNum"] += 0.5
-        mutDict[mutTypeList[0]]["totalRootNum"] += 0.5
-        mutDict[mutTypeList[1]]["totalRootNum"] += 0.5
+            # mutation count
+            mutDict3[revMutType(g3Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is rev(g1Tri))
+            add2totalNum(mutDict2, rev(g1Tri))
+            add2totalNum(mutDict3, rev(g1Tri))
 
 
 def initialize_mut_dict():
@@ -149,13 +175,29 @@ def initialize_mut_dict():
                 mutDict[mtype]["totalRootNum"] = 0
     return mutDict
 
+
+def write_output_file(outputFilePath, mutDict):
+    with open(outputFilePath, "w") as tsvfile:
+        writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+        writer.writerow(["mutType", "mutNum", "totalRootNum"])
+        mutTypeList = sorted(list(mutDict.keys()), key=lambda x: (x[2], x[4], x[0], x[6]))
+        for mutType in mutTypeList:
+            writer.writerow(
+                [
+                    mutType,
+                    mutDict[mutType]["mutNum"],
+                    mutDict[mutType]["totalRootNum"],
+                ]
+            )
+
+
 ###################
 # main procedures
 ###################
-def main(alnFileHandle, outputFilePath1, outputFilePath2):
-    mutDict1 = initialize_mut_dict()
+def main(alnFileHandle, outputFilePath2, outputFilePath3):
     mutDict2 = initialize_mut_dict()
-
+    mutDict3 = initialize_mut_dict()
+    
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
         gSeq2 = aln.gSeq2.upper()
@@ -169,38 +211,38 @@ def main(alnFileHandle, outputFilePath1, outputFilePath2):
             g1Tri = gSeq1[i : i + 3]
             g2Tri = gSeq2[i : i + 3]
             g3Tri = gSeq3[i : i + 3]
+            # if indels are included, go next
             if not (
                 all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g1Tri)))
                 and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g2Tri)))
                 and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g3Tri)))
             ):
                 continue
+            # if there are no indels
+            # and there are no substitution,
+            # count as total num to both of mutDicts
             elif noMut(g1Tri, g2Tri, g3Tri):
-                add2totalNum(mutDict, g1Tri, g2Tri, g3Tri)
-            elif isMut(g1Tri, g2Tri, g3Tri):
+                add2totalNum(mutDict2, g1Tri)
+                add2totalNum(mutDict3, g1Tri)
+            # if its a mutational signature
+            # count as mutation and add the count of the original trinuc as total
+            elif isMutSig(g1Tri, g2Tri, g3Tri):
                 try:
-                    mutTypeList = getMutTypeList(g1Tri, g2Tri, g3Tri)
-                    add2MutDict(mutDict, mutTypeList)
+                    add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3)
                 except Exception:
                     print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
+            # if there are no indels, and there are mutations
+            # but not a mutational signature,
+            # go next
             else:
                 continue
 
     alnFileHandle.close()
 
-    with open(outputFilePath, "w") as tsvfile:
-        writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-        writer.writerow(["mutType", "mutNum", "totalRootNum"])
-        mutTypeList = sorted(list(mutDict.keys()), key=lambda x: (x[2], x[4], x[0], x[6] ))
-        for mutType in mutTypeList:
-            writer.writerow(
-                [
-                    mutType,
-                    mutDict[mutType]["mutNum"],
-                    mutDict[mutType]["totalRootNum"],
-                ]
-            )
-
+    # write to outputFilePath2
+    write_output_file(outputFilePath2, mutDict2)
+    # write to outputFilePath3
+    write_output_file(outputFilePath3, mutDict3)
 
 if __name__ == "__main__":
     ###################
@@ -212,17 +254,17 @@ if __name__ == "__main__":
         help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup)",
     )
     parser.add_argument(
-        "outputFilePath1",
-        help="a tsv file1 with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
+        "outputFilePath2",
+        help="a tsv file2 of genome2 with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
     )
     parser.add_argument(
-        "outputFilePath2",
-        help="a tsv file with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
+        "outputFilePath3",
+        help="a tsv file3 of genome3 with the following columns: mutation type (96 types), the num of mutation, the total num of the original trinucleotides",
     )
     args = parser.parse_args()
     joinedAlnFile = args.joinedAlignmentFile
-    outputFilePath1 = args.outputFilePath1
     outputFilePath2 = args.outputFilePath2
+    outputFilePath3 = args.outputFilePath3
     alnFileHandle = open(joinedAlnFile)
 
     ###################
@@ -238,4 +280,4 @@ if __name__ == "__main__":
     ###################
     # main
     ###################
-    main(alnFileHandle, outputFilePath1, outputFilePath2)
+    main(alnFileHandle, outputFilePath2, outputFilePath3)
