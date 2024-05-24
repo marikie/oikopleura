@@ -29,10 +29,14 @@ o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
 pngFile="$org1Name""2""$org2Name""_one2one_$DATE.png"
 
 # get the approximate length of the query sequence
-result=$(grep -v "^>" $org2FASTA | wc -c)
-power=$(echo "scale=10; l($result) / l(10)" | bc -l)
-num=$(echo "scale=0; $power/1" | bc)
-Dopt="1e$num"
+# and set Dopt
+# result=$(grep -v "^>" $org2FASTA | wc -c)
+# power=$(echo "scale=10; l($result) / l(10)" | bc -l)
+# num=$(echo "scale=0; $power/1" | bc)
+# Dopt="1e$num"
+
+# set the Dopt based on the query sequence length
+Dopt=$(grep -v "^>" $org2FASTA | tr -d acgtACGT | wc -c)
 
 echo "Date: $DATE"
 echo "outDirPath: $outDirPath"
