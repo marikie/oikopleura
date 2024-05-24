@@ -654,3 +654,6 @@ python triUvMuts_joined.py ~/data/ulvPro_ulvMut_ulvCom/uPro_uMut_uCom_20240422.m
 python triUvMuts_joined.py ~/data/gigPla_batSep_batBro/gPla_bSep_bBro.maf ~/data/gigPla_batSep_batBro/mut3_gigPla_batSep_batBro_20240509.tsv
 python triUvMuts_joined.py ~/data/ostMed_ostTau_ostLuc/ostMed_ostTau_ostLuc_20240423.maf ~/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240509.tsv
 python triUvMuts_joined.py ~/data/proCut_proCif_proBov/proCut_proCif_proBov_20240423.maf ~/data/proCut_proCif_proBov/mut3_proCut_proCif_proBov_20240509.tsv
+
+# May 13, 2024
+Rscript uvMutations_3_smallinput.R ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytGal.tsv ~/biohazard/data/mytTro_mytEdu_mytGal > ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytGal.out
