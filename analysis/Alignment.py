@@ -66,6 +66,9 @@ def cigarParts(beg, alignmentColums, end):
 
 
 class Alignment:
+    """
+    modified a class from Alignments.py inside JSA. written by Anish Shrestha.
+    """
     def __init__(self, **kwargs):
         """
         coordinates are in inbetween coordinates
