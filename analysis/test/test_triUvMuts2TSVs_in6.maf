@@ -1,0 +1,11 @@
+# multiple trinucs (from a real data)
+# mutation counts:
+#  - C[C>T]A in org3
+#  - G[T>C]G in org3 (C[G>A]C)
+# original counts:
+#  - CCA in org3, CCA in org2
+#  - GTG in org3, GTG in org2
+a
+s SCLG01000001.1    70397 115 +  3310157 CAGGAGT--------------------------------------------CCAGCGCGTCCCCGCATGCTT
+s PAR            14565352 112 - 17092476 AACTCGTCTTAATTTGTGGTTAAAGATTTGAATTGAAAAAGAGGAGTTTACCCATGGCATCTCCGCAAGTAG
+s SCLH01029056.1     3874 106 +     4424 CAGGAGT--------------------------------------------CTAGGGAGTCTCCACAGGCTT

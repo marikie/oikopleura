@@ -1,0 +1,9 @@
+# signature
+# a mutation in org3
+# mutation count: C[A->G]G i.e. C[C->T]G on org3 
+# original count: CCG on org3
+# original count: CCG on org2
+a
+s SCLG01000001.1    70397 3 +  3310157 CAG
+s PAR            14565352 3 - 17092476 CAG
+s SCLH01029056.1     3874 3 +     4424 CGG
