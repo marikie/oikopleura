@@ -64,6 +64,7 @@ def revMutType(gTri, ori, mut):
         + revDict[gTri[0]]
     )
 
+
 def ori(mutType):
     return mutType[0] + mutType[2] + mutType[6]
 
@@ -75,32 +76,14 @@ def add2totalNum(mutDict, triNuc):
         oriNuc = triNuc
 
     for key in mutDict.keys():
-        if ori(key) == triNuc:
+        if ori(key) == oriNuc:
             mutDict[key]["totalRootNum"] += 1
-
-# def add2Dicts(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
-#     if noMut(g1Tri, g2Tri, g3Tri):
-#         triNuc = g1Tri
-#         add2totalNum(mutDict2, triNuc)
-#         add2totalNum(mutDict3, g1Tri, g2Tri, g3Tri)
-#     elif isMutSig(g1Tri, g2Tri, g3Tri):
-#         try:
-#             add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3)
-#         except Exception:
-#             print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
-#     elif isNonSigMut(g1Tri, g2Tri, g3Tri):
-#         try:
-#             #! NEED TO CONSIDER
-#             add2totalNum(mutDict2, g1Tri, g2Tri, g3Tri)
-#             add2totalNum(mutDict3, g1Tri, g2Tri, g3Tri)
-#         except Exception:
-#             print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
-#     else:
-#         continue
 
 
 def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
     """
+    If the middle bases are all different to each other,
+    do nothing.
     If the mutation happened on genome2,
     add the mutation count to mutDict2 (N[majority > minority]N),
     add the total count to mutDict2 (N(majority)N),
@@ -120,45 +103,49 @@ def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
     majority = ""
     minority = ""
 
-    for base in set(middleList):
-        if middleList.count(base) == 2:
-            majority = base
-        elif middleList.count(base) == 1:
-            minority = base
-        else:
-            raise (Exception)
-
-    # ambiguous: minority > majority or majority > minority
-    if g1Tri[1] == minority:
+    if set(middleList) == 3:
+        # do nothing
         pass
-    # majority > minority on mutDict2
-    elif g2Tri[1] == minority:
-        if majority in set(["C", "T"]):
-            # mutation count
-            mutDict2[mutType(g2Tri, majority, minority)]["mutNum"] += 1
-            # total count (original is g1Tri)
-            add2totalNum(mutDict2, g1Tri)
-            add2totalNum(mutDict3, g1Tri)
-        else:
-            # mutation count
-            mutDict2[revMutType(g2Tri, majority, minority)]["mutNum"] += 1
-            # total count (original is rev(g1Tri))
-            add2totalNum(mutDict2, rev(g1Tri))
-            add2totalNum(mutDict3, rev(g1Tri))
-    # majority > minority on mutDict3
-    elif g3Tri[1] == minority:
-        if majority in set(["C", "T"]):
-            # mutation count
-            mutDict3[mutType(g3Tri, majority, minority)]["mutNum"] += 1
-            # total count (original is g1Tri)
-            add2totalNum(mutDict2, g1Tri)
-            add2totalNum(mutDict3, g1Tri)
-        else:
-            # mutation count
-            mutDict3[revMutType(g3Tri, majority, minority)]["mutNum"] += 1
-            # total count (original is rev(g1Tri))
-            add2totalNum(mutDict2, rev(g1Tri))
-            add2totalNum(mutDict3, rev(g1Tri))
+    else:
+        for base in set(middleList):
+            if middleList.count(base) == 2:
+                majority = base
+            elif middleList.count(base) == 1:
+                minority = base
+            else:
+                raise (Exception)
+
+        # ambiguous: minority > majority or majority > minority
+        if g1Tri[1] == minority:
+            pass
+        # majority > minority on mutDict2
+        elif g2Tri[1] == minority:
+            if majority in set(["C", "T"]):
+                # mutation count
+                mutDict2[mutType(g2Tri, majority, minority)]["mutNum"] += 1
+                # total count (original is g1Tri)
+                add2totalNum(mutDict2, g1Tri)
+                add2totalNum(mutDict3, g1Tri)
+            else:
+                # mutation count
+                mutDict2[revMutType(g2Tri, majority, minority)]["mutNum"] += 1
+                # total count (original is rev(g1Tri))
+                add2totalNum(mutDict2, rev(g1Tri))
+                add2totalNum(mutDict3, rev(g1Tri))
+        # majority > minority on mutDict3
+        elif g3Tri[1] == minority:
+            if majority in set(["C", "T"]):
+                # mutation count
+                mutDict3[mutType(g3Tri, majority, minority)]["mutNum"] += 1
+                # total count (original is g1Tri)
+                add2totalNum(mutDict2, g1Tri)
+                add2totalNum(mutDict3, g1Tri)
+            else:
+                # mutation count
+                mutDict3[revMutType(g3Tri, majority, minority)]["mutNum"] += 1
+                # total count (original is rev(g1Tri))
+                add2totalNum(mutDict2, rev(g1Tri))
+                add2totalNum(mutDict3, rev(g1Tri))
 
 
 def initialize_mut_dict():
@@ -180,7 +167,9 @@ def write_output_file(outputFilePath, mutDict):
     with open(outputFilePath, "w") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
         writer.writerow(["mutType", "mutNum", "totalRootNum"])
-        mutTypeList = sorted(list(mutDict.keys()), key=lambda x: (x[2], x[4], x[0], x[6]))
+        mutTypeList = sorted(
+            list(mutDict.keys()), key=lambda x: (x[2], x[4], x[0], x[6])
+        )
         for mutType in mutTypeList:
             writer.writerow(
                 [
@@ -197,7 +186,7 @@ def write_output_file(outputFilePath, mutDict):
 def main(alnFileHandle, outputFilePath2, outputFilePath3):
     mutDict2 = initialize_mut_dict()
     mutDict3 = initialize_mut_dict()
-    
+
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
         gSeq2 = aln.gSeq2.upper()
@@ -244,6 +233,7 @@ def main(alnFileHandle, outputFilePath2, outputFilePath3):
     # write to outputFilePath3
     write_output_file(outputFilePath3, mutDict3)
 
+
 if __name__ == "__main__":
     ###################
     # parse arguments
@@ -268,6 +258,11 @@ if __name__ == "__main__":
     alnFileHandle = open(joinedAlnFile)
 
     ###################
+    # main
+    ###################
+    main(alnFileHandle, outputFilePath2, outputFilePath3)
+
+    ###################
     # test
     ###################
     # alnFileHandle = open(
@@ -276,8 +271,3 @@ if __name__ == "__main__":
     # outputFilePath = (
     #     "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_20240410.tsv"
     # )
-
-    ###################
-    # main
-    ###################
-    main(alnFileHandle, outputFilePath2, outputFilePath3)
