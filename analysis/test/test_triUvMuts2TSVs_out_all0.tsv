@@ -1,8 +1,8 @@
 mutType	mutNum	totalRootNum
 A[C>A]A	0	0
 A[C>A]C	0	0
-A[C>A]T	0	0
 A[C>A]G	0	0
+A[C>A]T	0	0
 C[C>A]A	0	0
 C[C>A]C	0	0
 C[C>A]G	0	0
