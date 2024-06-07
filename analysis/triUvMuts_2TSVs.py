@@ -10,6 +10,7 @@ Output:
         - mutNum
         - totalRootNum
 """
+
 import argparse
 import csv
 from Util import getJoinedAlignmentObj
@@ -18,28 +19,10 @@ from Util import getJoinedAlignmentObj
 #############
 # functions
 #############
-def isMutSig(g1Tri, g2Tri, g3Tri):
-    if not (
-        (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0])
-        and (g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2])
-    ):
-        return False
-    middleSet = set([g1Tri[1], g2Tri[1], g3Tri[1]])
-    if len(middleSet) == 2:
-        return True
-    else:
-        return False
-
-
-def noMut(g1Tri, g2Tri, g3Tri):
-    if (
-        (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0])
-        and (g1Tri[1] == g2Tri[1] and g2Tri[1] == g3Tri[1])
-        and (g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2])
-    ):
-        return True
-    else:
-        return False
+def bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
+    return (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0]) and (
+        g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2]
+    )
 
 
 revDict = {"A": "T", "T": "A", "C": "G", "G": "C"}
@@ -50,19 +33,18 @@ def rev(triNuc):
 
 
 def mutType(gTri, ori, mut):
-    return gTri[0] + "[" + ori + ">" + mut + "]" + gTri[2]
-
-
-def revMutType(gTri, ori, mut):
-    return (
-        revDict[gTri[2]]
-        + "["
-        + revDict[ori]
-        + ">"
-        + revDict[mut]
-        + "]"
-        + revDict[gTri[0]]
-    )
+    if ori in set(["C", "T"]):
+        return gTri[0] + "[" + ori + ">" + mut + "]" + gTri[2]
+    else:
+        return (
+            revDict[gTri[2]]
+            + "["
+            + revDict[ori]
+            + ">"
+            + revDict[mut]
+            + "]"
+            + revDict[gTri[0]]
+        )
 
 
 def ori(mutType):
@@ -95,6 +77,10 @@ def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
     If the mutation happend on genome1,
     do nothing.
     """
+    # print("add2MutDict called")
+    # print("g1Tri: ", g1Tri)
+    # print("g2Tri: ", g2Tri)
+    # print("g3Tri: ", g3Tri)
     assert (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0]) and (
         g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2]
     ), "edge bases are not the same (not a mutational signature)"
@@ -102,11 +88,15 @@ def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
     middleList = [g1Tri[1], g2Tri[1], g3Tri[1]]
     majority = ""
     minority = ""
+    # print("middleList: ", middleList)
+    # print("set(middleList): ", set(middleList))
 
-    if set(middleList) == 3:
-        # do nothing
-        pass
-    else:
+    if len(set(middleList)) == 1:
+        # only original count
+        add2totalNum(mutDict2, g1Tri)
+        add2totalNum(mutDict3, g1Tri)
+    # if there is a mutation on org1, org2, or org3
+    elif len(set(middleList)) == 2:
         for base in set(middleList):
             if middleList.count(base) == 2:
                 majority = base
@@ -114,41 +104,49 @@ def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
                 minority = base
             else:
                 raise (Exception)
-
+        # print("majority: ", majority, "minority: ", minority)
+        # if the mutation is on org1
         # ambiguous: minority > majority or majority > minority
         if g1Tri[1] == minority:
+            # print("g1Tri[1] == minority")
             pass
+        # if the mutation is on org2
         # majority > minority on mutDict2
         elif g2Tri[1] == minority:
-            if majority in set(["C", "T"]):
-                # mutation count
-                mutDict2[mutType(g2Tri, majority, minority)]["mutNum"] += 1
-                # total count (original is g1Tri)
-                add2totalNum(mutDict2, g1Tri)
-                add2totalNum(mutDict3, g1Tri)
-            else:
-                # mutation count
-                mutDict2[revMutType(g2Tri, majority, minority)]["mutNum"] += 1
-                # total count (original is rev(g1Tri))
-                add2totalNum(mutDict2, rev(g1Tri))
-                add2totalNum(mutDict3, rev(g1Tri))
+            # print("g2Tri[1] == minority")
+            # mutation count
+            # print(
+            #     "mutType(g2Tri, majority, minority): ",
+            #     mutType(g2Tri, majority, minority),
+            # )
+            mutDict2[mutType(g2Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is g1Tri) to mutDict2 and mutDict3
+            add2totalNum(mutDict2, g1Tri)
+            add2totalNum(mutDict3, g1Tri)
+        # if the mutation is on org3
         # majority > minority on mutDict3
         elif g3Tri[1] == minority:
-            if majority in set(["C", "T"]):
-                # mutation count
-                mutDict3[mutType(g3Tri, majority, minority)]["mutNum"] += 1
-                # total count (original is g1Tri)
-                add2totalNum(mutDict2, g1Tri)
-                add2totalNum(mutDict3, g1Tri)
-            else:
-                # mutation count
-                mutDict3[revMutType(g3Tri, majority, minority)]["mutNum"] += 1
-                # total count (original is rev(g1Tri))
-                add2totalNum(mutDict2, rev(g1Tri))
-                add2totalNum(mutDict3, rev(g1Tri))
+            # print("g3Tri[1] == minority")
+            # mutation count
+            mutDict3[mutType(g3Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is g1Tri) to mutDict2 and mutDict3
+            add2totalNum(mutDict2, g1Tri)
+            add2totalNum(mutDict3, g1Tri)
+    # if the middle bases are all different
+    # set(middleList) == 3
+    else:
+        # do nothing
+        pass
 
 
 def initialize_mut_dict():
+    """
+    key: mutType (e.g. A[C>A]G)
+    value: {
+        "mutNum": 0,
+        "totalRootNum": 0
+    }
+    """
     mutDict = {}
     letters = ["A", "C", "G", "T"]
     conversion = ["C>A", "C>G", "C>T", "T>A", "T>C", "T>G"]
@@ -208,20 +206,12 @@ def main(alnFileHandle, outputFilePath2, outputFilePath3):
             ):
                 continue
             # if there are no indels
-            # and there are no substitution,
-            # count as total num to both of mutDicts
-            elif noMut(g1Tri, g2Tri, g3Tri):
-                add2totalNum(mutDict2, g1Tri)
-                add2totalNum(mutDict3, g1Tri)
-            # if its a mutational signature
-            # count as mutation and add the count of the original trinuc as total
-            elif isMutSig(g1Tri, g2Tri, g3Tri):
-                try:
-                    add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3)
-                except Exception:
-                    print("g1Tri, g2Tri, g3Tri: ", g1Tri, g2Tri, g3Tri)
-            # if there are no indels, and there are mutations
-            # but not a mutational signature,
+            # and the edge bases are the same,
+            # count original trinucs as total and count mutations if there is a mutation
+            elif bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
+                add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3)
+            # if there are no indels,
+            # but edge bases are not all the same,
             # go next
             else:
                 continue
@@ -261,13 +251,3 @@ if __name__ == "__main__":
     # main
     ###################
     main(alnFileHandle, outputFilePath2, outputFilePath3)
-
-    ###################
-    # test
-    ###################
-    # alnFileHandle = open(
-    #     "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_joined.maf"
-    # )
-    # outputFilePath = (
-    #     "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_20240410.tsv"
-    # )
