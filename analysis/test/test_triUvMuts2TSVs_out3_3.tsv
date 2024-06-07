@@ -1,11 +1,11 @@
 mutType	mutNum	totalRootNum
 A[C>A]A	0	0
 A[C>A]C	0	0
-A[C>A]T	0	0
 A[C>A]G	0	0
+A[C>A]T	0	0
 C[C>A]A	0	0
 C[C>A]C	0	0
-C[C>A]G	0	1
+C[C>A]G	0	0
 C[C>A]T	0	0
 G[C>A]A	0	0
 G[C>A]C	0	0
@@ -21,7 +21,7 @@ A[C>G]G	0	0
 A[C>G]T	0	0
 C[C>G]A	0	0
 C[C>G]C	0	0
-C[C>G]G	0	1
+C[C>G]G	0	0
 C[C>G]T	0	0
 G[C>G]A	0	0
 G[C>G]C	0	0
@@ -37,7 +37,7 @@ A[C>T]G	0	0
 A[C>T]T	0	0
 C[C>T]A	0	0
 C[C>T]C	0	0
-C[C>T]G	0	1
+C[C>T]G	0	0
 C[C>T]T	0	0
 G[C>T]A	0	0
 G[C>T]C	0	0
@@ -53,7 +53,7 @@ A[T>A]G	0	0
 A[T>A]T	0	0
 C[T>A]A	0	0
 C[T>A]C	0	0
-C[T>A]G	0	0
+C[T>A]G	0	1
 C[T>A]T	0	0
 G[T>A]A	0	0
 G[T>A]C	0	0
@@ -69,7 +69,7 @@ A[T>C]G	0	0
 A[T>C]T	0	0
 C[T>C]A	0	0
 C[T>C]C	0	0
-C[T>C]G	0	0
+C[T>C]G	0	1
 C[T>C]T	0	0
 G[T>C]A	0	0
 G[T>C]C	0	0
@@ -85,7 +85,7 @@ A[T>G]G	0	0
 A[T>G]T	0	0
 C[T>G]A	0	0
 C[T>G]C	0	0
-C[T>G]G	0	0
+C[T>G]G	0	1
 C[T>G]T	0	0
 G[T>G]A	0	0
 G[T>G]C	0	0
