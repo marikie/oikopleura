@@ -31,10 +31,12 @@ o2omaf13="$org1Name""2""$org3Name""_one2one_$DATE.maf"
 o2omaf12_sorted="$org1Name""2""$org2Name""_one2one_$DATE""_sorted.maf"
 o2omaf13_sorted="$org1Name""2""$org3Name""_one2one_$DATE""_sorted.maf"
 joinedFile="$org1Name""_""$org2Name""_""$org3Name""_$DATE.maf"
-mutFile="mut_"$(echo $joinedFile | sed -e "s/.maf//")"_$DATE.tsv"
-mut3File="mut3_"$(echo $joinedFile | sed -e "s/.maf//")"_$DATE.tsv"
-mut3Graph="$org1Name""_""$org2Name""_""$org3Name""_$DATE.pdf"
-mut3GraphOut="$org1Name""_""$org2Name""_""$org3Name""_$DATE.out"
+mut3File_org2="mut3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org2Name.tsv"
+mut3File_org3="mut3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org3Name.tsv"
+mut3Graph_org2="mut3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org2Name.pdf"
+mut3Graph_org3="mut3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org3Name.pdf"
+mut3GraphOut_org2="mut3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org2Name.out"
+mut3GraphOut_org3="mut3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org3Name.out"
 
 echo "Date: $DATE"
 echo "org1FASTA: $org1FASTA"
@@ -49,10 +51,12 @@ echo "o2omaf13: $o2omaf13"
 echo "o2omaf12_sorted: $o2omaf12_sorted"
 echo "o2omaf13_sorted: $o2omaf13_sorted"
 echo "joinedFile: $joinedFile"
-echo "mutFile: $mutFile"
-echo "mut3File: $mut3File"
-echo "mut3Graph: $mut3Graph"
-echo "mut3GraphOut: $mut3GraphOut"
+echo "mut3File_org2: $mut3File_org2"
+echo "mut3File_org3: $mut3File_org3"
+echo "mut3Graph_org2: $mut3Graph_org2"
+echo "mut3Graph_org3: $mut3Graph_org3"
+echo "mut3GraphOut_org2: $mut3GraphOut_org2"
+echo "mut3GraphOut_org3: $mut3GraphOut_org3"
 
 if [ ! -d $outDirPath ]; then
 	echo "---making $outDirPath"
@@ -85,28 +89,26 @@ else
 	echo "$joinedFile already exists"
 fi
 
-# make a .tsv file about single-base mutations
-# echo "making a .tsv file about single-base mutations"
-# if [ ! -e $mutFile ]; then
-# 	python ~/scripts/analysis/singleUvMuts.py $o2omaf $mutFile
-# else
-# 	echo "$mutFile already exists"
-# fi
-
-# make a .tsv file about trinucleotide mutations
-echo "---making a .tsv trinucleotide mutation file"
-if [ ! -e $mut3File ]; then
-	python ~/scripts/analysis/triUvMuts_joined.py $joinedFile "./"$mut3File
+# make .tsv files about trinucleotide mutations
+echo "---making .tsv trinucleotide mutation files"
+if [ ! -e $mut3File_org2 ] && [ ! -e $mut3File_org3 ]; then
+	python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile "./"$mut3File_org2 "./"$mut3File_org3
 else
-	echo "$mut3File already exists"
+	echo "$mut3File_org2 and $mut3File_org3 already exist"
 fi
+
 
 # make a graph of the trinucleotide mutations
 echo "---making a graph of the trinucleotide mutations"
-if [ ! -e $mut3Graph ]; then
-	Rscript ~/scripts/analysis/R/uvMutations_3_smallinput.R $mut3File $outDirPath >$mut3GraphOut
+if [ ! -e $mut3Graph_org2 ]; then
+	Rscript ~/scripts/analysis/R/uvMutations_3_smallinput.R $mut3File_org2 $mut3Graph_org2 $org2Name >$mut3GraphOut_org2
 else
-	echo "$mut3Graph already exists"
+	echo "$mut3Graph_org2 already exists"
+fi
+if [ ! -e $mut3Graph_org3 ]; then
+	Rscript ~/scripts/analysis/R/uvMutations_3_smallinput.R $mut3File_org3 $mut3Graph_org3 $org3Name >$mut3GraphOut_org3
+else
+	echo "$mut3Graph_org3 already exists"
 fi
 
-bash ~/scripts/last/one2one.sh $DATE $outDirPath $org2FASTA $org3FASTA $org2Name $org3Name
+# bash ~/scripts/last/one2one.sh $DATE $outDirPath $org2FASTA $org3FASTA $org2Name $org3Name
