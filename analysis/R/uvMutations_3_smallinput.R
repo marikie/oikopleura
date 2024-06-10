@@ -154,15 +154,11 @@ generate_plot<-function(file_path, filename=0, filename100=0, graphTitle){
 args <- commandArgs(trailingOnly = TRUE)
 
 # Access the arguments
-file_path <- args[1] # File path for the input data, .tsv file
-dir_path <- args[2] # Directory path for the output data, directory of spc1_spc2_spc3
-#print(file_path)
-#print(dir_path)
-#data <- read.csv(file_path, sep="\t", header=TRUE)
-dirname <- basename(dir_path)
-#print(dirname)
-spc <- str_split(dirname, "_", simplify = TRUE)
-#print(spc)
-title <- paste0(spc[1,1], "-", spc[1,2], ", ", spc[1,1], "-", spc[1,3])
-#print(title)
-generate_plot(file_path, filename = paste0(dir_path, "/", dirname, ".pdf"), filename100=paste0(dir_path, "/", dirname, "_100.pdf"), graphTitle=title)
+tsv_path <- args[1] # File path for the input data, .tsv file
+graph_path <- args[2] # File path for the output graph, .pdf
+orgName <- args[3] # Name of the organism
+
+# Extract the path without an extension from graph_path
+path_without_extension <- tools::file_path_sans_ext(graph_path)
+
+generate_plot(tsv_path, filename = graph_path, filename100=paste0(path_without_extension, "_100.pdf"), graphTitle=orgName)
