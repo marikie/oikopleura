@@ -708,3 +708,5 @@ fi
 # April 28, 2024
 ./uvmut_3spc.sh 20240428 ~/genomes/mytilusTrossulus/GCF_036588685.1_PNRI_Mtr1.1.1.hap1_genomic.fna ~/genomes/mytilusEdulis/GCA_019925275.1_PEIMed_genomic.fna ~/genomes/mytilusGalloprovincialis/GCA_037788925.1_MytGallo_primary_0.1_genomic.fna mytTro mytEdu mytGal ~/data
 
+# June 10, 2024
+./uvmut_3spc.sh 20240415 ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikVan/GCA_004367855.1_ASM436785v1_genomic.fna oikDio oikAlb oikVan ~/data
