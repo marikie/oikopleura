@@ -710,3 +710,6 @@ fi
 
 # June 10, 2024
 ./uvmut_3spc.sh 20240415 ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikVan/GCA_004367855.1_ASM436785v1_genomic.fna oikDio oikAlb oikVan ~/data
+
+# June 11, 2024
+./uvmut_3spc_fromDwl.sh 20240611 GCF_000263375.1 GCF_000400465.1 GCA_004918325.1 wallemiaMellicola wallemiaIchthyophaga wallemiaHederae
