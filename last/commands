@@ -711,5 +711,15 @@ fi
 # June 10, 2024
 ./uvmut_3spc.sh 20240415 ~/genomes/oikDio/OKI2018_I69_1.0.removed_chrUn.fa ~/genomes/oikAlb/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikVan/GCA_004367855.1_ASM436785v1_genomic.fna oikDio oikAlb oikVan ~/data
 
+./uvmut_3spc.sh 20240610 ~/genomes/gigantidasPlatifrons/GCA_002080005.1_Bpl_v1.0_genomic.fna ~/genomes/bathymodiolusSeptemdierum/GCA_963383655.1_xbBatSept2.1_genomic.fna ~/genomes/bathymodiolusBrooksi/GCA_963680875.1_xbBatBroo1.1_genomic.fna gigPla batSep batBro ~/data
+
+./uvmut_3spc.sh 20240428 ~/genomes/mytilusTrossulus/GCF_036588685.1_PNRI_Mtr1.1.1.hap1_genomic.fna ~/genomes/mytilusEdulis/GCA_019925275.1_PEIMed_genomic.fna ~/genomes/mytilusGalloprovincialis/GCA_037788925.1_MytGallo_primary_0.1_genomic.fna mytTro mytEdu mytGal ~/data
+
+./uvmut_3spc.sh 20240423 ~/genomes/ostreococcusMediterraneus/GCA_012295225.1_ASM1229522v1_genomic.fna ~/genomes/ostreococcusTauri/GCF_000214015.3_version_140606_genomic.fna ~/genomes/ostreococcusLucimarinus/GCF_000092065.1_ASM9206v1_genomic.fna ostMed ostTau ostLuc ~/data
+
+./uvmut_3spc.sh 20240423 ~/genomes/protothecaCutis/GCA_002897115.2_JCM_15793_assembly_v001_genomic.fna ~/genomes/protothecaCiferrii/GCA_003613005.1_ASM361300v1_genomic.fna ~/genomes/protothecaBovis/GCA_003612995.1_ASM361299v1_genomic.fna proCut proCif proBov ~/data
+
+$ ./uvmut_3spc.sh 20240610 ~/genomes/ulvaProlifera/GCA_023078555.1_ASM2307855v1_genomic.fna ~/genomes/ulvaMutabilis/GCA_900538255.1_Ulvmu_WT_fa_genomic.fna ~/genomes/ulvaCompressa/GCA_024500015.1_ASM2450001v1_genomic.fna ulvPro ulvMut ulvCom ~/data
+
 # June 11, 2024
 ./uvmut_3spc_fromDwl.sh 20240611 GCF_000263375.1 GCF_000400465.1 GCA_004918325.1 wallemiaMellicola wallemiaIchthyophaga wallemiaHederae
