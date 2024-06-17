@@ -723,3 +723,6 @@ $ ./uvmut_3spc.sh 20240610 ~/genomes/ulvaProlifera/GCA_023078555.1_ASM2307855v1_
 
 # June 11, 2024
 ./uvmut_3spc_fromDwl.sh 20240611 GCF_000263375.1 GCF_000400465.1 GCA_004918325.1 wallemiaMellicola wallemiaIchthyophaga wallemiaHederae
+
+# June 17, 2024
+./uvmut_3spc_fromDwl.sh 20240617 GCA_037044115.1 GCF_016861735.1 GCA_034509305.1 aspergillusCostiformis aspergillusChevalieri aspergillusCristatus > output.log 2> error.log
