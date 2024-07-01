@@ -1,0 +1,142 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with`a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\begin{document}
+
+\section{Introduction}
+
+
+\section{Methods}
+
+\section{Results \& Discussion}
+\begin{itemize}
+  \item We often observe high C>T (or G>A on the other strand) or T>C (or A>G on the other strand) mutations, which aligns with the established understanding of transition mutations. Transitions can easily occur due to the similarity in their chemical structures. \\
+    \\
+    However, it is interesting to note that C>T and T>C mutations do not always occur at the same frequency. For example, deep-sea mussels (\textit{B. septemdierum} and \textit{B. brooksi}) and shallow-sea mussels (\textit{M. edulis} and \textit{M. galloprovincialis}) show a high frequency of C>T mutations, but not T>C. On the other hand, \textit{W. hederae}, a fungus often isolated from plant-associated low-water-activity environments and exhibiting halotolerance~\cite{janvcivc2016halophily}, shows higher T>C than C>T.
+  \item Some species show unique trends of mutations.
+    \begin{itemize}
+      \item Two fungi species, \textit{P.bovis} and \textit{P.ciferrii}, show high C>G mutations. They belong to the genus \textit{Prototheca}, which is a unicellular, achlorophyllous, yeast-like algae that can induce protothecosis in humans and animals~\cite{hifney2022microbial}.
+      \item The animal plankton \textit{O.vanhoeffeni} shows high C>A mutations, while \textit{O.albicans} shows high T>A and T>G mutations.
+    \end{itemize}
+\end{itemize}
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_gigPla_batSep_batBro_20240610_batBro.pdf}
+      \caption{\textit{B.brooksi}}
+      \label{fig:fig1a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_gigPla_batSep_batBro_20240610_batSep.pdf}
+      \caption{\textit{B.septemdierum}}
+      \label{fig:fig1b}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_mytTro_mytEdu_mytGal_20240428_mytEdu.pdf}
+      \caption{\textit{M.edulis}}
+      \label{fig:fig1c}
+    \end{subfigure}
+    \vspace{0.1cm}
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_mytTro_mytEdu_mytGal_20240428_mytGal.pdf}
+      \caption{\textit{M.galloprovincialis}}
+      \label{fig:fig1d}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./images/mut3_aspCos_aspChe_aspCri_20240617_aspChe.pdf}
+        \caption{\textit{A.chevalieri}}
+        \label{fig:fig1e}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./images/mut3_aspCos_aspChe_aspCri_20240617_aspCri.pdf}
+        \caption{\textit{A.crinita}}
+        \label{fig:fig1f}
+    \end{subfigure}
+    \vspace{0.1cm}
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_ulvPro_ulvMut_ulvCom_20240610_ulvCom.pdf}
+      \caption{\textit{U.compressa}}
+      \label{fig:fig1g}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_ulvPro_ulvMut_ulvCom_20240610_ulvMut.pdf}
+      \caption{\textit{U.mutabilis}}
+      \label{fig:fig1h}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_walMel_walIch_walHed_20240611_walHed.pdf}
+      \caption{\textit{W.hederae}}
+      \label{fig:fig1i}
+    \end{subfigure}
+    \vspace{0.1cm}
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_walMel_walIch_walHed_20240611_walIch.pdf}
+      \caption{\textit{W.ichthyophaga}}
+      \label{fig:fig1j}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_proCut_proCif_proBov_20240423_proBov.pdf}
+      \caption{\textit{P.bovis}}
+      \label{fig:fig1k}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_proCut_proCif_proBov_20240423_proCif.pdf}
+      \caption{\textit{P.ciferrii}}
+      \label{fig:fig1l}
+    \end{subfigure}
+    \vspace{0.1cm}
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_oikDio_oikAlb_oikVan_20240415_oikAlb.pdf}
+      \caption{\textit{O.albicans}}
+      \label{fig:fig1m}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{./images/mut3_oikDio_oikAlb_oikVan_20240415_oikVan.pdf}
+      \caption{\textit{O.vanhoeffeni}}
+      \label{fig:fig1n}
+    \end{subfigure}
+    \caption{Single-base substitution mutations of various organisms.}
+    \label{fig:fig1}
+\end{figure}
+\bibliographystyle{unsrt}
+\bibliography{ref.bib}
+
+\end{document}
+
