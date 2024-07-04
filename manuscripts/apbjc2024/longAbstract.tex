@@ -8,28 +8,51 @@
 % Set page size and margins
 % Replace `letterpaper' with`a4paper' for UK/EU standard size
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+% \usepackage[a4paper, margin=0.8cm]{geometry}
 
 % Useful packages
-\usepackage{amsmath}
+\usepackage{amsmath, amssymb}
+\usepackage{wasysym} % For consistent geometric shapes
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{hyperref}
+
+
+% User-defined commands
+\newcommand{\Cir}{\CIRCLE} % Filled Circle
+\newcommand{\Tri}{\blacktriangle} % Triangle
+\newcommand{\dTri}{\blacktriangledown} % downward triangle
+\newcommand{\Squ}{\blacksquare} % Filled Square
+
+\title{Trends and Patterns of Single-Base Mutations in Evolution: A Comparative Analysis}
+\author{Mariko Nakagawa and Martin C. Frith}
+\date{}
 
 \begin{document}
 
-\section{Introduction}
+\maketitle
 
+\section{Introduction}
+Few studies examine single-base mutations across diverse organisms. Even a recent comprehensive study of vertebrates did not thoroughly investigate single-base mutations~\cite{bergeron2023evolution}.
 
 \section{Methods}
+We obtained reference genomes for three closely related species (\textit{Species A}, \textit{Species B}, and \textit{Species C}) from NCBI (https://www.ncbi.nlm.nih.gov/datasets), with \textit{Species A} serving as the outgroup in the phylogenetic relationship. Pairwise alignments were performed between \textit{Species A} and \textit{Species B}, and between \textit{Species A} and \textit{Species C}. We examined every set of trinucleotides in the alignments to infer mutations in \textit{Species B} and \textit{Species C} based on the principle of parsimony. The mutation rate was calculated as the percentage of the number of inferred mutations divided by the number of original trinucleotides. For instance, if a mutation from $\Cir\Tri\Squ$ to $\Cir\dTri\Squ$ was inferred to have occurred in \textit{Species B}, we incremented the count of the mutation $\Cir\Tri\Squ \rightarrow \Cir\dTri\Squ$ for \textit{Species B} and the count of the original trinucleotide $\Cir\Tri\Squ$ for both \textit{Species B} and \textit{Species C}. Additionally, we incremented the count of the original trinucleotide $\Cir\Tri\Squ$ by 1 if the trinucleotide sequence was $\Cir\Tri\Squ$ in all three species.
 
-\section{Results \& Discussion}
+\section{Preliminary Results}
 \begin{itemize}
-  \item We often observe high C>T (or G>A on the other strand) or T>C (or A>G on the other strand) mutations, which aligns with the established understanding of transition mutations. Transitions can easily occur due to the similarity in their chemical structures. \\
-    \\
-    However, it is interesting to note that C>T and T>C mutations do not always occur at the same frequency. For example, deep-sea mussels (\textit{B. septemdierum} and \textit{B. brooksi}) and shallow-sea mussels (\textit{M. edulis} and \textit{M. galloprovincialis}) show a high frequency of C>T mutations, but not T>C. On the other hand, \textit{W. hederae}, a fungus often isolated from plant-associated low-water-activity environments and exhibiting halotolerance~\cite{janvcivc2016halophily}, shows higher T>C than C>T.
+\begin{minipage}{0.55\textwidth}
+  \item We often observe high C>T (or G>A on the other strand) or T>C (or A>G on the other strand) mutations, which aligns with the well-known concept of “transition bias.”~\cite{macintyre1985molecular} “Transitions” are mutations between purines (A and G) or pyrimidines (C and T), while mutations between purines (A or G) and pyrimidines (C or T) are called “transversions.” It is known that transitions occur more frequently than transversions through evolution.~\cite{macintyre1985molecular}\\\\
+    It is also known that transitions from strong base pairing to weak base pairing (C>T) occur in a wide range of living organisms~\cite{gheorghiu2020influence}, and our results also show this. However, it is interesting to note that this is not always the case. \textit{W.hederae}, a fungus often isolated from plant-associated low-water-activity environments and exhibiting halotolerance~\cite{janvcivc2016halophily}, shows markedly higher T>C than C>T (\autoref{fig:fig1i}).
+\end{minipage}\hfill
+  \begin{minipage}{0.3\textwidth}
+    \includegraphics[width=\textwidth]{./images/transitions_and_transversions.svg.png}
+    \captionof{figure}{Illustration of transitions and transversions from Wikipedia}
+    \label{fig:fig0}
+\end{minipage}
   \item Some species show unique trends of mutations.
     \begin{itemize}
-      \item Two fungi species, \textit{P.bovis} and \textit{P.ciferrii}, show high C>G mutations. They belong to the genus \textit{Prototheca}, which is a unicellular, achlorophyllous, yeast-like algae that can induce protothecosis in humans and animals~\cite{hifney2022microbial}.
-      \item The animal plankton \textit{O.vanhoeffeni} shows high C>A mutations, while \textit{O.albicans} shows high T>A and T>G mutations.
+    \item Two fungi species, \textit{P.bovis} and \textit{P.ciferrii}, show high C>G mutations (\autoref{fig:fig1k}, \ref{fig:fig1l}). They belong to the genus \textit{Prototheca}, which is a unicellular, achlorophyllous, yeast-like algae that can induce protothecosis in humans and animals~\cite{hifney2022microbial}.
+      \item The animal plankton, \textit{O.albicans}, shows high T>A and T>G mutations (\autoref{fig:fig1m}), while \textit{O.vanhoeffeni} shows high C>A mutations (\autoref{fig:fig1n}).
     \end{itemize}
 \end{itemize}
 
@@ -37,98 +60,98 @@
     \centering
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_gigPla_batSep_batBro_20240610_batBro.pdf}
+      \includegraphics[width=\linewidth]{./images/batBro.pdf}
       \caption{\textit{B.brooksi}}
       \label{fig:fig1a}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_gigPla_batSep_batBro_20240610_batSep.pdf}
+      \includegraphics[width=\linewidth]{./images/batSep.pdf}
       \caption{\textit{B.septemdierum}}
       \label{fig:fig1b}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_mytTro_mytEdu_mytGal_20240428_mytEdu.pdf}
+      \includegraphics[width=\linewidth]{./images/mytEdu.pdf}
       \caption{\textit{M.edulis}}
       \label{fig:fig1c}
     \end{subfigure}
-    \vspace{0.1cm}
+    \vspace{0.05cm}
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_mytTro_mytEdu_mytGal_20240428_mytGal.pdf}
+      \includegraphics[width=\linewidth]{./images/mytGal.pdf}
       \caption{\textit{M.galloprovincialis}}
       \label{fig:fig1d}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{./images/mut3_aspCos_aspChe_aspCri_20240617_aspChe.pdf}
+        \includegraphics[width=\linewidth]{./images/aspChe.pdf}
         \caption{\textit{A.chevalieri}}
         \label{fig:fig1e}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{./images/mut3_aspCos_aspChe_aspCri_20240617_aspCri.pdf}
+        \includegraphics[width=\linewidth]{./images/aspCri.pdf}
         \caption{\textit{A.crinita}}
         \label{fig:fig1f}
     \end{subfigure}
-    \vspace{0.1cm}
+    \vspace{0.05cm}
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_ulvPro_ulvMut_ulvCom_20240610_ulvCom.pdf}
+      \includegraphics[width=\linewidth]{./images/ulvCom.pdf}
       \caption{\textit{U.compressa}}
       \label{fig:fig1g}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_ulvPro_ulvMut_ulvCom_20240610_ulvMut.pdf}
+      \includegraphics[width=\linewidth]{./images/ulvMut.pdf}
       \caption{\textit{U.mutabilis}}
       \label{fig:fig1h}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_walMel_walIch_walHed_20240611_walHed.pdf}
+      \includegraphics[width=\linewidth]{./images/walHed.pdf}
       \caption{\textit{W.hederae}}
       \label{fig:fig1i}
     \end{subfigure}
-    \vspace{0.1cm}
+    \vspace{0.05cm}
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_walMel_walIch_walHed_20240611_walIch.pdf}
+      \includegraphics[width=\linewidth]{./images/walIch.pdf}
       \caption{\textit{W.ichthyophaga}}
       \label{fig:fig1j}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_proCut_proCif_proBov_20240423_proBov.pdf}
+      \includegraphics[width=\linewidth]{./images/proBov.pdf}
       \caption{\textit{P.bovis}}
       \label{fig:fig1k}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_proCut_proCif_proBov_20240423_proCif.pdf}
+      \includegraphics[width=\linewidth]{./images/proCif.pdf}
       \caption{\textit{P.ciferrii}}
       \label{fig:fig1l}
     \end{subfigure}
-    \vspace{0.1cm}
+    \vspace{0.05cm}
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_oikDio_oikAlb_oikVan_20240415_oikAlb.pdf}
+      \includegraphics[width=\linewidth]{./images/oikAlb.pdf}
       \caption{\textit{O.albicans}}
       \label{fig:fig1m}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{./images/mut3_oikDio_oikAlb_oikVan_20240415_oikVan.pdf}
+      \includegraphics[width=\linewidth]{./images/oikVan.pdf}
       \caption{\textit{O.vanhoeffeni}}
       \label{fig:fig1n}
     \end{subfigure}
