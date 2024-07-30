@@ -3,7 +3,7 @@ library(RColorBrewer)
 
 # MODIFIED THE CODE FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
-generate_plot<-function(file_path, filename=0, ymax_plus){
+generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
   ## Perform analysis for the trinucleotide variants
   
   ### Check which of the mutation variant is missing and add that to the named vector
@@ -87,7 +87,9 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
     pdf(filename, width=30, height=8)
     # default: c(5, 4, 4, 2) + 0.1
     par(family="mono", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
-    bar_positions <- barplot(as.numeric(conv.data.norm[conv.label.all.sorted]),
+    bar_positions <- barplot(
+                      main = orgName, # graph title
+                      as.numeric(conv.data.norm[conv.label.all.sorted]),
                       col=rep(colour_array,each=16), 
                       cex.names=0.7, # default size (manually write over later)
                       las=3,
@@ -137,10 +139,10 @@ args <- commandArgs(trailingOnly = TRUE)
 tsv_path <- args[1] # File path for the input data, .tsv file
 graph_path <- args[2] # File path for the output graph, .pdf
 ymax_plus <- args[3]
-#orgName <- args[3] # Name of the organism
+orgName <- args[4] # Name of the organism
 print("ymax_plus:")
 print(ymax_plus)
 # Extract the path without an extension from graph_path
 # path_without_extension <- tools::file_path_sans_ext(graph_path)
 
-generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus))
+generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus), orgName)
