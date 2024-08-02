@@ -8,7 +8,7 @@ if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
 	echo "You'll get one-to-one alignments of org1-org2 and org1-org3. The top genome of each alignment .maf file will be org1. org1 should be in the outgroup." 1>&2
 	echo "- today's date" 1>&2                                           # $1
-	echo "- path to the org1 reference fasta file" 1>&2                  # $2
+	echo "- path to the org1 reference fasta file (outgroup)" 1>&2                  # $2
 	echo "- path to the org2 reference fasta file" 1>&2                  # $3
 	echo "- path to the org3 reference fasta file" 1>&2                  # $4
 	echo "- org1 name" 1>&2                                              # $5
