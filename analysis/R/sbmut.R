@@ -80,7 +80,25 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
   # Reorder the columns based on sorted indices
   conv.data.sorted <- conv.data[, col_order]
 
-  
+
+  ### print Top 10 and Worst 10
+  # Print the sorted data frame
+  print("Data sorted by Mutation Percentage:")
+  print(conv.data.sorted)
+
+  cat("\n\nTop 10:\n")
+  print(conv.data.sorted[,1:10])
+  cat("\n\nWorst 10:\n")
+  print(conv.data.sorted[, (ncol(conv.data.sorted)-9):ncol(conv.data.sorted)])
+  # Get the reverse order of indices based on 'MutationPercentage' values
+  col_order_rev <- order(as.numeric(conv.data["MutationPercentage", ]))
+  # Reorder the columns based on sorted indices
+  conv.data.revsorted <- conv.data[, col_order_rev]
+  cat("\n\nWorst 10 (rev):\n")
+  # Reverse-sort the data frame 'conv.data.sorted' based on the third row
+  print(conv.data.revsorted[,1:10])
+
+
   ### Barplot for Trinucleotide Mutation rate (Percentage)
   # Make the PDF plot of the graph
   if(!filename==0){
@@ -111,7 +129,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
     bar_widths <- diff(bar_positions)
     bar_width <- mean(bar_widths)
     # Print the bar width for debugging
-    print(paste("Bar width: ", bar_width))
+    #print(paste("Bar width: ", bar_width))
     
     total_size_per_group = bar_width * 16
     
@@ -140,8 +158,8 @@ tsv_path <- args[1] # File path for the input data, .tsv file
 graph_path <- args[2] # File path for the output graph, .pdf
 ymax_plus <- args[3]
 orgName <- args[4] # Name of the organism
-print("ymax_plus:")
-print(ymax_plus)
+#print("ymax_plus:")
+#print(ymax_plus)
 # Extract the path without an extension from graph_path
 # path_without_extension <- tools::file_path_sans_ext(graph_path)
 
