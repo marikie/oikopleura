@@ -89,6 +89,8 @@ generate_plot<-function(file_path, filename=0, filename100=0, graphTitle){
   col_order <- order(as.numeric(conv.data["MutationPercentage", ]), decreasing = TRUE)
   # Reorder the columns based on sorted indices
   conv.data.sorted <- conv.data[, col_order]
+
+  ### print Top 10 and Worst 10
   # Print the sorted data frame
   print("Data sorted by Mutation Percentage:")
   print(conv.data.sorted)
