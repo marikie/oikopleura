@@ -657,3 +657,12 @@ python triUvMuts_joined.py ~/data/proCut_proCif_proBov/proCut_proCif_proBov_2024
 
 # May 13, 2024
 Rscript uvMutations_3_smallinput.R ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytGal.tsv ~/biohazard/data/mytTro_mytEdu_mytGal > ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytGal.out
+
+# August 2, 2024
+Rscript sbmut_smally.R ~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_20240802_oenEla.tsv 
+~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_20240802_oenEla.pdf 0.05 oenEla 1> ~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_20240802_oenEla.out
+
+Rscript sbmut_smally.R ~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_20240802_oenGla.tsv 
+~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_20240802_oenGla.pdf 0.05 oenGla 1 > ~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_20240802_oenGla.out 
+
+Rscript sbmut_smally.R ~/data/oenArg_oenOak_oenPar/mut3_oenArg_oenOak_oenPar_20240802_oenOak.tsv ~/data/oenArg_oenOak_oenPar/mut3_oenArg_oenOak_oenPar_20240802_oenOak.pdf 0.01 oenOak 2 > ~/data/oenArg_oenOak_oenPar/mut3_oenArg_oenOak_oenPar_20240802_oenOak.out
