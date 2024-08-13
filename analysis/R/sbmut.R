@@ -107,7 +107,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
     pdf(filename, width=30, height=8)
     # default: c(5, 4, 4, 2) + 0.1
     # font_add_google("IBM Plex Mono", "mn", 500)
-    font_add_google("Courier Prime", "mn")
+    font_add_google("Courier Prime", "mn", 700)
     font_add_google("Roboto", "os")
     showtext_auto()
     par(family="mn", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
@@ -148,11 +148,11 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
           adj=c(0.5,1), xpd=TRUE, cex=2, srt=90)
       
       # Middle letter (colored red, slightly above the first letter)
-      text(family="mn", x_pos, base_y - strwidth(label)*1.5, substr(label, 2, 2), 
+      text(family="mn", x_pos, base_y - strwidth(label)*1.65, substr(label, 2, 2), 
           adj=c(0.5,1), xpd=TRUE, cex=2, col=colour_array[coln], srt=90)
       
       # First letter (at the bottom)
-      text(family="mn", x_pos, base_y - strwidth(label)*3, substr(label, 1, 1), 
+      text(family="mn", x_pos, base_y - strwidth(label)*3.2, substr(label, 1, 1), 
           adj=c(0.5,1), xpd=TRUE, cex=2, srt=90)
     }
 
