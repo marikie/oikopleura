@@ -1,5 +1,6 @@
 require(stringr)
 library(RColorBrewer)
+library(showtext)
 
 # MODIFIED THE CODE FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
@@ -43,7 +44,8 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
   trinuc.lab.sorted<-trinuc.lab[conv.label.all.sorted]
   
   # Labels information for subsequent barplot
-  colour_array <- brewer.pal(6, "Set2")
+  # colour_array <- brewer.pal(6, "Set2")
+  colour_array <- brewer.pal(6, "Dark2")
   #colour_array<-c("red","blue","green","yellow", "purple", "black")
   text_array=c("C > A","C > G","C > T","T > A","T > C","T > G")
   
@@ -104,8 +106,13 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
   if(!filename==0){
     pdf(filename, width=30, height=8)
     # default: c(5, 4, 4, 2) + 0.1
-    par(family="mono", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
+    # font_add_google("IBM Plex Mono", "mn", 500)
+    font_add_google("Courier Prime", "mn")
+    font_add_google("Roboto", "os")
+    showtext_auto()
+    par(family="mn", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
     bar_positions <- barplot(
+                      family="os",
                       main = orgName, # graph title
                       as.numeric(conv.data.norm[conv.label.all.sorted]),
                       col=rep(colour_array,each=16), 
@@ -114,16 +121,44 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
                       names.arg=rep("", length(trinuc.lab.sorted)), # empty labels for now
                       #names.arg=trinuc.lab.sorted,
                       ylim=c(0,pct_yaxs_max),
-                      space = 0.1) # Increase space between bars
+                      space = 0) # Increase space between bars
     
     
     # manually add labels
-    text(x=bar_positions, y=par("usr")[3] - 0.05 * (par("usr")[4] - par("usr")[3]), 
-         labels=trinuc.lab.sorted, srt=90, adj=1, xpd=TRUE, cex=2) # modify size by cex, rotate by srt
-    
+    #text(x=bar_positions, y=par("usr")[3] - 0.05 * (par("usr")[4] - par("usr")[3]), 
+    #     labels=trinuc.lab.sorted, srt=90, adj=1, xpd=TRUE, cex=2) # modify size by cex, rotate by srt
+    for (i in seq_along(trinuc.lab.sorted)) {
+      label <- trinuc.lab.sorted[i]
+      x_pos <- bar_positions[i] - 0.5
+      base_y <- par("usr")[3] - 0.05 * (par("usr")[4] - par("usr")[3])
+      if(i%%16!=0){
+        coln <- i %/% 16 + 1
+      }else{
+        coln <- i %/% 16
+      }
+      
+      # print("strwidth:")
+      # print(strwidth(label))
+      # print("strheight:")
+      # print(strheight(label))
+      # print(label)
+
+      # Last letter (slightly under the x axis)
+      text(family="mn", x_pos, base_y, substr(label, 3, 3), 
+          adj=c(0.5,1), xpd=TRUE, cex=2, srt=90)
+      
+      # Middle letter (colored red, slightly above the first letter)
+      text(family="mn", x_pos, base_y - strwidth(label)*1.5, substr(label, 2, 2), 
+          adj=c(0.5,1), xpd=TRUE, cex=2, col=colour_array[coln], srt=90)
+      
+      # First letter (at the bottom)
+      text(family="mn", x_pos, base_y - strwidth(label)*3, substr(label, 1, 1), 
+          adj=c(0.5,1), xpd=TRUE, cex=2, srt=90)
+    }
+
     # add xlab and ylab
-    mtext("Original Trinucleotides", side=1, line=6, cex=2.5) # modify size by cex
-    mtext("#Subs/#OrigTrinucs (%)", side=2, line=4, cex=2.5) # cexでサイズ調整
+    mtext(family="os", "Original Trinucleotides", side=1, line=6, cex=2.5) # modify size by cex
+    mtext(family="os", "#Subs/#OrigTrinucs (%)", side=2, line=4, cex=2.5) # cexでサイズ調整
     
     # Calculate the width of the bars
     bar_widths <- diff(bar_positions)
@@ -142,7 +177,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
       
       #rect(left,5.1,right,5.2, col=colour_array[i], border=NA)
       rect(left,0.90*pct_yaxs_max,right,0.93*pct_yaxs_max, col=colour_array[i], border=NA)
-      text(x=label_mid, y=0.97*pct_yaxs_max, labels=text_array[i], cex=2.5) # increase label size with cex
+      text(family="mn", x=label_mid, y=0.97*pct_yaxs_max, labels=text_array[i], cex=2.5) # increase label size with cex
     }
     
     dev.off()
