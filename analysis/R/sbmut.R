@@ -130,7 +130,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
     for (i in seq_along(trinuc.lab.sorted)) {
       label <- trinuc.lab.sorted[i]
       x_pos <- bar_positions[i] - 0.5
-      base_y <- par("usr")[3] - 0.05 * (par("usr")[4] - par("usr")[3])
+      base_y <- par("usr")[3] - 0.03 * (par("usr")[4] - par("usr")[3])
       if(i%%16!=0){
         coln <- i %/% 16 + 1
       }else{
@@ -157,7 +157,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus, orgName){
     }
 
     # add xlab and ylab
-    mtext(family="os", "Original Trinucleotides", side=1, line=6, cex=2.5) # modify size by cex
+    mtext(family="os", "Original Trinucleotides", side=1, line=5.5, cex=2.5) # modify size by cex
     mtext(family="os", "#Subs/#OrigTrinucs (%)", side=2, line=4, cex=2.5) # cexでサイズ調整
     
     # Calculate the width of the bars
