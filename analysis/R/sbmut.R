@@ -129,7 +129,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
     #     labels=trinuc.lab.sorted, srt=90, adj=1, xpd=TRUE, cex=2) # modify size by cex, rotate by srt
     for (i in seq_along(trinuc.lab.sorted)) {
       label <- trinuc.lab.sorted[i]
-      x_pos <- bar_positions[i] - 0.5
+      x_pos <- bar_positions[i]
       base_y <- par("usr")[3] - 0.03 * (par("usr")[4] - par("usr")[3])
       if(i%%16!=0){
         coln <- i %/% 16 + 1
@@ -144,16 +144,16 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
       # print(label)
 
       # Last letter (slightly under the x axis)
-      text(family="mn", x_pos, base_y, substr(label, 3, 3), 
-          adj=c(0.5,1), xpd=TRUE, cex=2, srt=90)
+      text(family="mn", x_pos, base_y, substr(label, 3, 3),
+           xpd=TRUE, cex=2, srt=90)
       
       # Middle letter (colored red, slightly above the first letter)
-      text(family="mn", x_pos, base_y - strwidth(label)*1.65, substr(label, 2, 2), 
-          adj=c(0.5,1), xpd=TRUE, cex=2, col=colour_array[coln], srt=90)
+      text(family="mn", x_pos, base_y - strwidth(label)*0.03*(par("usr")[4]-par("usr")[3]), substr(label, 2, 2),
+          xpd=TRUE, cex=2, col=colour_array[coln], srt=90)
       
       # First letter (at the bottom)
-      text(family="mn", x_pos, base_y - strwidth(label)*3.2, substr(label, 1, 1), 
-          adj=c(0.5,1), xpd=TRUE, cex=2, srt=90)
+      text(family="mn", x_pos, base_y - strwidth(label)*0.06*(par("usr")[4]-par("usr")[3]), substr(label, 1, 1),
+          xpd=TRUE, cex=2, srt=90)
     }
 
     # add xlab and ylab
