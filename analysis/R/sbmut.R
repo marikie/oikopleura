@@ -112,6 +112,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
     showtext_auto()
     par(family="mn", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
     bar_positions <- barplot(
+                      axes = FALSE,
                       family="os",
                       # main = orgName, # graph title
                       as.numeric(conv.data.norm[conv.label.all.sorted]),
@@ -122,8 +123,10 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
                       #names.arg=trinuc.lab.sorted,
                       ylim=c(0,pct_yaxs_max),
                       space = 0) # Increase space between bars
-    
-    
+
+    # manually add y axis
+    axis(side=2, line=-3.5)
+
     # manually add labels
     #text(x=bar_positions, y=par("usr")[3] - 0.05 * (par("usr")[4] - par("usr")[3]), 
     #     labels=trinuc.lab.sorted, srt=90, adj=1, xpd=TRUE, cex=2) # modify size by cex, rotate by srt
@@ -158,7 +161,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
 
     # add xlab and ylab
     mtext(family="os", "Original Trinucleotides", side=1, line=5.5, cex=2.5) # modify size by cex
-    mtext(family="os", "#Subs/#OrigTrinucs (%)", side=2, line=4, cex=2.5) # cexでサイズ調整
+    mtext(family="os", "#Subs/#OrigTrinucs (%)", side=2, line=0.5, cex=2.5) # cexでサイズ調整
     
     # Calculate the width of the bars
     bar_widths <- diff(bar_positions)
