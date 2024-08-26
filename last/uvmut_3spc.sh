@@ -101,12 +101,12 @@ fi
 # make a graph of the trinucleotide mutations
 echo "---making a graph of the trinucleotide mutations"
 if [ ! -e $mut3Graph_org2 ]; then
-	Rscript ~/scripts/analysis/R/sbmut.R $mut3File_org2 $mut3Graph_org2 0 $org2Name >$mut3GraphOut_org2
+	Rscript ~/scripts/analysis/R/sbmut.R $mut3File_org2 $mut3Graph_org2 0 >$mut3GraphOut_org2
 else
 	echo "$mut3Graph_org2 already exists"
 fi
 if [ ! -e $mut3Graph_org3 ]; then
-	Rscript ~/scripts/analysis/R/sbmut.R $mut3File_org3 $mut3Graph_org3 0 $org3Name >$mut3GraphOut_org3
+	Rscript ~/scripts/analysis/R/sbmut.R $mut3File_org3 $mut3Graph_org3 0 >$mut3GraphOut_org3
 else
 	echo "$mut3Graph_org3 already exists"
 fi
