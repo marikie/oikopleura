@@ -30,7 +30,7 @@ echo "org1FullName: $org1FullName"
 echo "org2FullName: $org2FullName"
 echo "org3FullName: $org3FullName"
 
-cd ~/genomes
+cd /home/mrk/genomes
 if [ ! -d $org1FullName ]; then
     mkdir $org1FullName
 fi
@@ -52,23 +52,23 @@ echo "org3ShortName: $org3ShortName"
 
 
 # download from NCBIdatase
-if [ ! -e ~/genomes/$org1FullName/ncbi_dataset.zip ]; then
+if [ ! -e /home/mrk/genomes/$org1FullName/ncbi_dataset.zip ]; then
     echo "Downloading $org1FullName from NCBIdataset"
-    cd ~/genomes/$org1FullName
+    cd /home/mrk/genomes/$org1FullName
     datasets download genome accession $org1ID --include gff3,rna,cds,protein,genome,seq-report &   
 else
     echo "$org1FullName already downloaded"
 fi
-if [ ! -e ~/genomes/$org2FullName/ncbi_dataset.zip ]; then
+if [ ! -e /home/mrk/genomes/$org2FullName/ncbi_dataset.zip ]; then
     echo "Downloading $org2FullName from NCBIdataset"
-    cd ~/genomes/$org2FullName
+    cd /home/mrk/genomes/$org2FullName
     datasets download genome accession $org2ID --include gff3,rna,cds,protein,genome,seq-report &
 else
     echo "$org2FullName already downloaded"
 fi
-if [ ! -e ~/genomes/$org3FullName/ncbi_dataset.zip ]; then
+if [ ! -e /home/mrk/genomes/$org3FullName/ncbi_dataset.zip ]; then
     echo "Downloading $org3FullName from NCBIdataset"
-    cd ~/genomes/$org3FullName
+    cd /home/mrk/genomes/$org3FullName
     datasets download genome accession $org3ID --include gff3,rna,cds,protein,genome,seq-report &
 else
     echo "$org3FullName already downloaded"
@@ -81,14 +81,14 @@ function processGenomeData() {
     local orgFullName=$1
     local orgID=$2
 
-    cd ~/genomes/"$orgFullName"
+    cd /home/mrk/genomes/"$orgFullName"
     if [ -z "$(ls *.fna 2>/dev/null)" ]; then
         unzip ncbi_dataset.zip
         cd ncbi_dataset/data
-        mv $(ls -p | grep -v /) ~/genomes/"$orgFullName"
+        mv $(ls -p | grep -v /) /home/mrk/genomes/"$orgFullName"
         cd "$orgID"
-        mv * ~/genomes/"$orgFullName"
-        cd ~/genomes/"$orgFullName"
+        mv * /home/mrk/genomes/"$orgFullName"
+        cd /home/mrk/genomes/"$orgFullName"
         rm -r ncbi_dataset
     fi
 }
@@ -97,13 +97,13 @@ processGenomeData $org2FullName $org2ID &
 processGenomeData $org3FullName $org3ID &
 wait
 
-org1FASTA="~/genomes/$org1FullName/$(ls ~/genomes/$org1FullName | grep $org1ID)"
-org2FASTA="~/genomes/$org2FullName/$(ls ~/genomes/$org2FullName | grep $org2ID)"
-org3FASTA="~/genomes/$org3FullName/$(ls ~/genomes/$org3FullName | grep $org3ID)"
+org1FASTA="/home/mrk/genomes/$org1FullName/$(ls /home/mrk/genomes/$org1FullName | grep $org1ID)"
+org2FASTA="/home/mrk/genomes/$org2FullName/$(ls /home/mrk/genomes/$org2FullName | grep $org2ID)"
+org3FASTA="/home/mrk/genomes/$org3FullName/$(ls /home/mrk/genomes/$org3FullName | grep $org3ID)"
 echo "org1FASTA: $org1FASTA"
 echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
 echo "Running uvmut_3spc.sh"
-echo "bash ~/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName ~/data"
-bash ~/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName ~/data
+echo "bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName /home/mrk/data"
+bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName /home/mrk/data
