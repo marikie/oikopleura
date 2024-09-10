@@ -734,3 +734,7 @@ $ ./uvmut_3spc.sh 20240610 ~/genomes/ulvaProlifera/GCA_023078555.1_ASM2307855v1_
 
 # August 26, 2024
 ./uvmut_3spc.sh 20240826 ~/genomes/chloroplast/Ulva_prolifera_chloroplast.fasta ~/genomes/chloroplast/Ulva_mutabilis_chloroplast.fasta ~/genomes/chloroplast/Ulva_compressa_chloroplast.fasta ulvProCh ulvMutCh ulvComCh ~/data
+
+# September 3, 2024
+./uvmut_3spc.sh 20240903 ~/genomes/chloroplast/Prototheca_cutis_chloroplast.fasta ~/genomes/chloroplast/Prototheca_ciferrii_chloroplast.fasta ~/genomes/chloroplast/Prototheca_bovis_chloroplast.fasta proCutCh proCifCh proBovCh ~/data
+
