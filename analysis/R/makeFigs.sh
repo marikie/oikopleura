@@ -4,9 +4,9 @@ Rscript sbmut.R ~/biohazard/data/gigPla_batSep_batBro/mut3_gigPla_batSep_batBro_
 
 Rscript sbmut.R ~/biohazard/data/gigPla_batSep_batBro/mut3_gigPla_batSep_batBro_20240610_batSep.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/batSep.pdf 0
 
-Rscript sbmut.R ~/biohazard/data/mytTro_mytEdu_mytGal/mut3_mytTro_mytEdu_mytGal_20240428_mytEdu.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/mytEdu.pdf 0.6
+Rscript sbmut.R ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytEdu.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/mytEdu.pdf 0.6
 
-Rscript sbmut.R ~/biohazard/data/mytTro_mytEdu_mytGal/mut3_mytTro_mytEdu_mytGal_20240428_mytGal.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/mytGal.pdf 0.5
+Rscript sbmut.R ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytGal.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/mytGal.pdf 1
 
 Rscript sbmut.R ~/biohazard/data/aspCos_aspChe_aspCri/mut3_aspCos_aspChe_aspCri_20240617_aspChe.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/aspChe.pdf 0.6
 
@@ -24,6 +24,9 @@ Rscript sbmut.R ~/biohazard/data/proCut_proCif_proBov/mut3_proCut_proCif_proBov_
 
 Rscript sbmut.R ~/biohazard/data/proCut_proCif_proBov/mut3_proCut_proCif_proBov_20240423_proCif.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/proCif.pdf 1.5
 
-Rscript sbmut.R ~/biohazard/data/oikDio_oikAlb_oikVan/mut3_oikDio_oikAlb_oikVan_20240415_oikAlb.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/oikAlb.pdf 4
+Rscript sbmut.R ~/biohazard/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240513_oikAlb.tsv ~/biohazard/data/oikDio_oikAlb_oikVan/oikAlb.pdf 4
 
 Rscript sbmut.R ~/biohazard/data/oikDio_oikAlb_oikVan/mut3_oikDio_oikAlb_oikVan_20240415_oikVan.tsv ~/biohazard/scripts/manuscripts/apbjc2024/images/oikVan.pdf 5
+
+Rscript sbmut.R ~/biohazard/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostTau.tsv ~/biohazard/data/ostMed_ostTau_ostLuc/ostTau.pdf 2
+Rscript sbmut.R ~/biohazard/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostLuc.tsv ~/biohazard/data/ostMed_ostTau_ostLuc/ostLuc.pdf 2

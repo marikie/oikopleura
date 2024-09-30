@@ -667,5 +667,29 @@ Rscript sbmut_smally.R ~/data/oenArg_oenGla_oenEla/mut3_oenArg_oenGla_oenEla_202
 
 Rscript sbmut_smally.R ~/data/oenArg_oenOak_oenPar/mut3_oenArg_oenOak_oenPar_20240802_oenOak.tsv ~/data/oenArg_oenOak_oenPar/mut3_oenArg_oenOak_oenPar_20240802_oenOak.pdf 0.01 oenOak 2 > ~/data/oenArg_oenOak_oenPar/mut3_oenArg_oenOak_oenPar_20240802_oenOak.out
 
+# September 18, 2024
+Rscript barRatio.R ~/biohazard/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240513_oikAlb.tsv > ~/biohazard/data/oikDio_oikAlb_oikVan/barRatio_oikAlb.txt
+Rscript barRatio.R ~/biohazard/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240513_oikVan.tsv > ~/biohazard/data/oikDio_oikAlb_oikVan/barRatio_oikVan.txt 
+
+Rscript barRatio.R ~/biohazard/data/gigPla_batSep_batBro/mut3_gigPla_batSep_batBro_20240610_batBro.tsv > ~/biohazard/data/gigPla_batSep_batBro/barRatio_batBro.txt
+Rscript barRatio.R ~/biohazard/data/gigPla_batSep_batBro/mut3_gigPla_batSep_batBro_20240610_batSep.tsv > ~/biohazard/data/gigPla_batSep_batBro/barRatio_batSep.txt 
+
+Rscript barRatio.R ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytEdu.tsv > ~/biohazard/data/mytTro_mytEdu_mytGal/barRatio_mytEdu.txt
+Rscript barRatio.R ~/biohazard/data/mytTro_mytEdu_mytGal/mytTro_mytEdu_mytGal_20240513_mytGal.tsv > ~/biohazard/data/mytTro_mytEdu_mytGal/barRatio_mytGal.txt
+
+Rscript barRatio.R ~/biohazard/data/ulvPro_ulvMut_ulvCom/mut3_ulvPro_ulvMut_ulvCom_20240610_ulvCom.tsv  > ~/biohazard/data/ulvPro_ulvMut_ulvCom/barRatio_ulvCom.txt
+Rscript barRatio.R ~/biohazard/data/ulvPro_ulvMut_ulvCom/mut3_ulvPro_ulvMut_ulvCom_20240610_ulvMut.tsv  > ~/biohazard/data/ulvPro_ulvMut_ulvCom/barRatio_ulvMut.txt
+
+python triUvMuts_2TSVs.py ~/data/ostMed_ostTau_ostLuc/ostMed_ostTau_ostLuc_20240423.maf ~/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostTau.tsv ~/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostLuc.tsv
+
+Rscript barRatio.R ~/biohazard/data/proCut_proCif_proBov/mut3_proCut_proCif_proBov_20240423_proCif.tsv  > ~/biohazard/data/proCut_proCif_proBov/barRatio_proCif.txt 
+Rscript barRatio.R ~/biohazard/data/proCut_proCif_proBov/mut3_proCut_proCif_proBov_20240423_proBov.tsv  > ~/biohazard/data/proCut_proCif_proBov/barRatio_proBov.txt 
+
+Rscript barRatio.R ~/biohazard/data/walMel_walIch_walHed/mut3_walMel_walIch_walHed_20240611_walIch.tsv  > ~/biohazard/data/walMel_walIch_walHed/barRatio_walIch.txt 
+Rscript barRatio.R ~/biohazard/data/walMel_walIch_walHed/mut3_walMel_walIch_walHed_20240611_walHed.tsv  > ~/biohazard/data/walMel_walIch_walHed/barRatio_walHed.txt 
+
+Rscript barRatio.R ~/biohazard/data/aspCos_aspChe_aspCri/mut3_aspCos_aspChe_aspCri_20240617_aspChe.tsv  > ~/biohazard/data/aspCos_aspChe_aspCri/barRatio_aspChe.txt 
+Rscript barRatio.R ~/biohazard/data/aspCos_aspChe_aspCri/mut3_aspCos_aspChe_aspCri_20240617_aspCri.tsv  > ~/biohazard/data/aspCos_aspChe_aspCri/barRatio_aspCri.txt
+
 # September 30, 2024
 ./get_gc_content.sh > ~/data/gc_contents.out
