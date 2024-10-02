@@ -693,3 +693,7 @@ Rscript barRatio.R ~/biohazard/data/aspCos_aspChe_aspCri/mut3_aspCos_aspChe_aspC
 
 # September 30, 2024
 ./get_gc_content.sh > ~/data/gc_contents.out
+
+# October 2, 2024
+python subRatio.py /home/mrk/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240415.maf
+python subRatio.py ~/data/gigPla_batSep_batBro/gPla_bSep_bBro.maf
