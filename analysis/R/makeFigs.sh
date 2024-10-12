@@ -30,3 +30,6 @@ Rscript sbmut.R ~/biohazard/data/oikDio_oikAlb_oikVan/mut3_oikDio_oikAlb_oikVan_
 
 Rscript sbmut.R ~/biohazard/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostTau.tsv ~/biohazard/data/ostMed_ostTau_ostLuc/ostTau.pdf 2
 Rscript sbmut.R ~/biohazard/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostLuc.tsv ~/biohazard/data/ostMed_ostTau_ostLuc/ostLuc.pdf 2
+
+Rscrip sbmut.R ~/biohazard/data/proCutCh_proCifCh_proBovCh/mut3_proCutCh_proCifCh_proBovCh_20240903_proBovCh.tsv ~/biohazard/data/proCutCh_proCifCh_proBovCh/proBovCh.pdf 1
+Rscript sbmut.R ~/biohazard/data/proCutCh_proCifCh_proBovCh/mut3_proCutCh_proCifCh_proBovCh_20240903_proCifCh.tsv ~/biohazard/data/proCutCh_proCifCh_proBovCh/proCifCh.pdf 1
