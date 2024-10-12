@@ -17,3 +17,9 @@ python subRatio.py /home/mrk/data/walMel_walIch_walHed/walMel_walIch_walHed_2024
 
 echo -e "\n\naspChe, aspCri" >> /home/mrk/data/subRatios.out
 python subRatio.py /home/mrk/data/aspCos_aspChe_aspCri/aspCos_aspChe_aspCri_20240617.maf >> /home/mrk/data/subRatios.out
+
+echo -e "\n\nulvMutCh, ulvComCh" >> /home/mrk/data/subRatios.out
+python subRatio.py /home/mrk/data/ulvProCh_ulvMutCh_ulvComCh/ulvProCh_ulvMutCh_ulvComCh_20240826.maf >> /home/mrk/data/subRatios.out
+
+echo -e "\n\nProCifCh, proBovCh" >> /home/mrk/data/subRatios.out
+/big/mrk/oikopleura/scripts/analysis $ python subRatio.py /home/mrk/data/proCutCh_proCifCh_proBovCh/proCutCh_proCifCh_proBovCh_20240903.maf >> /home/mrk/data/subRatios.out

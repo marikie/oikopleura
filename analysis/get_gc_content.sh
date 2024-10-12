@@ -63,3 +63,16 @@ python gc_content.py /home/mrk/genomes/aspergillusChevalieri/GCF_016861735.1_Ach
 echo -e "\naspCri"
 echo "python gc_content.py /home/mrk/genomes/aspergillusCristatus/GCA_034509305.1_ASM3450930v1_genomic.fna"
 python gc_content.py /home/mrk/genomes/aspergillusCristatus/GCA_034509305.1_ASM3450930v1_genomic.fna
+
+echo -e "\nulvMutCh" >> /home/mrk/data/gc_contents.out
+python gc_content.py /home/mrk/genomes/chloroplast/Ulva_mutabilis_chloroplast.fasta >> /home/mrk/data/gc_contents.out
+
+echo -e "\nulvComCh" >> /home/mrk/data/gc_contents.out
+python gc_content.py /home/mrk/genomes/chloroplast/Ulva_compressa_chloroplast.fasta >> /home/mrk/data/gc_contents.out
+
+echo -e "\nproBovPl" >> /home/mrk/data/gc_contents.out
+python gc_content.py /home/mrk/genomes/plastids/Prototheca_bovis_plastid.fasta >> /home/mrk/data/gc_contents.out
+
+echo -e "\nproCifPl" >> /home/mrk/data/gc_contents.out
+python gc_content.py /home/mrk/genomes/plastids/Prototheca_ciferrii_plastid.fasta >> /home/mrk/data/gc_contents.out
+
