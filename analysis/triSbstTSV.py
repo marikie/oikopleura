@@ -36,8 +36,7 @@ def getPlusStrandStart(coord, gLength, gStrand):
     if gStrand == "+":
         return coord
     else:
-        minusEnd = coord + 1
-        plusStart = gLength - minusEnd
+        plusStart = gLength - coord
         return plusStart
 
 
@@ -135,8 +134,9 @@ def main(alnFileHandle, outputFilePath):
             # and the edge bases are the same,
             # and can consider it as a substitution
             # write to TSV
+            # only the middle base
             elif bothEdgeBasesSame(g1Tri, g2Tri, g3Tri) and isSbst(g1Tri, g2Tri, g3Tri):
-                write2TSV(aln, i, g1Tri, g2Tri, g3Tri, writer)
+                write2TSV(aln, i + 1, g1Tri, g2Tri, g3Tri, writer)
             # if there are no indels,
             # but edge bases are not all the same,
             # or it's not a substitution,
