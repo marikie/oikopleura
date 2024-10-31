@@ -12,7 +12,7 @@ class TestTriSbstTSV(unittest.TestCase):
         self.outPath1 = "./test/result_triSbstTSV_out1.tsv"
 
         # expected outputs
-        self.out1_tsv = open("./test/test_triSbstTSV_out1.tsv")
+        self.out1_tsv = "./test/test_triSbstTSV_out1.tsv"
 
         ### test1 ###
         print("test1")
@@ -22,6 +22,7 @@ class TestTriSbstTSV(unittest.TestCase):
         result = subprocess.run(
             ["diff", self.outPath1, self.out1_tsv], capture_output=True
         )
+        print("result.returncode: ", result.returncode)
         self.assertEqual(result.returncode, 0, "The files are different")
 
 
