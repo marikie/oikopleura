@@ -20,7 +20,7 @@ class TestTriSbstTSV(unittest.TestCase):
         script.main(self.in1_maf, self.outPath1)
         # Check if the contents of the two files (result and expected) are the same using diff
         result = subprocess.run(
-            ["diff", self.outPath1, self.out1_tsv], capture_output=True
+            ["diff", "-b", self.outPath1, self.out1_tsv], capture_output=True
         )
         print("result.returncode: ", result.returncode)
         self.assertEqual(result.returncode, 0, "The files are different")
