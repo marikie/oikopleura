@@ -437,3 +437,12 @@ def overlap(chr1, a1, b1, chr2, a2, b2):
             return False
     else:
         return False
+
+
+def bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
+    """
+    Return True if both edge bases are the same.
+    """
+    return (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0]) and (
+        g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2]
+    )
