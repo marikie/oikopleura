@@ -1,6 +1,8 @@
 """
 Input:
 	- a tsv file with 15 columns about trinucleotide substitutions of 3 species
+	- outputFilePathB
+	- outputFilePathC
 
 Output:
 	- two tsv files with 7 columns (speciesB and speciesC)
