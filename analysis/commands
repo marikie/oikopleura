@@ -707,3 +707,5 @@ cat ~/biohazard/genomes/wallemiaHederae/genomic.gff | awk 'BEGIN {OFS="\t"} !/^#
 python triSbstTSV.py ~/biohazard/data/walMel_walIch_walHed/walMel_walIch_walHed_20240611.maf ~/biohazard/data/walMel_walIch_walHed/walMel_walIch_walHed_sbst_20241111.tsv
 
 python split2twoFiles.py ~/biohazard/data/walMel_walIch_walHed/walMel_walIch_walHed_sbst_20241111.tsv ~/biohazard/data/walMel_walIch_walHed/sbst_walIch_20241111.bed ~/biohazard/data/walMel_walIch_walHed/sbst_walHed_20241111.bed 
+
+cat genomic.gff | awk 'BEGIN {OFS="\t"} $3=="CDS" {print $0}' > genomic_cds.gff
