@@ -33,16 +33,66 @@ def isSpcC(trinucA, trinucB, trinucC):
         return False
 
 
+revDict = {"A": "T", "T": "A", "C": "G", "G": "C"}
+
+
+def sbstType(trinuc, majority, minority):
+    if majority in set(["A", "G"]):
+        return (
+            revDict[trinuc[2]]
+            + "["
+            + revDict[majority]
+            + ">"
+            + revDict[minority]
+            + "]"
+            + revDict[trinuc[0]]
+        )
+    else:
+        return trinuc[0] + "[" + majority + ">" + minority + "]" + trinuc[2]
+
+
+def getSbstSig(trinucA, trinucB, trinucC):
+    assert bothEdgeBasesSame(
+        trinucA, trinucB, trinucC
+    ), f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC} are not valid"
+    assert (
+        len(set([trinucA[1], trinucB[1], trinucC[1]])) == 2
+    ), f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC} are not valid"
+
+    middleList = [trinucA[1], trinucB[1], trinucC[1]]
+    for base in set(middleList):
+        if middleList.count(base) == 2:
+            majority = base
+        elif middleList.count(base) == 1:
+            minority = base
+        else:
+            raise Exception(
+                f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC} are not valid"
+            )
+    if trinucA[1] == minority:
+        raise Exception(
+            f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC} are not valid"
+        )
+    elif trinucB[1] == minority:
+        return sbstType(trinucB, majority, minority)
+    elif trinucC[1] == minority:
+        return sbstType(trinucC, majority, minority)
+    else:
+        raise Exception(
+            f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC} are not valid"
+        )
+
+
 def main(tsv3spcFilePath, outputFilePathB, outputFilePathC):
     spcBFileHandle = open(outputFilePathB, "w")
     spcBwriter = csv.writer(spcBFileHandle, delimiter="\t", lineterminator="\n")
     spcCFileHandle = open(outputFilePathC, "w")
     spcCwriter = csv.writer(spcCFileHandle, delimiter="\t", lineterminator="\n")
     spcBwriter.writerow(
-        ["#", "chrB", "startB", "endB", "name", "score", "strandB", "trinucB"]
+        ["#", "chrB", "startB", "endB", "name", "score", "strandB", "sbstSig"]
     )
     spcCwriter.writerow(
-        ["#", "chrC", "startC", "endC", "name", "score", "strandC", "trinucC"]
+        ["#", "chrC", "startC", "endC", "name", "score", "strandC", "sbstSig"]
     )
     with open(tsv3spcFilePath, "r") as tsv3spcFileHandle:
         tsv3spcReader = csv.DictReader(tsv3spcFileHandle, delimiter="\t")
@@ -62,9 +112,19 @@ def main(tsv3spcFilePath, outputFilePathB, outputFilePathC):
             trinucC = row["trinucC"]
 
             if isSpcB(trinucA, trinucB, trinucC):
-                spcBwriter.writerow([chrB, startB, endB, ".", ".", strandB, trinucB])
+                try:
+                    sbstSig = getSbstSig(trinucA, trinucB, trinucC)
+                except Exception as e:
+                    print(f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC}")
+                    raise e
+                spcBwriter.writerow([chrB, startB, endB, ".", ".", strandB, sbstSig])
             elif isSpcC(trinucA, trinucB, trinucC):
-                spcCwriter.writerow([chrC, startC, endC, ".", ".", strandC, trinucC])
+                try:
+                    sbstSig = getSbstSig(trinucA, trinucB, trinucC)
+                except Exception as e:
+                    print(f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC}")
+                    raise e
+                spcCwriter.writerow([chrC, startC, endC, ".", ".", strandC, sbstSig])
             else:
                 print(f"trinucA: {trinucA}, trinucB: {trinucB}, trinucC: {trinucC}")
                 raise Exception("trinucA, trinucB, trinucC are not valid")
