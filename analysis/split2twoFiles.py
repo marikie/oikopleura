@@ -39,10 +39,10 @@ def main(tsv3spcFilePath, outputFilePathB, outputFilePathC):
     spcCFileHandle = open(outputFilePathC, "w")
     spcCwriter = csv.writer(spcCFileHandle, delimiter="\t", lineterminator="\n")
     spcBwriter.writerow(
-        ["chrB", "startB", "endB", "name", "score", "strandB", "trinucB"]
+        ["#", "chrB", "startB", "endB", "name", "score", "strandB", "trinucB"]
     )
     spcCwriter.writerow(
-        ["chrC", "startC", "endC", "name", "score", "strandC", "trinucC"]
+        ["#", "chrC", "startC", "endC", "name", "score", "strandC", "trinucC"]
     )
     with open(tsv3spcFilePath, "r") as tsv3spcFileHandle:
         tsv3spcReader = csv.DictReader(tsv3spcFileHandle, delimiter="\t")
