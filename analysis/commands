@@ -697,3 +697,13 @@ Rscript barRatio.R ~/biohazard/data/aspCos_aspChe_aspCri/mut3_aspCos_aspChe_aspC
 # October 2, 2024
 python subRatio.py /home/mrk/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240415.maf
 python subRatio.py ~/data/gigPla_batSep_batBro/gPla_bSep_bBro.maf
+
+# November 10, 2024
+python triSbstTSV.py ~/biohazard/data/proCut_proCif_proBov/proCut_proCif_proBov_20240423.maf ~/biohazard/data/proCut_proCif_proBov/proCut_proCif_proBov_sbst_20241105.tsv
+
+# November 11, 2024
+cat ~/biohazard/genomes/wallemiaHederae/genomic.gff | awk 'BEGIN {OFS="\t"} !/^#/ && $3 == "CDS" {print $1, $4-1, $5, ".", ".", $7}' > ~/biohazard/genomes/wallemiaHederae/genomic_cds.bed
+
+python triSbstTSV.py ~/biohazard/data/walMel_walIch_walHed/walMel_walIch_walHed_20240611.maf ~/biohazard/data/walMel_walIch_walHed/walMel_walIch_walHed_sbst_20241111.tsv
+
+python split2twoFiles.py ~/biohazard/data/walMel_walIch_walHed/walMel_walIch_walHed_sbst_20241111.tsv ~/biohazard/data/walMel_walIch_walHed/sbst_walIch_20241111.bed ~/biohazard/data/walMel_walIch_walHed/sbst_walHed_20241111.bed 
