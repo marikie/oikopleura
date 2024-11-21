@@ -217,12 +217,12 @@ fi
 # make a graph of the number of trinucleotide substitutions
 echo "---making a graph of the number of trinucleotide substitutions"
 if [ ! -e $sbstCount_org2 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 >$sbstCountOut_org2
+	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 
 else
 	echo "$sbstCount_org2 already exists"
 fi
 if [ ! -e $sbstCount_org3 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3 $sbstCount_org3 0 >$sbstCountOut_org3
+	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3 $sbstCount_org3 0 
 else
 	echo "$sbstCount_org3 already exists"
 fi
@@ -230,12 +230,12 @@ fi
 # make a graph of the number of original trinucleotides
 echo "---making a graph of the number of original trinucleotides"
 if [ ! -e $oriCount_org2 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 >$oriCountOut_org2
+	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 
 else
 	echo "$oriCount_org2 already exists"
 fi
 if [ ! -e $oriCount_org3 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3 $oriCount_org3 0 >$oriCountOut_org3
+	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3 $oriCount_org3 0
 else
 	echo "$oriCount_org3 already exists"
 fi
