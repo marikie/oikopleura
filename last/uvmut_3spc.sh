@@ -46,6 +46,12 @@ sbst3Graph_org2="$org2Name""_$DATE.pdf"
 sbst3Graph_org3="$org3Name""_$DATE.pdf"
 sbst3GraphOut_org2="$org2Name""_$DATE.out"
 sbst3GraphOut_org3="$org3Name""_$DATE.out"
+sbstCount_org2="$org2Name""_sbstCount_$DATE.pdf"
+sbstCount_org3="$org3Name""_sbstCount_$DATE.pdf"
+oriCount_org2="$org2Name""_oriCount_$DATE.pdf"
+oriCount_org3="$org3Name""_oriCount_$DATE.pdf"
+gcContent_org2="$org2Name""_gcContent_$DATE.out"
+gcContent_org3="$org3Name""_gcContent_$DATE.out"
 
 echo "Date: $DATE"
 echo "org1FASTA: $org1FASTA"
@@ -111,92 +117,92 @@ else
 	echo "$sbst3File_org2 and $sbst3File_org3 already exist"
 fi
 
-# make another .tsv file of the trinucleotide mutations
-# which contains all the substitutions in org2 and org3 with org1's trinucleotide info
-echo "---making another .tsv file of all the trinucleotide substitutions in org2 and org3 with org1's trinucleotide info"
-if [ ! -e $sbstFile ]; then
-	python ~/scripts/analysis/triSbstTSV.py $joinedFile "./"$sbstFile
-else
-	echo "$sbstFile already exists"
-fi
+# # make another .tsv file of the trinucleotide mutations
+# # which contains all the substitutions in org2 and org3 with org1's trinucleotide info
+# echo "---making another .tsv file of all the trinucleotide substitutions in org2 and org3 with org1's trinucleotide info"
+# if [ ! -e $sbstFile ]; then
+# 	python ~/scripts/analysis/triSbstTSV.py $joinedFile "./"$sbstFile
+# else
+# 	echo "$sbstFile already exists"
+# fi
 
-# split the $sbstFile into $sbstFile_org2 and $sbstFile_org3
-echo "---splitting the $sbstFile into $sbstFile_org2 and $sbstFile_org3"
-if [ ! -e $sbstFile_org2 ] && [ ! -e $sbstFile_org3 ]; then
-	python ~/scripts/analysis/split2twoFiles.py $sbstFile "./"$sbstFile_org2 "./"$sbstFile_org3
-else
-	echo "$sbstFile_org2 and $sbstFile_org3 already exist"
-fi
+# # split the $sbstFile into $sbstFile_org2 and $sbstFile_org3
+# echo "---splitting the $sbstFile into $sbstFile_org2 and $sbstFile_org3"
+# if [ ! -e $sbstFile_org2 ] && [ ! -e $sbstFile_org3 ]; then
+# 	python ~/scripts/analysis/split2twoFiles.py $sbstFile "./"$sbstFile_org2 "./"$sbstFile_org3
+# else
+# 	echo "$sbstFile_org2 and $sbstFile_org3 already exist"
+# fi
 
-# assert $sbst3File_org2 and $sbstFile_org2 doesn't contradict each other
-echo "---asserting $sbst3File_org2 and $sbstFile_org2 doesn't contradict each other"
-# Extract and count sbstSig occurrences in sbstFile_org2
-awk '{count[$7]++} END {for (sig in count) print sig, count[sig]}' "$sbstFile_org2" > sbst_counts2.txt
-# Compare with mutNum in sbst3File_org2
-awk 'NR==FNR {mutNum[$1]=$2; next} {if (mutNum[$1] != $2) {print "Mismatch for", $1, ": expected", mutNum[$1], "found", $2; exit 1}}' "$sbst3File_org2" sbst_counts2.txt
-if [ $? -eq 0 ]; then
-    echo "Assertion passed: Files match"
-else
-    echo "Assertion failed: Files do not match"
-    exit 1
-fi
+# # assert $sbst3File_org2 and $sbstFile_org2 doesn't contradict each other
+# echo "---asserting $sbst3File_org2 and $sbstFile_org2 doesn't contradict each other"
+# # Extract and count sbstSig occurrences in sbstFile_org2
+# awk '{count[$7]++} END {for (sig in count) print sig, count[sig]}' "$sbstFile_org2" > sbst_counts2.txt
+# # Compare with mutNum in sbst3File_org2
+# awk 'NR==FNR {mutNum[$1]=$2; next} {if (mutNum[$1] != $2) {print "Mismatch for", $1, ": expected", mutNum[$1], "found", $2; exit 1}}' "$sbst3File_org2" sbst_counts2.txt
+# if [ $? -eq 0 ]; then
+#     echo "Assertion passed: Files match"
+# else
+#     echo "Assertion failed: Files do not match"
+#     exit 1
+# fi
 
-# assert $sbst3File_org3 and $sbstFile_org3 doesn't contradict each other
-echo "---asserting $sbst3File_org3 and $sbstFile_org3 doesn't contradict each other"
-awk '{count[$7]++} END {for (sig in count) print sig, count[sig]}' "$sbstFile_org3" > sbst_counts3.txt
-awk 'NR==FNR {mutNum[$1]=$2; next} {if (mutNum[$1] != $2) {print "Mismatch for", $1, ": expected", mutNum[$1], "found", $2; exit 1}}' "$sbst3File_org3" sbst_counts3.txt
-if [ $? -eq 0 ]; then
-    echo "Assertion passed: Files match"
-else
-    echo "Assertion failed: Files do not match"
-    exit 1
-fi
+# # assert $sbst3File_org3 and $sbstFile_org3 doesn't contradict each other
+# echo "---asserting $sbst3File_org3 and $sbstFile_org3 doesn't contradict each other"
+# awk '{count[$7]++} END {for (sig in count) print sig, count[sig]}' "$sbstFile_org3" > sbst_counts3.txt
+# awk 'NR==FNR {mutNum[$1]=$2; next} {if (mutNum[$1] != $2) {print "Mismatch for", $1, ": expected", mutNum[$1], "found", $2; exit 1}}' "$sbst3File_org3" sbst_counts3.txt
+# if [ $? -eq 0 ]; then
+#     echo "Assertion passed: Files match"
+# else
+#     echo "Assertion failed: Files do not match"
+#     exit 1
+# fi
 
-# make gff files for the CDSs
-echo "---making gff files for the CDSs"
-awk 'BEGIN {OFS="\t"} $3 == "CDS"' $org2gff > $org2cdsGFF
-awk 'BEGIN {OFS="\t"} $3 == "CDS"' $org3gff > $org3cdsGFF
+# # make gff files for the CDSs
+# echo "---making gff files for the CDSs"
+# awk 'BEGIN {OFS="\t"} $3 == "CDS"' $org2gff > $org2cdsGFF
+# awk 'BEGIN {OFS="\t"} $3 == "CDS"' $org3gff > $org3cdsGFF
 
-# bedtools intersect to get the trinucleotide substitutions in the CDSs
-# all
-echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (all)"
-if [ ! -e $cdsIntsct_all_org2 ]; then
-	bedtools intersect -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_all_org2
-else
-	echo "$cdsIntsct_all_org2 already exists"
-fi
-if [ ! -e $cdsIntsct_all_org3 ]; then
-	bedtools intersect -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_all_org3
-else
-	echo "$cdsIntsct_all_org3 already exists"
-fi
-# same strand
-echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (same strand)"
-if [ ! -e $cdsIntsct_sameStrand_org2 ]; then
-	bedtools intersect -s -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_sameStrand_org2
-else
-	echo "$cdsIntsct_sameStrand_org2 already exists"
-fi
-if [ ! -e $cdsIntsct_sameStrand_org3 ]; then
-	bedtools intersect -s -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_sameStrand_org3
-else
-	echo "$cdsIntsct_sameStrand_org3 already exists"
-fi
-# different strand
-echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (different strand)"
-if [ ! -e $cdsIntsct_diffStrand_org2 ]; then
-	bedtools intersect -S -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_diffStrand_org2
-else
-	echo "$cdsIntsct_diffStrand_org2 already exists"
-fi
-if [ ! -e $cdsIntsct_diffStrand_org3 ]; then
-	bedtools intersect -S -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_diffStrand_org3
-else
-	echo "$cdsIntsct_diffStrand_org3 already exists"
-fi
+# # bedtools intersect to get the trinucleotide substitutions in the CDSs
+# # all
+# echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (all)"
+# if [ ! -e $cdsIntsct_all_org2 ]; then
+# 	bedtools intersect -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_all_org2
+# else
+# 	echo "$cdsIntsct_all_org2 already exists"
+# fi
+# if [ ! -e $cdsIntsct_all_org3 ]; then
+# 	bedtools intersect -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_all_org3
+# else
+# 	echo "$cdsIntsct_all_org3 already exists"
+# fi
+# # same strand
+# echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (same strand)"
+# if [ ! -e $cdsIntsct_sameStrand_org2 ]; then
+# 	bedtools intersect -s -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_sameStrand_org2
+# else
+# 	echo "$cdsIntsct_sameStrand_org2 already exists"
+# fi
+# if [ ! -e $cdsIntsct_sameStrand_org3 ]; then
+# 	bedtools intersect -s -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_sameStrand_org3
+# else
+# 	echo "$cdsIntsct_sameStrand_org3 already exists"
+# fi
+# # different strand
+# echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (different strand)"
+# if [ ! -e $cdsIntsct_diffStrand_org2 ]; then
+# 	bedtools intersect -S -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_diffStrand_org2
+# else
+# 	echo "$cdsIntsct_diffStrand_org2 already exists"
+# fi
+# if [ ! -e $cdsIntsct_diffStrand_org3 ]; then
+# 	bedtools intersect -S -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_diffStrand_org3
+# else
+# 	echo "$cdsIntsct_diffStrand_org3 already exists"
+# fi
 
-# make a graph of the trinucleotide mutations
-echo "---making a graph of the trinucleotide mutations"
+# make a graph of the trinucleotide substitutions (normalized)
+echo "---making a graph of the trinucleotide substitutions (normalized)"
 if [ ! -e $sbst3Graph_org2 ]; then
 	Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2 $sbst3Graph_org2 0 >$sbst3GraphOut_org2
 else
@@ -208,5 +214,41 @@ else
 	echo "$sbst3Graph_org3 already exists"
 fi
 
+# make a graph of the number of trinucleotide substitutions
+echo "---making a graph of the number of trinucleotide substitutions"
+if [ ! -e $sbstCount_org2 ]; then
+	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 >$sbstCountOut_org2
+else
+	echo "$sbstCount_org2 already exists"
+fi
+if [ ! -e $sbstCount_org3 ]; then
+	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3 $sbstCount_org3 0 >$sbstCountOut_org3
+else
+	echo "$sbstCount_org3 already exists"
+fi
+
+# make a graph of the number of original trinucleotides
+echo "---making a graph of the number of original trinucleotides"
+if [ ! -e $oriCount_org2 ]; then
+	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 >$oriCountOut_org2
+else
+	echo "$oriCount_org2 already exists"
+fi
+if [ ! -e $oriCount_org3 ]; then
+	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3 $oriCount_org3 0 >$oriCountOut_org3
+else
+	echo "$oriCount_org3 already exists"
+fi
+
 # GC content
 echo "---calculating GC content"
+if [ ! -e $gcContent_org2 ]; then
+	python ~/scripts/analysis/gc_content.py $org2Fasta >$gcContent_org2
+else
+	echo "$gcContent_org2 already exists"
+fi
+if [ ! -e $gcContent_org3 ]; then
+	python ~/scripts/analysis/gc_content.py $org3Fasta >$gcContent_org3
+else
+	echo "$gcContent_org3 already exists"
+fi
