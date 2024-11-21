@@ -26,12 +26,14 @@ Rscript sbmut_oriCount.R ~/biohazard/data/proCut_proCif_proBov/mut3_proCut_proCi
 
 Rscript sbmut_oriCount.R ~/biohazard/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240513_oikAlb.tsv ~/biohazard/data/oikDio_oikAlb_oikVan/oikAlb_oriCount.pdf 0
 
-Rscript sbmut_oriCount.R ~/biohazard/data/oikDio_oikAlb_oikVan/mut3_oikDio_oikAlb_oikVan_20240415_oikVan.tsv ~/biohazard/data/oikDio_oikAlb_oikVan/oikVan_oriCount.pdf 0
+Rscript sbmut_oriCount.R ~/biohazard/data/oikDio_oikAlb_oikVan/oikDio_oikAlb_oikVan_20240513_oikVan.tsv ~/biohazard/data/oikDio_oikAlb_oikVan/oikVan_oriCount.pdf 0
 
 Rscript sbmut_oriCount.R ~/biohazard/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostTau.tsv ~/biohazard/data/ostMed_ostTau_ostLuc/ostTau_oriCount.pdf 0
 
 Rscript sbmut_oriCount.R ~/biohazard/data/ostMed_ostTau_ostLuc/mut3_ostMed_ostTau_ostLuc_20240918_ostLuc.tsv ~/biohazard/data/ostMed_ostTau_ostLuc/ostLuc_oriCount.pdf 0
 
 Rscript sbmut_oriCount.R ~/biohazard/data/proCutCh_proCifCh_proBovCh/mut3_proCutCh_proCifCh_proBovCh_20240903_proBovCh.tsv ~/biohazard/data/proCutCh_proCifCh_proBovCh/proBovCh_oriCount.pdf 0
-
 Rscript sbmut_oriCount.R ~/biohazard/data/proCutCh_proCifCh_proBovCh/mut3_proCutCh_proCifCh_proBovCh_20240903_proCifCh.tsv ~/biohazard/data/proCutCh_proCifCh_proBovCh/proCifCh_oriCount.pdf 0
+
+Rscript sbmut_oriCount.R ~/biohazard/data/ulvProCh_ulvMutCh_ulvComCh/mut3_ulvProCh_ulvMutCh_ulvComCh_20240826_ulvMutCh.tsv ~/biohazard/data/ulvProCh_ulvMutCh_ulvComCh/ulvMutCh_oriCount.pdf 0
+Rscript sbmut_oriCount.R ~/biohazard/data/ulvProCh_ulvMutCh_ulvComCh/mut3_ulvProCh_ulvMutCh_ulvComCh_20240826_ulvComCh.tsv ~/biohazard/data/ulvProCh_ulvMutCh_ulvComCh/ulvComCh_oriCount.pdf 0
