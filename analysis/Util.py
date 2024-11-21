@@ -446,3 +446,8 @@ def bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
     return (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0]) and (
         g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2]
     )
+
+
+def rev(triNuc):
+    revDict = {"A": "T", "T": "A", "C": "G", "G": "C"}
+    return revDict[triNuc[2]] + revDict[triNuc[1]] + revDict[triNuc[0]]
