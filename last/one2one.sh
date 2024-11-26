@@ -66,7 +66,7 @@ if [ ! -d $outDirPath/$dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName
-	lastdb -P8 -c $dbName $org1FASTA
+	time lastdb -P8 -c $dbName $org1FASTA
 	cd ..
 else
 	echo "$dbName already exists"
@@ -76,7 +76,7 @@ fi
 echo "--last-train"
 if [ ! -e $trainFile ]; then
 	echo "doing last-train"
-	last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile
+	time last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile
 else
 	echo "$trainFile already exists"
 fi
@@ -85,7 +85,7 @@ fi
 echo "---lastal"
 if [ ! -e $m2omaf ]; then
 	echo "doing lastal"
-	lastal -P8 -D$Dopt -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
+	time lastal -P8 -D$Dopt -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
 else
 	echo "$m2omaf already exists"
 fi
@@ -94,7 +94,7 @@ fi
 echo "---last-split"
 if [ ! -e $o2omaf ]; then
 	echo "doing last-split"
-	last-split -r $m2omaf >$o2omaf
+	time last-split -r $m2omaf >$o2omaf
 else
 	echo "$o2omaf already exists"
 fi

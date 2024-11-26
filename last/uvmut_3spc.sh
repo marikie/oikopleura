@@ -94,17 +94,17 @@ bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name
 # maf-join the two .maf files
 echo "---maf-joining the two .maf files"
 if [ ! -e $o2omaf12_sorted ]; then
-	maf-sort $o2omaf12 >$o2omaf12_sorted
+	time maf-sort $o2omaf12 >$o2omaf12_sorted
 else
 	echo "$o2omaf12_sorted already exists"
 fi
 if [ ! -e $o2omaf13_sorted ]; then
-	maf-sort $o2omaf13 >$o2omaf13_sorted
+	time maf-sort $o2omaf13 >$o2omaf13_sorted
 else
 	echo "$o2omaf13_sorted already exists"
 fi
 if [ ! -e $joinedFile ]; then
-	maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
+	time maf-join $o2omaf12_sorted $o2omaf13_sorted >$joinedFile
 else
 	echo "$joinedFile already exists"
 fi
@@ -112,7 +112,7 @@ fi
 # make .tsv files about trinucleotide mutations
 echo "---making .tsv trinucleotide mutation files"
 if [ ! -e $sbst3File_org2 ] && [ ! -e $sbst3File_org3 ]; then
-	python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile "./"$sbst3File_org2 "./"$sbst3File_org3
+	time python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile "./"$sbst3File_org2 "./"$sbst3File_org3
 else
 	echo "$sbst3File_org2 and $sbst3File_org3 already exist"
 fi
@@ -204,12 +204,12 @@ fi
 # make a graph of the trinucleotide substitutions (normalized)
 echo "---making a graph of the trinucleotide substitutions (normalized)"
 if [ ! -e $sbst3Graph_org2 ]; then
-	Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2 $sbst3Graph_org2 0 >$sbst3GraphOut_org2
+	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2 $sbst3Graph_org2 0 >$sbst3GraphOut_org2
 else
 	echo "$sbst3Graph_org2 already exists"
 fi
 if [ ! -e $sbst3Graph_org3 ]; then
-	Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org3 $sbst3Graph_org3 0 >$sbst3GraphOut_org3
+	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org3 $sbst3Graph_org3 0 >$sbst3GraphOut_org3
 else
 	echo "$sbst3Graph_org3 already exists"
 fi
@@ -217,12 +217,12 @@ fi
 # make a graph of the number of trinucleotide substitutions
 echo "---making a graph of the number of trinucleotide substitutions"
 if [ ! -e $sbstCount_org2 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 
+	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 
 else
 	echo "$sbstCount_org2 already exists"
 fi
 if [ ! -e $sbstCount_org3 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3 $sbstCount_org3 0 
+	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3 $sbstCount_org3 0 
 else
 	echo "$sbstCount_org3 already exists"
 fi
@@ -230,12 +230,12 @@ fi
 # make a graph of the number of original trinucleotides
 echo "---making a graph of the number of original trinucleotides"
 if [ ! -e $oriCount_org2 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 
+	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 
 else
 	echo "$oriCount_org2 already exists"
 fi
 if [ ! -e $oriCount_org3 ]; then
-	Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3 $oriCount_org3 0
+	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3 $oriCount_org3 0
 else
 	echo "$oriCount_org3 already exists"
 fi
@@ -243,12 +243,12 @@ fi
 # GC content
 echo "---calculating GC content"
 if [ ! -e $gcContent_org2 ]; then
-	python ~/scripts/analysis/gc_content.py $org2FASTA >$gcContent_org2
+	time python ~/scripts/analysis/gc_content.py $org2FASTA >$gcContent_org2
 else
 	echo "$gcContent_org2 already exists"
 fi
 if [ ! -e $gcContent_org3 ]; then
-	python ~/scripts/analysis/gc_content.py $org3FASTA >$gcContent_org3
+	time python ~/scripts/analysis/gc_content.py $org3FASTA >$gcContent_org3
 else
 	echo "$gcContent_org3 already exists"
 fi
