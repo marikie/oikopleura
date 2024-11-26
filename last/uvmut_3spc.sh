@@ -243,12 +243,12 @@ fi
 # GC content
 echo "---calculating GC content"
 if [ ! -e $gcContent_org2 ]; then
-	python ~/scripts/analysis/gc_content.py $org2Fasta >$gcContent_org2
+	python ~/scripts/analysis/gc_content.py $org2FASTA >$gcContent_org2
 else
 	echo "$gcContent_org2 already exists"
 fi
 if [ ! -e $gcContent_org3 ]; then
-	python ~/scripts/analysis/gc_content.py $org3Fasta >$gcContent_org3
+	python ~/scripts/analysis/gc_content.py $org3FASTA >$gcContent_org3
 else
 	echo "$gcContent_org3 already exists"
 fi
