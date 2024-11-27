@@ -15,6 +15,25 @@ import argparse
 import csv
 from Util import getJoinedAlignmentObj
 
+oriDict = {
+    "ACA": ["ACAA", "ACAG", "ACAT"],
+    "ACC": ["ACCA", "ACCG", "ACCT"],
+    "ACG": ["ACGA", "ACGG", "ACGT"],
+    "ACT": ["ACTA", "ACTG", "ACTT"],
+    "CCA": ["CCAA", "CCAG", "CCAT"],
+    "CCC": ["CCCA", "CCCG", "CCCT"],
+    "CCG": ["CCGA", "CCGG", "CCGT"],
+    "CCT": ["CCTA", "CCTG", "CCTT"],
+    "GCA": ["GCAA", "GCAG", "GCAT"],
+    "GCC": ["GCCA", "GCCG", "GCCT"],
+    "GCG": ["GCGA", "GCGG", "GCGT"],
+    "GCT": ["GCTA", "GCTG", "GCTT"],
+    "TCA": ["TCAA", "TCAG", "TCAT"],
+    "TCC": ["TCCA", "TCCG", "TCCT"],
+    "TCG": ["TCGA", "TCGG", "TCGT"],
+    "TCT": ["TCTA", "TCTG", "TCTT"],
+}
+
 
 #############
 # functions
@@ -47,6 +66,8 @@ def mutType(gTri, ori, mut):
         )
 
 
+# A[C>T]G -> ACG
+# A[C>G]G -> ACG
 def ori(mutType):
     return mutType[0] + mutType[2] + mutType[6]
 
@@ -57,9 +78,9 @@ def add2totalNum(mutDict, triNuc):
     else:
         oriNuc = triNuc
 
-    for key in mutDict.keys():
-        if ori(key) == oriNuc:
-            mutDict[key]["totalRootNum"] += 1
+    for mutType in mutDict.keys():
+        if ori(mutType) == oriNuc:
+            mutDict[mutType]["totalRootNum"] += 1
 
 
 def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
@@ -81,9 +102,6 @@ def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
     # print("g1Tri: ", g1Tri)
     # print("g2Tri: ", g2Tri)
     # print("g3Tri: ", g3Tri)
-    assert (g1Tri[0] == g2Tri[0] and g2Tri[0] == g3Tri[0]) and (
-        g1Tri[2] == g2Tri[2] and g2Tri[2] == g3Tri[2]
-    ), "edge bases are not the same (not a mutational signature)"
 
     middleList = [g1Tri[1], g2Tri[1], g3Tri[1]]
     majority = ""
@@ -132,16 +150,11 @@ def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
             # total count (original is g1Tri) to mutDict2 and mutDict3
             add2totalNum(mutDict2, g1Tri)
             add2totalNum(mutDict3, g1Tri)
-    # if the middle bases are all different
-    # set(middleList) == 3
-    else:
-        # do nothing
-        pass
 
 
 def initialize_mut_dict():
     """
-    key: mutType (e.g. A[C>A]G)
+    key: mutType (e.g. ACGA which means ACG -> AAG)
     value: {
         "mutNum": 0,
         "totalRootNum": 0
@@ -149,15 +162,21 @@ def initialize_mut_dict():
     """
     mutDict = {}
     letters = ["A", "C", "G", "T"]
-    conversion = ["C>A", "C>G", "C>T", "T>A", "T>C", "T>G"]
-    for i in range(len(letters)):
-        for j in range(len(conversion)):
-            for k in range(len(letters)):
-                mtype = letters[i] + "[" + conversion[j] + "]" + letters[k]
-                if mtype not in mutDict:
-                    mutDict[mtype] = {}
-                mutDict[mtype]["mutNum"] = 0
-                mutDict[mtype]["totalRootNum"] = 0
+    midLetters = ["C", "T"]
+    cSubs = ["A", "G", "T"]
+    tSubs = ["A", "C", "G"]
+    for i in letters:
+        for j in midLetters:
+            if j == "C":
+                for k in cSubs:
+                    for l in letters:
+                        mtype = i + j + l + k
+                        mutDict[mtype] = {"mutNum": 0, "totalRootNum": 0}
+            if j == "T":
+                for k in tSubs:
+                    for l in letters:
+                        mtype = i + j + l + k
+                        mutDict[mtype] = {"mutNum": 0, "totalRootNum": 0}
     return mutDict
 
 
@@ -199,6 +218,7 @@ def main(alnFileHandle, outputFilePath2, outputFilePath3):
             g2Tri = gSeq2[i : i + 3]
             g3Tri = gSeq3[i : i + 3]
             # if indels are included, go next
+            # if not all (i in "ACGT" for i in gTri)
             if not (
                 all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g1Tri)))
                 and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g2Tri)))
@@ -208,13 +228,8 @@ def main(alnFileHandle, outputFilePath2, outputFilePath3):
             # if there are no indels
             # and the edge bases are the same,
             # count original trinucs as total and count mutations if there is a mutation
-            elif bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
+            if bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
                 add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3)
-            # if there are no indels,
-            # but edge bases are not all the same,
-            # go next
-            else:
-                continue
 
     alnFileHandle.close()
 
