@@ -132,24 +132,24 @@ class TestTriUvMuts2TSVs(unittest.TestCase):
 
     def test_mutType(self):
         print("test_mutType")
-        self.assertEqual(script.mutType("AAA", "A", "G"), "T[T>C]T")
-        self.assertEqual(script.mutType("ACG", "C", "T"), "A[C>T]G")
+        self.assertEqual(script.mutType("AAA", "A", "G"), "TTTC")
+        self.assertEqual(script.mutType("ACG", "C", "T"), "ACGT")
 
     def test_add2totalNum(self):
         print("test_add2totalNum")
         mutDict = script.initialize_mut_dict()
         exp_mutDict = script.initialize_mut_dict()
-        exp_mutDict["C[T>A]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict["C[T>C]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict["C[T>G]G"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict["CTGA"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict["CTGC"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict["CTGG"] = {"mutNum": 0, "totalRootNum": 1}
         script.add2totalNum(mutDict, "CTG")
         self.assertEqual(mutDict, exp_mutDict)
 
         mutDict = script.initialize_mut_dict()
         exp_mutDict = script.initialize_mut_dict()
-        exp_mutDict["C[T>A]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict["C[T>C]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict["C[T>G]G"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict["CTGA"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict["CTGC"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict["CTGG"] = {"mutNum": 0, "totalRootNum": 1}
         script.add2totalNum(mutDict, "CAG")
         self.assertEqual(mutDict, exp_mutDict)
 
@@ -159,13 +159,13 @@ class TestTriUvMuts2TSVs(unittest.TestCase):
         mutDict3 = script.initialize_mut_dict()
         script.add2MutDict("CAG", "CGG", "CAG", mutDict2, mutDict3)
         exp_mutDict2 = script.initialize_mut_dict()
-        exp_mutDict2["C[T>A]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict2["C[T>C]G"] = {"mutNum": 1, "totalRootNum": 1}
-        exp_mutDict2["C[T>G]G"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict2["CTGA"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict2["CTGC"] = {"mutNum": 1, "totalRootNum": 1}
+        exp_mutDict2["CTGG"] = {"mutNum": 0, "totalRootNum": 1}
         exp_mutDict3 = script.initialize_mut_dict()
-        exp_mutDict3["C[T>A]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict3["C[T>C]G"] = {"mutNum": 0, "totalRootNum": 1}
-        exp_mutDict3["C[T>G]G"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict3["CTGA"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict3["CTGC"] = {"mutNum": 0, "totalRootNum": 1}
+        exp_mutDict3["CTGG"] = {"mutNum": 0, "totalRootNum": 1}
 
         # Set maxDiff to None to see the full diff
         self.maxDiff = None

@@ -32,6 +32,22 @@ oriDict = {
     "TCC": ["TCCA", "TCCG", "TCCT"],
     "TCG": ["TCGA", "TCGG", "TCGT"],
     "TCT": ["TCTA", "TCTG", "TCTT"],
+    "ATA": ["ATAA", "ATAC", "ATAG"],
+    "ATC": ["ATCA", "ATCC", "ATCG"],
+    "ATG": ["ATGA", "ATGC", "ATGG"],
+    "ATT": ["ATTA", "ATTC", "ATTG"],
+    "CTA": ["CTAA", "CTAC", "CTAG"],
+    "CTC": ["CTCA", "CTCC", "CTCG"],
+    "CTG": ["CTGA", "CTGC", "CTGG"],
+    "CTT": ["CTTA", "CTTC", "CTTG"],
+    "GTA": ["GTAA", "GTAC", "GTAG"],
+    "GTC": ["GTCA", "GTCC", "GTCG"],
+    "GTG": ["GTGA", "GTGC", "GTGG"],
+    "GTT": ["GTTA", "GTTC", "GTTG"],
+    "TTA": ["TTAA", "TTAC", "TTAG"],
+    "TTC": ["TTCA", "TTCC", "TTCG"],
+    "TTG": ["TTGA", "TTGC", "TTGG"],
+    "TTT": ["TTTA", "TTTC", "TTTG"],
 }
 
 
@@ -53,23 +69,15 @@ def rev(triNuc):
 
 def mutType(gTri, ori, mut):
     if ori in set(["C", "T"]):
-        return gTri[0] + "[" + ori + ">" + mut + "]" + gTri[2]
+        return gTri[0] + ori + gTri[2] + mut
     else:
-        return (
-            revDict[gTri[2]]
-            + "["
-            + revDict[ori]
-            + ">"
-            + revDict[mut]
-            + "]"
-            + revDict[gTri[0]]
-        )
+        return revDict[gTri[2]] + revDict[ori] + revDict[gTri[0]] + revDict[mut]
 
 
-# A[C>T]G -> ACG
-# A[C>G]G -> ACG
+# ACTG -> ACT
+# ACGG -> ACG
 def ori(mutType):
-    return mutType[0] + mutType[2] + mutType[6]
+    return mutType[0:3]
 
 
 def add2totalNum(mutDict, triNuc):
@@ -78,9 +86,8 @@ def add2totalNum(mutDict, triNuc):
     else:
         oriNuc = triNuc
 
-    for mutType in mutDict.keys():
-        if ori(mutType) == oriNuc:
-            mutDict[mutType]["totalRootNum"] += 1
+    for mutType in oriDict[oriNuc]:
+        mutDict[mutType]["totalRootNum"] += 1
 
 
 def add2MutDict(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
@@ -185,12 +192,12 @@ def write_output_file(outputFilePath, mutDict):
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
         writer.writerow(["mutType", "mutNum", "totalRootNum"])
         mutTypeList = sorted(
-            list(mutDict.keys()), key=lambda x: (x[2], x[4], x[0], x[6])
+            list(mutDict.keys()), key=lambda x: (x[1], x[3], x[0], x[2])
         )
         for mutType in mutTypeList:
             writer.writerow(
                 [
-                    mutType,
+                    mutType[0] + "[" + mutType[1] + ">" + mutType[3] + "]" + mutType[2],
                     mutDict[mutType]["mutNum"],
                     mutDict[mutType]["totalRootNum"],
                 ]
@@ -203,6 +210,7 @@ def write_output_file(outputFilePath, mutDict):
 def main(alnFileHandle, outputFilePath2, outputFilePath3):
     mutDict2 = initialize_mut_dict()
     mutDict3 = initialize_mut_dict()
+    # print("mutDict2: ", len(mutDict2.keys()))
 
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
