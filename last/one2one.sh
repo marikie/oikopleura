@@ -28,16 +28,6 @@ o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
 # sam="$org1Name""2""$org2Name""_one2one_$DATE.sam"
 pngFile="$org1Name""2""$org2Name""_one2one_$DATE.png"
 
-# get the approximate length of the query sequence
-# and set Dopt
-# result=$(grep -v "^>" $org2FASTA | wc -c)
-# power=$(echo "scale=10; l($result) / l(10)" | bc -l)
-# num=$(echo "scale=0; $power/1" | bc)
-# Dopt="1e$num"
-
-# set the Dopt based on the query sequence length
-Dopt=$(grep -v "^>" $org2FASTA | tr -d acgtACGT | wc -c)
-
 echo "Date: $DATE"
 echo "outDirPath: $outDirPath"
 echo "org1FASTA: $org1FASTA"
@@ -49,10 +39,6 @@ echo "trainFile: $trainFile"
 echo "m2omaf: $m2omaf"
 echo "o2omaf: $o2omaf"
 echo "pngFile: $pngFile"
-# echo "result: $result"
-# echo "power: $power"
-# echo "num: $num"
-echo "Dopt: $Dopt"
 
 if [ ! -d $outDirPath ]; then
 	echo "making $outDirPath"
@@ -71,6 +57,11 @@ if [ ! -d $outDirPath/$dbName ]; then
 else
 	echo "$dbName already exists"
 fi
+# -P8: makes it faster by using 8 threads (This has no effect on the results.)
+# -c: Soft-mask lowercase letters.  This means that, when we compare
+#     these sequences to some other sequences using lastal, lowercase
+#     letters will be excluded from initial matches.  This will apply
+#     to lowercase letters in both sets of sequences.
 
 # last-train
 echo "--last-train"
@@ -80,15 +71,21 @@ if [ ! -e $trainFile ]; then
 else
 	echo "$trainFile already exists"
 fi
+# --revsym: Force the substitution scores to have reverse-complement
+#           symmetry, e.g. score(A→G) = score(T→C).  This is often
+#           appropriate, if neither strand is "special".
+# -C COUNT: Before extending gapped alignments, discard any gapless alignment whose query range lies in COUNT other gapless alignments with higher score-per-length. This aims to reduce run time. -C2 may reduce run time with little effect on accuracy.
 
 # lastal
 echo "---lastal"
 if [ ! -e $m2omaf ]; then
 	echo "doing lastal"
-	time lastal -P8 -D$Dopt -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
+	time lastal -P8 -j4 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
 else
 	echo "$m2omaf already exists"
 fi
+# -j4: show the confidence of each alignment column
+# -H EXPECT: report alignments that are expected by chance at most EXPECT times, in all the sequences. This option requires reading the queries twice (to get their lengths before finding alignments), so it doesn't allow piped-in queries.
 
 # last-split
 echo "---last-split"
@@ -98,6 +95,7 @@ if [ ! -e $o2omaf ]; then
 else
 	echo "$o2omaf already exists"
 fi
+# -r: reverse the roles of the two sequences in each alignment: use the 1st(top) sequence as the query and the 2nd(bottom) sequence as the reference.
 
 # maf-convert sam
 # if [ ! -e $sam ]; then
