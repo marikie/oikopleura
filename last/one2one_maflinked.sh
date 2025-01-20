@@ -87,6 +87,7 @@ else
 fi
 # -j4: show the confidence of each alignment column
 # -H EXPECT: report alignments that are expected by chance at most EXPECT times, in all the sequences. This option requires reading the queries twice (to get their lengths before finding alignments), so it doesn't allow piped-in queries.
+# -j4 and --split-f=MAF+: lastal can optionally write "p" lines, indicating the probability that each base is misaligned due to wrong gap placement. last-split, on the other hand, writes "p" lines indicating the probability that each base is aligned to the wrong genomic locus. You can combine both sources of error (roughly) by taking the maximum of the two error probabilities for each base.
 
 # last-split
 echo "---last-split"
