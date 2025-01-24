@@ -25,9 +25,7 @@ dbName="$org1Name""db_$DATE"
 trainFile="$org1Name""2""$org2Name""_one2one_$DATE.train"
 m2omaf="$org1Name""2""$org2Name""_many2one_$DATE.maf"
 o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
-# sam="$org1Name""2""$org2Name""_one2one_$DATE.sam"
-pngFile="$org1Name""2""$org2Name""_one2one_$DATE.png"
-
+o2omaf_maflinked="$org1Name""2""$org2Name""_one2one_$DATE""_maflinked.maf"
 echo "Date: $DATE"
 echo "outDirPath: $outDirPath"
 echo "org1FASTA: $org1FASTA"
@@ -38,7 +36,7 @@ echo "dbName: $dbName"
 echo "trainFile: $trainFile"
 echo "m2omaf: $m2omaf"
 echo "o2omaf: $o2omaf"
-echo "pngFile: $pngFile"
+echo "o2omaf_maflinked: $o2omaf_maflinked"
 
 if [ ! -d $outDirPath ]; then
 	echo "making $outDirPath"
@@ -86,8 +84,9 @@ else
 fi
 # -j4: show the confidence of each alignment column
 # -H EXPECT: report alignments that are expected by chance at most EXPECT times, in all the sequences. This option requires reading the queries twice (to get their lengths before finding alignments), so it doesn't allow piped-in queries.
+# -j4 and --split-f=MAF+: lastal can optionally write "p" lines, indicating the probability that each base is misaligned due to wrong gap placement. last-split, on the other hand, writes "p" lines indicating the probability that each base is aligned to the wrong genomic locus. You can combine both sources of error (roughly) by taking the maximum of the two error probabilities for each base.
 
-# last-split
+# last-split (without maf-linked)
 echo "---last-split"
 if [ ! -e $o2omaf ]; then
 	echo "doing last-split"
@@ -97,19 +96,12 @@ else
 fi
 # -r: reverse the roles of the two sequences in each alignment: use the 1st(top) sequence as the query and the 2nd(bottom) sequence as the reference.
 
-# maf-convert sam
-# if [ ! -e $sam ]; then
-# 	echo "converting maf to sam"
-# 	maf-convert -j1e5 -d sam $o2omaf >$sam
-# else
-# 	echo "$sam already exists"
-# fi
-
-# last-dotplot
-# echo "---last-dotplot"
-# if [ ! -e $pngFile ]; then
-# 	echo "making $pngFile"
-# 	last-dotplot $o2omaf $pngFile
-# else
-# 	echo "$pngFile already exists"
-# fi
+# last-split (with maf-linked)
+echo "---last-split"
+if [ ! -e $o2omaf_maflinked ]; then
+	echo "doing last-split"
+	time last-split -r $m2omaf | maf-linked >$o2omaf_maflinked
+else
+	echo "$o2omaf_maflinked already exists"
+fi
+# maf-linked: maf-linked reads pair-wise sequence alignments in MAF format, and omits isolated alignments. It keeps groups of alignments that are nearby in both sequences. It may be useful for genome-to-genome alignments: It removes alignments between non-homologous insertions of homologous transposons

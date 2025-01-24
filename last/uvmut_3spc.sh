@@ -30,9 +30,16 @@ o2omaf12="$org1Name""2""$org2Name""_one2one_$DATE.maf"
 o2omaf13="$org1Name""2""$org3Name""_one2one_$DATE.maf"
 o2omaf12_sorted="$org1Name""2""$org2Name""_one2one_$DATE""_sorted.maf"
 o2omaf13_sorted="$org1Name""2""$org3Name""_one2one_$DATE""_sorted.maf"
+o2omaf12_maflinked="$org1Name""2""$org2Name""_one2one_$DATE""_maflinked.maf"
+o2omaf13_maflinked="$org1Name""2""$org3Name""_one2one_$DATE""_maflinked.maf"
+o2omaf12_sorted_maflinked="$org1Name""2""$org2Name""_one2one_$DATE""_sorted_maflinked.maf"
+o2omaf13_sorted_maflinked="$org1Name""2""$org3Name""_one2one_$DATE""_sorted_maflinked.maf"
 joinedFile="$org1Name""_""$org2Name""_""$org3Name""_$DATE.maf"
+joinedFile_maflinked="$org1Name""_""$org2Name""_""$org3Name""_$DATE""_maflinked.maf"
 sbst3File_org2="sbst3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org2Name.tsv"
 sbst3File_org3="sbst3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org3Name.tsv"
+sbst3File_org2_maflinked="sbst3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org2Name""_maflinked.tsv"
+sbst3File_org3_maflinked="sbst3_$org1Name""_""$org2Name""_""$org3Name""_$DATE""_$org3Name""_maflinked.tsv"
 sbstFile="$org1Name""_""$org2Name""_""$org3Name""_sbst_$DATE.tsv"
 sbstFile_org2="sbst_$org2Name""_$DATE.bed"
 sbstFile_org3="sbst_$org3Name""_$DATE.bed"
@@ -44,8 +51,12 @@ cdsIntsct_diffStrand_org2="cdsIntsct_diffStrand_$org2Name""_$DATE.out"
 cdsIntsct_diffStrand_org3="cdsIntsct_diffStrand_$org3Name""_$DATE.out"
 sbst3Graph_org2="$org2Name""_$DATE.pdf"
 sbst3Graph_org3="$org3Name""_$DATE.pdf"
+sbst3Graph_org2_maflinked="$org2Name""_$DATE""_maflinked.pdf"
+sbst3Graph_org3_maflinked="$org3Name""_$DATE""_maflinked.pdf"
 sbst3GraphOut_org2="$org2Name""_$DATE.out"
 sbst3GraphOut_org3="$org3Name""_$DATE.out"
+sbst3GraphOut_org2_maflinked="$org2Name""_$DATE""_maflinked.out"
+sbst3GraphOut_org3_maflinked="$org3Name""_$DATE""_maflinked.out"
 sbstCount_org2="$org2Name""_sbstCount_$DATE.pdf"
 sbstCount_org3="$org3Name""_sbstCount_$DATE.pdf"
 oriCount_org2="$org2Name""_oriCount_$DATE.pdf"
@@ -53,45 +64,36 @@ oriCount_org3="$org3Name""_oriCount_$DATE.pdf"
 gcContent_org2="$org2Name""_gcContent_$DATE.out"
 gcContent_org3="$org3Name""_gcContent_$DATE.out"
 
-echo "Date: $DATE"
-echo "org1FASTA: $org1FASTA"
-echo "org2FASTA: $org2FASTA"
-echo "org3FASTA: $org3FASTA"
-echo "org1Name: $org1Name"
-echo "org2Name: $org2Name"
-echo "org3Name: $org3Name"
-echo "outDirPath: $outDirPath"
-echo "o2omaf12: $o2omaf12"
-echo "o2omaf13: $o2omaf13"
-echo "o2omaf12_sorted: $o2omaf12_sorted"
-echo "o2omaf13_sorted: $o2omaf13_sorted"
-echo "joinedFile: $joinedFile"
-echo "sbst3File_org2: $sbst3File_org2"
-echo "sbst3File_org3: $sbst3File_org3"
-echo "sbstFile: $sbstFile"
-echo "sbstFile_org2: $sbstFile_org2"
-echo "sbstFile_org3: $sbstFile_org3"
-echo "cdsIntsct_org2: $cdsIntsct_org2"
-echo "cdsIntsct_org3: $cdsIntsct_org3"
-echo "sbst3Graph_org2: $sbst3Graph_org2"
-echo "sbst3Graph_org3: $sbst3Graph_org3"
-echo "sbst3GraphOut_org2: $sbst3GraphOut_org2"
-echo "sbst3GraphOut_org3: $sbst3GraphOut_org3"
-
 if [ ! -d $outDirPath ]; then
 	echo "---making $outDirPath"
 	mkdir $outDirPath
 fi
 cd $outDirPath
 
+# GC content
+echo "---calculating GC content"
+if [ ! -e $gcContent_org2 ]; then
+	time python ~/scripts/analysis/gc_content.py $org2FASTA >$gcContent_org2
+else
+	echo "$gcContent_org2 already exists"
+fi
+if [ ! -e $gcContent_org3 ]; then
+	time python ~/scripts/analysis/gc_content.py $org3FASTA >$gcContent_org3
+else
+	echo "$gcContent_org3 already exists"
+fi
+
+# one2one for org1-org2
 echo "---running one2one for org1-org2"
 echo "bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name"
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
+
+# one2one for org1-org3
 echo "---running one2one for org1-org3"
 echo "bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name"
 bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
 
-# maf-join the two .maf files
+# maf-join the two .maf files (without maf-linked)
 echo "---maf-joining the two .maf files"
 if [ ! -e $o2omaf12_sorted ]; then
 	time maf-sort $o2omaf12 >$o2omaf12_sorted
@@ -109,12 +111,38 @@ else
 	echo "$joinedFile already exists"
 fi
 
-# make .tsv files about trinucleotide mutations
+# maf-join the two .maf files (with maf-linked)
+echo "---maf-joining the two .maf files (with maf-linked)"
+if [ ! -e $o2omaf12_sorted_maflinked ]; then
+	time maf-sort $o2omaf12_maflinked >$o2omaf12_sorted_maflinked
+else
+	echo "$o2omaf12_sorted_maflinked already exists"
+fi
+if [ ! -e $o2omaf13_sorted_maflinked ]; then
+	time maf-sort $o2omaf13_maflinked >$o2omaf13_sorted_maflinked
+else
+	echo "$o2omaf13_sorted_maflinked already exists"
+fi
+if [ ! -e $joinedFile_maflinked ]; then
+	time maf-join $o2omaf12_sorted_maflinked $o2omaf13_sorted_maflinked >$joinedFile_maflinked
+else
+	echo "$joinedFile_maflinked already exists"
+fi
+
+# make .tsv files about trinucleotide mutations (without maf-linked)
 echo "---making .tsv trinucleotide mutation files"
 if [ ! -e $sbst3File_org2 ] && [ ! -e $sbst3File_org3 ]; then
 	time python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile "./"$sbst3File_org2 "./"$sbst3File_org3
 else
 	echo "$sbst3File_org2 and $sbst3File_org3 already exist"
+fi
+
+# make .tsv files about trinucleotide mutations (with maf-linked)
+echo "---making .tsv trinucleotide mutation files (with maf-linked)"
+if [ ! -e $sbst3File_org2_maflinked ] && [ ! -e $sbst3File_org3_maflinked ]; then
+	time python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile_maflinked "./"$sbst3File_org2_maflinked "./"$sbst3File_org3_maflinked
+else
+	echo "$sbst3File_org2_maflinked and $sbst3File_org3_maflinked already exist"
 fi
 
 # # make another .tsv file of the trinucleotide mutations
@@ -201,8 +229,8 @@ fi
 # 	echo "$cdsIntsct_diffStrand_org3 already exists"
 # fi
 
-# make a graph of the trinucleotide substitutions (normalized)
-echo "---making a graph of the trinucleotide substitutions (normalized)"
+# make a graph of the trinucleotide substitutions (normalized) (without maf-linked)
+echo "---making a graph of the trinucleotide substitutions (normalized) (without maf-linked)"
 if [ ! -e $sbst3Graph_org2 ]; then
 	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2 $sbst3Graph_org2 0 >$sbst3GraphOut_org2
 else
@@ -214,8 +242,8 @@ else
 	echo "$sbst3Graph_org3 already exists"
 fi
 
-# make a graph of the number of trinucleotide substitutions
-echo "---making a graph of the number of trinucleotide substitutions"
+# make a graph of the number of trinucleotide substitutions (without maf-linked)
+echo "---making a graph of the number of trinucleotide substitutions (without maf-linked)"
 if [ ! -e $sbstCount_org2 ]; then
 	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 
 else
@@ -227,8 +255,8 @@ else
 	echo "$sbstCount_org3 already exists"
 fi
 
-# make a graph of the number of original trinucleotides
-echo "---making a graph of the number of original trinucleotides"
+# make a graph of the number of original trinucleotides (without maf-linked)
+echo "---making a graph of the number of original trinucleotides (without maf-linked)"
 if [ ! -e $oriCount_org2 ]; then
 	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 
 else
@@ -240,15 +268,42 @@ else
 	echo "$oriCount_org3 already exists"
 fi
 
-# GC content
-echo "---calculating GC content"
-if [ ! -e $gcContent_org2 ]; then
-	time python ~/scripts/analysis/gc_content.py $org2FASTA >$gcContent_org2
+# make a graph of the trinucleotide substitutions (normalized) (with maf-linked)
+echo "---making a graph of the trinucleotide substitutions (normalized) (with maf-linked)"
+if [ ! -e $sbst3Graph_org2_maflinked ]; then
+	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2_maflinked $sbst3Graph_org2_maflinked 0 >$sbst3GraphOut_org2_maflinked
 else
-	echo "$gcContent_org2 already exists"
+	echo "$sbst3Graph_org2_maflinked already exists"
 fi
-if [ ! -e $gcContent_org3 ]; then
-	time python ~/scripts/analysis/gc_content.py $org3FASTA >$gcContent_org3
+if [ ! -e $sbst3Graph_org3_maflinked ]; then
+	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org3_maflinked $sbst3Graph_org3_maflinked 0 >$sbst3GraphOut_org3_maflinked
 else
-	echo "$gcContent_org3 already exists"
+	echo "$sbst3Graph_org3_maflinked already exists"
 fi
+
+# make a graph of the number of trinucleotide substitutions (with maf-linked)
+echo "---making a graph of the number of trinucleotide substitutions (with maf-linked)"
+if [ ! -e $sbstCount_org2_maflinked ]; then
+	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2_maflinked $sbstCount_org2_maflinked 0 
+else
+	echo "$sbstCount_org2_maflinked already exists"
+fi
+if [ ! -e $sbstCount_org3_maflinked ]; then
+	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3_maflinked $sbstCount_org3_maflinked 0 
+else
+	echo "$sbstCount_org3_maflinked already exists"
+fi
+
+# make a graph of the number of original trinucleotides (with maf-linked)
+echo "---making a graph of the number of original trinucleotides (with maf-linked)"
+if [ ! -e $oriCount_org2_maflinked ]; then
+	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2_maflinked $oriCount_org2_maflinked 0 
+else
+	echo "$oriCount_org2_maflinked already exists"
+fi
+if [ ! -e $oriCount_org3_maflinked ]; then
+	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3_maflinked $oriCount_org3_maflinked 0
+else
+	echo "$oriCount_org3_maflinked already exists"
+fi
+
