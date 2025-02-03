@@ -50,6 +50,7 @@ if [ ! -d $outDirPath/$dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName
+	echo "time lastdb -P8 -c $dbName $org1FASTA"
 	time lastdb -P8 -c $dbName $org1FASTA
 	cd ..
 else
@@ -64,7 +65,7 @@ fi
 # last-train
 echo "--last-train"
 if [ ! -e $trainFile ]; then
-	echo "doing last-train"
+	echo "time last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile"
 	time last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile
 else
 	echo "$trainFile already exists"
@@ -77,7 +78,7 @@ fi
 # lastal
 echo "---lastal"
 if [ ! -e $m2omaf ]; then
-	echo "doing lastal"
+	echo "time lastal -P8 -j4 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf"
 	time lastal -P8 -j4 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
 else
 	echo "$m2omaf already exists"
@@ -87,9 +88,9 @@ fi
 # -j4 and --split-f=MAF+: lastal can optionally write "p" lines, indicating the probability that each base is misaligned due to wrong gap placement. last-split, on the other hand, writes "p" lines indicating the probability that each base is aligned to the wrong genomic locus. You can combine both sources of error (roughly) by taking the maximum of the two error probabilities for each base.
 
 # last-split (without maf-linked)
-echo "---last-split"
+echo "---last-split (without maf-linked)" 
 if [ ! -e $o2omaf ]; then
-	echo "doing last-split"
+	echo "time last-split -r $m2omaf >$o2omaf"
 	time last-split -r $m2omaf >$o2omaf
 else
 	echo "$o2omaf already exists"
@@ -97,10 +98,10 @@ fi
 # -r: reverse the roles of the two sequences in each alignment: use the 1st(top) sequence as the query and the 2nd(bottom) sequence as the reference.
 
 # last-split (with maf-linked)
-echo "---last-split"
+echo "---last-split (with maf-linked)"
 if [ ! -e $o2omaf_maflinked ]; then
-	echo "doing last-split"
-	time last-split -r $m2omaf | maf-linked >$o2omaf_maflinked
+	echo "maf-linked $o2omaf >$o2omaf_maflinked"
+	time maf-linked $o2omaf >$o2omaf_maflinked
 else
 	echo "$o2omaf_maflinked already exists"
 fi
