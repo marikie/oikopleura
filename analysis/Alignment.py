@@ -69,6 +69,7 @@ class Alignment:
     """
     modified a class from Alignments.py inside JSA. written by Anish Shrestha.
     """
+
     def __init__(self, **kwargs):
         """
         coordinates are in inbetween coordinates
@@ -287,6 +288,7 @@ class JoinedAlignment:
 
             seq_name = "gSeq" + str(i + 1)
             exec("self.{} = '{}'".format(seq_name, sline[6]))
+        self.pLines = kwargs["pLines"]
 
     @classmethod
     def fromMAFEntry(cls, mafEntry):
@@ -299,7 +301,10 @@ class JoinedAlignment:
         sLines = [i for i in lines if i[0] == "s"]
         if not sLines:
             raise Exception("empty alignment")
-        return cls(sLines=sLines)
+        pLines = [i[1] for i in lines if i[0] == "p"]
+        if not pLines:
+            pLines = None
+        return cls(sLines=sLines, pLines=pLines)
 
 
 if __name__ == "__main__":
@@ -309,7 +314,7 @@ if __name__ == "__main__":
     from Util import getJoinedAlignmentObj
 
     alnFile = (
-        "/Users/nakagawamariko/biohazard/data/oikAlb_oikDio_oikVan/test_joined.maf"
+        "/Users/nakagawamariko/biohazard/data/test_test_test/test_joined_plines.maf"
     )
     alnFileHandle = open(alnFile)
     for joinedAln in getJoinedAlignmentObj(alnFileHandle):
@@ -332,3 +337,5 @@ if __name__ == "__main__":
         print("gStrand3: ", joinedAln.gStrand3, type(joinedAln.gStrand3))
         print("gLength3: ", joinedAln.gLength3, type(joinedAln.gLength3))
         print("gSeq3: ", joinedAln.gSeq3, type(joinedAln.gSeq3))
+        for pLine in joinedAln.pLines:
+            print("pLine: ", pLine, type(pLine))
