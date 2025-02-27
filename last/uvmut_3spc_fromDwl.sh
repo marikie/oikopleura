@@ -8,9 +8,9 @@ if [ $# -ne $argNum ]; then
     echo "- org1 accession ID" 1>&2                                      # $2
     echo "- org2 accession ID" 1>&2                                      # $3
     echo "- org3 accession ID" 1>&2                                      # $4
-	echo "- org1 full name" 1>&2                                         # $5
-	echo "- org2 full name" 1>&2                                         # $6
-	echo "- org3 full name" 1>&2                                         # $7
+	echo "- org1 full name: genusSpecies (e.g. 'ulvaProlifera')" 1>&2    # $5
+	echo "- org2 full name: genusSpecies (e.g. 'ulvaMutabilis')" 1>&2    # $6
+	echo "- org3 full name: genusSpecies (e.g. 'ulvaCompressa')" 1>&2    # $7
 	exit 1
 fi
 
@@ -84,6 +84,7 @@ function processGenomeData() {
     cd /home/mrk/genomes/"$orgFullName"
     if [ -z "$(ls *.fna 2>/dev/null)" ]; then
         unzip ncbi_dataset.zip
+        wait
         cd ncbi_dataset/data
         mv $(ls -p | grep -v /) /home/mrk/genomes/"$orgFullName"
         cd "$orgID"
@@ -105,5 +106,5 @@ echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
 echo "Running uvmut_3spc.sh"
-echo "bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName /home/mrk/data"
-bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1ShortName $org2ShortName $org3ShortName /home/mrk/data
+echo "bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org1ShortName $org2FullName $org2ShortName $org3FullName $org3ShortName /home/mrk/data"
+bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org1ShortName $org2FullName $org2ShortName $org3FullName $org3ShortName /home/mrk/data
