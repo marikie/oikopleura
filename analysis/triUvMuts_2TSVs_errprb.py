@@ -63,7 +63,7 @@ def bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
 
 
 def lowErrProb(pLines, i):
-    asciiThreshold = 53  # char >= 53 -> error probability =< 0.01
+    asciiThreshold = 53  # ord(char) >= 53 (char >= 5) -> error probability =< 0.01
     if all(
         ord(char) >= asciiThreshold for pLine in pLines for char in pLine[i : i + 3]
     ):
