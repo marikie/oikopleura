@@ -1,6 +1,7 @@
 import unittest
 import triUvMuts_2TSVs_errprb as script
 import subprocess
+import os
 
 
 class TestTriUvMuts2TSVs(unittest.TestCase):
@@ -92,6 +93,92 @@ class TestTriUvMuts2TSVs(unittest.TestCase):
 
         self.assertEqual(mutDict2, exp_mutDict2)
         self.assertEqual(mutDict3, exp_mutDict3)
+
+
+class TestPathOperations(unittest.TestCase):
+    def setUp(self):
+        # Test cases that will be used across multiple tests
+        self.test_paths = [
+            "/home/user/data/ulvPro_ulvMut_ulvCom_aligned.maf",
+            "data/ulvPro_ulvMut_ulvCom_aligned.maf",
+            "./ulvPro_ulvMut_ulvCom_aligned.maf",
+            "ulvPro_ulvMut_ulvCom_aligned.maf",
+        ]
+
+    def test_filename_extraction(self):
+        expected_filename = "ulvPro_ulvMut_ulvCom_aligned"
+        for path in self.test_paths:
+            with self.subTest(path=path):
+                filename = os.path.splitext(os.path.basename(path))[0]
+                self.assertEqual(filename, expected_filename)
+
+    def test_directory_path(self):
+        expected_dirs = ["/home/user/data", "data", ".", ""]
+        for path, expected_dir in zip(self.test_paths, expected_dirs):
+            with self.subTest(path=path):
+                path_before_filename = os.path.dirname(path)
+                self.assertEqual(path_before_filename, expected_dir)
+
+    def test_filename_parts(self):
+        expected_parts = ["ulvPro", "ulvMut", "ulvCom", "aligned"]
+        for path in self.test_paths:
+            with self.subTest(path=path):
+                filename = os.path.splitext(os.path.basename(path))[0]
+                filename_parts = filename.split("_")
+                self.assertEqual(filename_parts, expected_parts)
+
+    def test_output_path_construction(self):
+        expected_outputs = [
+            (
+                "/home/user/data/ulvMut_aligned.tsv",
+                "/home/user/data/ulvCom_aligned.tsv",
+            ),
+            ("data/ulvMut_aligned.tsv", "data/ulvCom_aligned.tsv"),
+            ("./ulvMut_aligned.tsv", "./ulvCom_aligned.tsv"),
+            ("ulvMut_aligned.tsv", "ulvCom_aligned.tsv"),
+        ]
+
+        for path, expected in zip(self.test_paths, expected_outputs):
+            with self.subTest(path=path):
+                # Get filename without extension
+                filename = os.path.splitext(os.path.basename(path))[0]
+                path_before_filename = os.path.dirname(path)
+
+                # Split filename
+                filename_parts = filename.split("_")
+                org2 = filename_parts[1]
+                org3 = filename_parts[2]
+                rest = "_".join(filename_parts[3:])
+
+                # Construct output paths
+                outFile2 = f"{org2}_{rest}.tsv"
+                outFile3 = f"{org3}_{rest}.tsv"
+                outputFilePath2 = os.path.join(path_before_filename, outFile2)
+                outputFilePath3 = os.path.join(path_before_filename, outFile3)
+
+                self.assertEqual((outputFilePath2, outputFilePath3), expected)
+
+    def test_invalid_filename(self):
+        invalid_paths = [
+            "/home/user/data/invalid.maf",
+            "data/ulvPro_ulvMut.maf",
+            "not_enough_parts.maf",
+        ]
+
+        for path in invalid_paths:
+            with self.subTest(path=path):
+                filename = os.path.splitext(os.path.basename(path))[0]
+                filename_parts = filename.split("_")
+
+                # First check if we have enough parts
+                if len(filename_parts) < 3:
+                    with self.assertRaises(ValueError):
+                        self.validate_filename_parts(filename_parts)
+
+    def validate_filename_parts(self, parts):
+        if len(parts) < 3:
+            raise ValueError("The file name should be org1_org2_org3_*.maf")
+        return parts[0], parts[1], parts[2]
 
 
 if __name__ == "__main__":
