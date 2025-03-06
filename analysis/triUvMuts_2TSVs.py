@@ -248,18 +248,7 @@ def main(alnFileHandle, outputFilePath2, outputFilePath3):
     write_output_file(outputFilePath3, mutDict3)
 
 
-if __name__ == "__main__":
-    ###################
-    # parse arguments
-    ###################
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "joinedAlignmentFile",
-        help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup), the file name should be org1_org2_org3_*.maf",
-    )
-    args = parser.parse_args()
-    joinedAlnFile = args.joinedAlignmentFile
-
+def get_default_output_file_names(joinedAlnFile):
     # file name without extension
     filename = os.path.splitext(os.path.basename(joinedAlnFile))[0]
     # Get the path before the filename at the end
@@ -268,7 +257,6 @@ if __name__ == "__main__":
     filename_parts = filename.split("_")
     if len(filename_parts) < 3:
         raise ValueError("The file name should be org1_org2_org3_*.maf")
-    org1 = filename_parts[0]
     org2 = filename_parts[1]
     org3 = filename_parts[2]
     rest = "_".join(filename_parts[3:])
@@ -280,10 +268,36 @@ if __name__ == "__main__":
         outFile3 = f"{org3}_{rest}.tsv"
     outputFilePath2 = os.path.join(path_before_filename, outFile2)
     outputFilePath3 = os.path.join(path_before_filename, outFile3)
+    return outputFilePath2, outputFilePath3
 
-    alnFileHandle = open(joinedAlnFile)
+
+if __name__ == "__main__":
+    ###################
+    # parse arguments
+    ###################
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "joinedAlignmentFile",
+        help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup), the file name should be org1_org2_org3_*.maf",
+    )
+    parser.add_argument(
+        "-o2",
+        "--outputFilePath2",
+        help="output file path for organism2",
+    )
+    parser.add_argument(
+        "-o3",
+        "--outputFilePath3",
+        help="output file path for organism3",
+    )
+    args = parser.parse_args()
+    joinedAlnFile = args.joinedAlignmentFile
+    outputFilePath2 = args.outputFilePath2 or get_default_output_file_names(joinedAlnFile)[0]
+    outputFilePath3 = args.outputFilePath3 or get_default_output_file_names(joinedAlnFile)[1]
+
 
     ###################
     # main
     ###################
+    alnFileHandle = open(joinedAlnFile)
     main(alnFileHandle, outputFilePath2, outputFilePath3)
