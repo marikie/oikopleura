@@ -285,6 +285,11 @@ if __name__ == "__main__":
     ###################
     # parse arguments
     ###################
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "joinedAlignmentFile",
+        help="a 3-genome joined alignment .maf file (the top sequence should be the outgroup), the file name should be org1_org2_org3_*.maf",
+    )
     parser.add_argument(
         "-o2",
         "--outputFilePath2",
@@ -297,9 +302,12 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     joinedAlnFile = args.joinedAlignmentFile
-    outputFilePath2 = args.outputFilePath2 or get_default_output_file_names(joinedAlnFile)[0]
-    outputFilePath3 = args.outputFilePath3 or get_default_output_file_names(joinedAlnFile)[1]
-
+    outputFilePath2 = (
+        args.outputFilePath2 or get_default_output_file_names(joinedAlnFile)[0]
+    )
+    outputFilePath3 = (
+        args.outputFilePath3 or get_default_output_file_names(joinedAlnFile)[1]
+    )
 
     ###################
     # main
