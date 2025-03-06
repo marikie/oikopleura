@@ -272,8 +272,12 @@ if __name__ == "__main__":
     org2 = filename_parts[1]
     org3 = filename_parts[2]
     rest = "_".join(filename_parts[3:])
-    outFile2 = f"{org2}_{rest}.tsv"
-    outFile3 = f"{org3}_{rest}.tsv"
+    if rest == "":
+        outFile2 = f"{org2}.tsv"
+        outFile3 = f"{org3}.tsv"
+    else:
+        outFile2 = f"{org2}_{rest}.tsv"
+        outFile3 = f"{org3}_{rest}.tsv"
     outputFilePath2 = os.path.join(path_before_filename, outFile2)
     outputFilePath3 = os.path.join(path_before_filename, outFile3)
 

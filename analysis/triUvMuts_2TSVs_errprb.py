@@ -281,9 +281,16 @@ if __name__ == "__main__":
     org1 = filename_parts[0]
     org2 = filename_parts[1]
     org3 = filename_parts[2]
+    # print(org1, org2, org3)
     rest = "_".join(filename_parts[3:])
-    outFile2 = f"{org2}_{rest}_errprb.tsv"
-    outFile3 = f"{org3}_{rest}_errprb.tsv"
+    # print(rest)
+    if rest == "":
+        outFile2 = f"{org2}_errprb.tsv"
+        outFile3 = f"{org3}_errprb.tsv"
+    else:
+        outFile2 = f"{org2}_{rest}_errprb.tsv"
+        outFile3 = f"{org3}_{rest}_errprb.tsv"
+    # print(outFile2, outFile3)
     outputFilePath2 = os.path.join(path_before_filename, outFile2)
     outputFilePath3 = os.path.join(path_before_filename, outFile3)
 
