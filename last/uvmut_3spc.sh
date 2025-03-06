@@ -1,9 +1,22 @@
 #!/bin/bash
 
+# Load YAML configuration using yq
+if [ ! -f ~/scripts/last/uvmut_config.yaml ]; then
+    echo "Configuration file not found!" 1>&2
+    exit 1
+fi
+
+# Function to get config values using yq
+get_config() {
+    yq eval "$1" ~/scripts/last/uvmut_config.yaml
+}
+
 module load last/1608
+module load yq/4.45.1
 lastal --version
 
-argNum=11
+# Get required arguments count from config
+argNum=$(get_config '.settings.required_args')
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
 	echo "You'll get one-to-one alignments of org1-org2 and org1-org3. The top genome of each alignment .maf file will be org1. org1 should be in the outgroup." 1>&2
@@ -33,42 +46,43 @@ org3FullName=$9
 org3ShortName=$10
 outDirPath=$11/$org1ShortName"_"$org2ShortName"_"$org3ShortName
 
-gcContent_org2="$org2ShortName""_gcContent_$DATE.out"
-gcContent_org3="$org3ShortName""_gcContent_$DATE.out"
+# Use config patterns to generate filenames
+gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+gcContent_org3=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
-o2o12="$org1ShortName""2""$org2ShortName""_one2one_$DATE.maf"
-o2o13="$org1ShortName""2""$org3ShortName""_one2one_$DATE.maf"
-joinedFile="$org1ShortName""_""$org2ShortName""_""$org3ShortName""_$DATE.maf"
+o2o12=$(get_config '.patterns.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+o2o13=$(get_config '.patterns.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+joinedFile=$(get_config '.patterns.joined_file' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
-o2o12_maflinked="$org1ShortName""2""$org2ShortName""_one2one_$DATE""_maflinked.maf"
-o2o13_maflinked="$org1ShortName""2""$org3ShortName""_one2one_$DATE""_maflinked.maf"
-joinedFile_maflinked="$org1ShortName""_""$org2ShortName""_""$org3ShortName""_$DATE""_maflinked.maf"
+o2o12_maflinked=$(get_config '.patterns.maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+o2o13_maflinked=$(get_config '.patterns.maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+joinedFile_maflinked=$(get_config '.patterns.joined_maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
-sbst3File_org2="sbst3_$org1ShortName""_""$org2ShortName""_""$org3ShortName""_$DATE""_$org2ShortName.tsv"
-sbst3File_org3="sbst3_$org1ShortName""_""$org2ShortName""_""$org3ShortName""_$DATE""_$org3ShortName.tsv"
-sbst3File_org2_maflinked="sbst3_$org1ShortName""_""$org2ShortName""_""$org3ShortName""_$DATE""_$org2ShortName""_maflinked.tsv"
-sbst3File_org3_maflinked="sbst3_$org1ShortName""_""$org2ShortName""_""$org3ShortName""_$DATE""_$org3ShortName""_maflinked.tsv"
-sbstFile="$org1ShortName""_""$org2ShortName""_""$org3ShortName""_sbst_$DATE.tsv"
-sbstFile_org2="sbst_$org2ShortName""_$DATE.bed"
-sbstFile_org3="sbst_$org3ShortName""_$DATE.bed"
-org2cdsGFF="$org2FullName""_cds.gff"
-org3cdsGFF="$org3FullName""_cds.gff"
-cdsIntsct_sameStrand_org2="cdsIntsct_sameStrand_$org2ShortName""_$DATE.out"
-cdsIntsct_sameStrand_org3="cdsIntsct_sameStrand_$org3ShortName""_$DATE.out"
-cdsIntsct_diffStrand_org2="cdsIntsct_diffStrand_$org2ShortName""_$DATE.out"
-cdsIntsct_diffStrand_org3="cdsIntsct_diffStrand_$org3ShortName""_$DATE.out"
-sbst3Graph_org2="$org2ShortName""_$DATE.pdf"
-sbst3Graph_org3="$org3ShortName""_$DATE.pdf"
-sbst3Graph_org2_maflinked="$org2ShortName""_$DATE""_maflinked.pdf"
-sbst3Graph_org3_maflinked="$org3ShortName""_$DATE""_maflinked.pdf"
-sbst3GraphOut_org2="$org2ShortName""_$DATE.out"
-sbst3GraphOut_org3="$org3ShortName""_$DATE.out"
-sbst3GraphOut_org2_maflinked="$org2ShortName""_$DATE""_maflinked.out"
-sbst3GraphOut_org3_maflinked="$org3ShortName""_$DATE""_maflinked.out"
-sbstCount_org2="$org2ShortName""_sbstCount_$DATE.pdf"
-sbstCount_org3="$org3ShortName""_sbstCount_$DATE.pdf"
-oriCount_org2="$org2ShortName""_oriCount_$DATE.pdf"
-oriCount_org3="$org3ShortName""_oriCount_$DATE.pdf"
+org2tsv=$(get_config '.patterns.tsv' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3tsv=$(get_config '.patterns.tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2tsv_maflinked=$(get_config '.patterns.tsv_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3tsv_maflinked=$(get_config '.patterns.tsv_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph=$(get_config '.patterns.graphs.sbst3' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph=$(get_config '.patterns.graphs.sbst3' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_maflinked=$(get_config '.patterns.graphs.sbst3_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_maflinked=$(get_config '.patterns.graphs.sbst3_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_errprb=$(get_config '.patterns.graphs.sbst_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_errprb=$(get_config '.patterns.graphs.sbst_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_maflinked_errprb=$(get_config '.patterns.graphs.sbst_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_maflinked_errprb=$(get_config '.patterns.graphs.sbst_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out=$(get_config '.patterns.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out=$(get_config '.patterns.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out_maflinked=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out_maflinked=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out_errprb=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out_errprb=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out_maflinked_errprb=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out_maflinked_errprb=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
 
 if [ ! -d $outDirPath ]; then
 	echo "---making $outDirPath"
