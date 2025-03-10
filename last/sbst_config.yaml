@@ -1,0 +1,44 @@
+# File patterns and suffixes
+patterns:
+  gc_content: "{org_short}_gcContent_{date}.out"
+  one2one: "{org1_short}_{org2_short}_one2one_{date}.maf"
+  maflinked: "{org1_short}_{org2_short}_one2one_{date}_maflinked.maf"
+  joined: "{org1_short}_{org2_short}_{org3_short}_{date}.maf"
+  joined_maflinked: "{org1_short}_{org2_short}_{org3_short}_{date}_maflinked.maf"
+  tsv: "{org_short}_{date}.tsv"
+  tsv_maflinked: "{org_short}_{date}_maflinked.tsv"
+  tsv_errprb: "{org_short}_{date}_errprb.tsv"
+  tsv_maflinked_errprb: "{org_short}_{date}_maflinked_errprb.tsv"
+  cds_gff: "{org_full}_cds.gff"
+  graphs:
+    sbst: "{org_short}_{date}.pdf"
+    sbst_count: "{org_short}_sbstCount_{date}.pdf"
+    ori_count: "{org_short}_oriCount_{date}.pdf"
+
+    sbst_maflinked: "{org_short}_{date}_maflinked.pdf"
+    sbst_count_maflinked: "{org_short}_sbstCount_{date}_maflinked.pdf"
+    ori_count_maflinked: "{org_short}_oriCount_{date}_maflinked.pdf"
+
+    sbst_errprb: "{org_short}_{date}.out"
+    sbst_count_errprb: "{org_short}_sbstCount_{date}_errprb.out"
+    ori_count_errprb: "{org_short}_oriCount_{date}_errprb.out"
+
+    sbst_maflinked_errprb: "{org_short}_{date}_mlep.out"
+    sbst_count_maflinked_errprb: "{org_short}_sbstCount_{date}_mlep.out"
+    ori_count_maflinked_errprb: "{org_short}_oriCount_{date}_mlep.out"
+  out: "{org_short}_{date}.out"
+  out_maflinked: "{org_short}_{date}_maflinked.out"
+  out_errprb: "{org_short}_{date}_errprb.out"
+  out_maflinked_errprb: "{org_short}_{date}_mlep.out"
+
+# Paths
+paths:
+  scripts:
+    analysis: "/home/mrk/scripts/analysis"
+    last: "/home/mrk/scripts/last"
+    r_scripts: "/home/mrk/scripts/analysis/R"
+
+# Script settings
+settings:
+  required_args: 8
+  normalize_graphs: 0
