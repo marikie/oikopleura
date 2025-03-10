@@ -25,12 +25,9 @@ if [ $# -ne $argNum ]; then
 	echo "- path to the org2 reference fasta file" 1>&2                  # $3
 	echo "- path to the org3 reference fasta file" 1>&2                  # $4
 	echo "- org1 full name" 1>&2                                         # $5
-	echo "- org1 short name" 1>&2                                        # $6
-	echo "- org2 full name" 1>&2                                         # $7
-	echo "- org2 short name" 1>&2                                        # $8
-	echo "- org3 full name" 1>&2                                         # $9
-	echo "- org3 short name" 1>&2                                        # $10
-	echo "- path to the dir where you want to place the output dir" 1>&2 # $11
+	echo "- org2 full name" 1>&2                                         # $6
+	echo "- org3 full name" 1>&2                                         # $7
+	echo "- path to the dir where you want to place the output dir" 1>&2 # $8
 	exit 1
 fi
 
@@ -39,12 +36,14 @@ org1FASTA=$2
 org2FASTA=$3
 org3FASTA=$4
 org1FullName=$5
-org1ShortName=$6
-org2FullName=$7
-org2ShortName=$8
-org3FullName=$9
-org3ShortName=$10
-outDirPath=$11/$org1ShortName"_"$org2ShortName"_"$org3ShortName
+org2FullName=$6
+org3FullName=$7
+outDirPath=$8/$org1ShortName"_"$org2ShortName"_"$org3ShortName
+
+# make short names
+org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
+org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
+org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 
 # Use config patterns to generate filenames
 gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
@@ -66,22 +65,40 @@ org2tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org2Sho
 org3tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
 org2Graph=$(get_config '.patterns.graphs.sbst3' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3Graph=$(get_config '.patterns.graphs.sbst3' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_sbstCount=$(get_config '.patterns.graphs.sbst_count' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_sbstCount=$(get_config '.patterns.graphs.sbst_count' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_oriCount=$(get_config '.patterns.graphs.ori_count' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_oriCount=$(get_config '.patterns.graphs.ori_count' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2Graph_maflinked=$(get_config '.patterns.graphs.sbst3_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3Graph_maflinked=$(get_config '.patterns.graphs.sbst3_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_maflinked_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_maflinked_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_maflinked_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_maflinked_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2Graph_errprb=$(get_config '.patterns.graphs.sbst_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3Graph_errprb=$(get_config '.patterns.graphs.sbst_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2Graph_maflinked_errprb=$(get_config '.patterns.graphs.sbst_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3Graph_maflinked_errprb=$(get_config '.patterns.graphs.sbst_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_maflinked_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_maflinked_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2Graph_maflinked_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3Graph_maflinked_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
 org2_out=$(get_config '.patterns.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3_out=$(get_config '.patterns.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2_out_maflinked=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_out_maflinked=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2_out_errprb=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_out_errprb=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2_out_maflinked_errprb=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_out_maflinked_errprb=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_out=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_out=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_errprb_out=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_errprb_out=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_errprb_out=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_errprb_out=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 
 if [ ! -d $outDirPath ]; then
@@ -93,126 +110,93 @@ cd $outDirPath
 # GC content
 echo "---calculating GC content"
 if [ ! -e $gcContent_org2 ]; then
-	time python ~/scripts/analysis/gc_content.py $org2FASTA >$gcContent_org2
+	echo "time python $(get_config '.paths.scripts.analysis')/gc_content.py $org2FASTA >$gcContent_org2"
+	time python $(get_config '.paths.scripts.analysis')/gc_content.py $org2FASTA >$gcContent_org2
 else
 	echo "$gcContent_org2 already exists"
 fi
 if [ ! -e $gcContent_org3 ]; then
-	time python ~/scripts/analysis/gc_content.py $org3FASTA >$gcContent_org3
+	echo "time python $(get_config '.paths.scripts.analysis')/gc_content.py $org3FASTA >$gcContent_org3"
+	time python $(get_config '.paths.scripts.analysis')/gc_content.py $org3FASTA >$gcContent_org3
 else
 	echo "$gcContent_org3 already exists"
 fi
 
 # one2one for org1-org2
 echo "---running one2one for org1-org2"
-echo "bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name"
-bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1Name $org2Name
+echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1ShortName $org2ShortName"
+bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1ShortName $org2ShortName
 
 # one2one for org1-org3
 echo "---running one2one for org1-org3"
-echo "bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name"
-bash ~/scripts/last/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1Name $org3Name
+echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1ShortName $org3ShortName"
+bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1ShortName $org3ShortName
 
 # maf-join the two .maf files (without maf-linked)
-bash ~/scripts/last/mafjoin.sh $o2o12 $o2o13 $joinedFile
+echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12 $o2o13 $joinedFile"
+bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12 $o2o13 $joinedFile
+
 # maf-join the two .maf files (with maf-linked)
-bash ~/scripts/last/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked
+echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked"
+bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked
 
-# make .tsv files about trinucleotide substitutions (without maf-linked)
-echo "---making .tsv trinucleotide substitution files"
-if [ ! -e $sbst3File_org2 ] && [ ! -e $sbst3File_org3 ]; then
-	time python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile "./"$sbst3File_org2 "./"$sbst3File_org3
-else
-	echo "$sbst3File_org2 and $sbst3File_org3 already exist"
-fi
+# Generate all TSV files
+bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
+    "$joinedFile" \
+    "$joinedFile_maflinked" \
+    "$org2tsv" \
+    "$org3tsv" \
+    "$org2tsv_maflinked" \
+    "$org3tsv_maflinked" \
+    "$org2tsv_errprb" \
+    "$org3tsv_errprb" \
+    "$org2tsv_maflinked_errprb" \
+    "$org3tsv_maflinked_errprb" \
+    "$(get_config '.paths.scripts.analysis')"
 
-# make .tsv files about trinucleotide substitutions (with maf-linked)
-echo "---making .tsv trinucleotide substitution files (with maf-linked)"
-if [ ! -e $sbst3File_org2_maflinked ] && [ ! -e $sbst3File_org3_maflinked ]; then
-	time python ~/scripts/analysis/triUvMuts_2TSVs.py $joinedFile_maflinked "./"$sbst3File_org2_maflinked "./"$sbst3File_org3_maflinked
-else
-	echo "$sbst3File_org2_maflinked and $sbst3File_org3_maflinked already exist"
-fi
-
-
-# make a graph of the trinucleotide substitutions (normalized) (without maf-linked)
-echo "---making a graph of the trinucleotide substitutions (normalized) (without maf-linked)"
-if [ ! -e $sbst3Graph_org2 ]; then
-	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2 $sbst3Graph_org2 0 >$sbst3GraphOut_org2
-else
-	echo "$sbst3Graph_org2 already exists"
-fi
-if [ ! -e $sbst3Graph_org3 ]; then
-	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org3 $sbst3Graph_org3 0 >$sbst3GraphOut_org3
-else
-	echo "$sbst3Graph_org3 already exists"
-fi
-
-# make a graph of the number of trinucleotide substitutions (without maf-linked)
-echo "---making a graph of the number of trinucleotide substitutions (without maf-linked)"
-if [ ! -e $sbstCount_org2 ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2 $sbstCount_org2 0 
-else
-	echo "$sbstCount_org2 already exists"
-fi
-if [ ! -e $sbstCount_org3 ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3 $sbstCount_org3 0 
-else
-	echo "$sbstCount_org3 already exists"
-fi
-
-# make a graph of the number of original trinucleotides (without maf-linked)
-echo "---making a graph of the number of original trinucleotides (without maf-linked)"
-if [ ! -e $oriCount_org2 ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2 $oriCount_org2 0 
-else
-	echo "$oriCount_org2 already exists"
-fi
-if [ ! -e $oriCount_org3 ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3 $oriCount_org3 0
-else
-	echo "$oriCount_org3 already exists"
-fi
-
-# make a graph of the trinucleotide substitutions (normalized) (with maf-linked)
-echo "---making a graph of the trinucleotide substitutions (normalized) (with maf-linked)"
-if [ ! -e $sbst3Graph_org2_maflinked ]; then
-	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org2_maflinked $sbst3Graph_org2_maflinked 0 >$sbst3GraphOut_org2_maflinked
-else
-	echo "$sbst3Graph_org2_maflinked already exists"
-fi
-if [ ! -e $sbst3Graph_org3_maflinked ]; then
-	time Rscript ~/scripts/analysis/R/sbmut.R $sbst3File_org3_maflinked $sbst3Graph_org3_maflinked 0 >$sbst3GraphOut_org3_maflinked
-else
-	echo "$sbst3Graph_org3_maflinked already exists"
-fi
-
-# make a graph of the number of trinucleotide substitutions (with maf-linked)
-echo "---making a graph of the number of trinucleotide substitutions (with maf-linked)"
-if [ ! -e $sbstCount_org2_maflinked ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org2_maflinked $sbstCount_org2_maflinked 0 
-else
-	echo "$sbstCount_org2_maflinked already exists"
-fi
-if [ ! -e $sbstCount_org3_maflinked ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_sbstCount.R $sbst3File_org3_maflinked $sbstCount_org3_maflinked 0 
-else
-	echo "$sbstCount_org3_maflinked already exists"
-fi
-
-# make a graph of the number of original trinucleotides (with maf-linked)
-echo "---making a graph of the number of original trinucleotides (with maf-linked)"
-if [ ! -e $oriCount_org2_maflinked ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org2_maflinked $oriCount_org2_maflinked 0 
-else
-	echo "$oriCount_org2_maflinked already exists"
-fi
-if [ ! -e $oriCount_org3_maflinked ]; then
-	time Rscript ~/scripts/analysis/R/sbmut_oriCount.R $sbst3File_org3_maflinked $oriCount_org3_maflinked 0
-else
-	echo "$oriCount_org3_maflinked already exists"
-fi
-
+# Generate all graphs
+bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
+    "$org2tsv" \
+    "$org3tsv" \
+    "$org2tsv_maflinked" \
+    "$org3tsv_maflinked" \
+    "$org2tsv_errprb" \
+    "$org3tsv_errprb" \
+    "$org2tsv_maflinked_errprb" \
+    "$org3tsv_maflinked_errprb" \
+	"$org2Graph" \
+	"$org3Graph" \
+	"$org2_out" \
+	"$org3_out" \
+	"$org2Graph_sbstCount" \
+	"$org3Graph_sbstCount" \
+	"$org2Graph_oriCount" \
+	"$org3Graph_oriCount" \
+	"$org2Graph_maflinked" \
+	"$org3Graph_maflinked" \
+	"$org2_maflinked_out" \
+	"$org3_maflinked_out" \
+	"$org2Graph_maflinked_sbstCount" \
+	"$org3Graph_maflinked_sbstCount" \
+	"$org2Graph_maflinked_oriCount" \
+	"$org3Graph_maflinked_oriCount" \
+	"$org2Graph_errprb" \
+	"$org3Graph_errprb" \
+	"$org2_errprb_out" \
+	"$org3_errprb_out" \
+	"$org2Graph_errprb_sbstCount" \
+	"$org3Graph_errprb_sbstCount" \
+	"$org2Graph_errprb_oriCount" \
+	"$org3Graph_errprb_oriCount" \
+	"$org2Graph_maflinked_errprb" \
+	"$org3Graph_maflinked_errprb" \
+	"$org2_maflinked_errprb_out" \
+	"$org3_maflinked_errprb_out" \
+	"$org2Graph_maflinked_errprb_sbstCount" \
+	"$org3Graph_maflinked_errprb_sbstCount" \
+	"$org2Graph_maflinked_errprb_oriCount" \
+	"$org3Graph_maflinked_errprb_oriCount" \
+	"$(get_config '.paths.scripts.analysis')/R"
 
 # # make another .tsv file of the trinucleotide mutations
 # # which contains all the substitutions in org2 and org3 with org1's trinucleotide info

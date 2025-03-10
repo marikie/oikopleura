@@ -41,15 +41,6 @@ if [ ! -d $org3FullName ]; then
     mkdir $org3FullName
 fi
 
-# make short names
-org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
-org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
-org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
-
-echo "org1ShortName: $org1ShortName"
-echo "org2ShortName: $org2ShortName"
-echo "org3ShortName: $org3ShortName"
-
 
 # download from NCBIdatase
 if [ ! -e /home/mrk/genomes/$org1FullName/ncbi_dataset.zip ]; then
@@ -106,5 +97,5 @@ echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
 echo "Running uvmut_3spc.sh"
-echo "bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org1ShortName $org2FullName $org2ShortName $org3FullName $org3ShortName /home/mrk/data"
-bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org1ShortName $org2FullName $org2ShortName $org3FullName $org3ShortName /home/mrk/data
+echo "bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName /home/mrk/data"
+bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName /home/mrk/data
