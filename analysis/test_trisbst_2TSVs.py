@@ -1,5 +1,5 @@
 import unittest
-import triUvMuts_2TSVs as script
+import trisbst_2TSVs as script
 import subprocess
 
 
