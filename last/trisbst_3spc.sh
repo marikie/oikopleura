@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Load YAML configuration using yq
-if [ ! -f ~/scripts/last/uvmut_config.yaml ]; then
+if [ ! -f ~/scripts/last/sbst_config.yaml ]; then
     echo "Configuration file not found!" 1>&2
     exit 1
 fi
 
 # Function to get config values using yq
 get_config() {
-    yq eval "$1" ~/scripts/last/uvmut_config.yaml
+    yq eval "$1" ~/scripts/last/sbst_config.yaml
 }
 
 module load last/1608
