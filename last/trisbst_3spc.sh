@@ -1,14 +1,16 @@
 #!/bin/bash
 
+config_file="/home/mrk/scripts/last/sbst_config.yaml"
+
 # Load YAML configuration using yq
-if [ ! -f ~/scripts/last/sbst_config.yaml ]; then
+if [ ! -f $config_file ]; then
     echo "Configuration file not found!" 1>&2
     exit 1
 fi
 
 # Function to get config values using yq
 get_config() {
-    yq eval "$1" ~/scripts/last/sbst_config.yaml
+    yq eval "$1" $config_file
 }
 
 module load last/1608
@@ -18,17 +20,9 @@ lastal --version
 # Get required arguments count from config
 argNum=$(get_config '.settings.required_args')
 if [ $# -ne $argNum ]; then
-	echo "You need $argNum arguments" 1>&2
-	echo "You'll get one-to-one alignments of org1-org2 and org1-org3. The top genome of each alignment .maf file will be org1. org1 should be in the outgroup." 1>&2
-	echo "- today's date" 1>&2                                           # $1
-	echo "- path to the org1 reference fasta file (outgroup)" 1>&2       # $2
-	echo "- path to the org2 reference fasta file" 1>&2                  # $3
-	echo "- path to the org3 reference fasta file" 1>&2                  # $4
-	echo "- org1 full name" 1>&2                                         # $5
-	echo "- org2 full name" 1>&2                                         # $6
-	echo "- org3 full name" 1>&2                                         # $7
-	echo "- path to the dir where you want to place the output dir" 1>&2 # $8
-	exit 1
+    echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$argNum/g")" 1>&2
+    echo "$(get_config '.errors.usage')" 1>&2
+    exit 1
 fi
 
 DATE=$1
@@ -108,7 +102,7 @@ fi
 cd $outDirPath
 
 # GC content
-echo "---calculating GC content"
+echo "$(get_config '.messages.gc_content')"
 if [ ! -e $gcContent_org2 ]; then
 	echo "time python $(get_config '.paths.scripts.analysis')/gc_content.py $org2FASTA >$gcContent_org2"
 	time python $(get_config '.paths.scripts.analysis')/gc_content.py $org2FASTA >$gcContent_org2
@@ -123,20 +117,22 @@ else
 fi
 
 # one2one for org1-org2
-echo "---running one2one for org1-org2"
+echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g")"
 echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1ShortName $org2ShortName"
 bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $org1ShortName $org2ShortName
 
 # one2one for org1-org3
-echo "---running one2one for org1-org3"
+echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g")"
 echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1ShortName $org3ShortName"
 bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $org1ShortName $org3ShortName
 
 # maf-join the two .maf files (without maf-linked)
+echo "$(get_config '.messages.maf_join')"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12 $o2o13 $joinedFile"
 bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12 $o2o13 $joinedFile
 
 # maf-join the two .maf files (with maf-linked)
+echo "$(get_config '.messages.maf_join') with maf-linked"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked"
 bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked
 
@@ -196,7 +192,7 @@ bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
 	"$org3Graph_maflinked_errprb_sbstCount" \
 	"$org2Graph_maflinked_errprb_oriCount" \
 	"$org3Graph_maflinked_errprb_oriCount" \
-	"$(get_config '.paths.scripts.analysis')/R"
+	"$(get_config '.paths.scripts.analysis.r')"
 
 # # make another .tsv file of the trinucleotide mutations
 # # which contains all the substitutions in org2 and org3 with org1's trinucleotide info
