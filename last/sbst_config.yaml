@@ -36,7 +36,32 @@ paths:
   scripts:
     analysis: "/home/mrk/scripts/analysis"
     last: "/home/mrk/scripts/last"
-    r_scripts: "/home/mrk/scripts/analysis/R"
+    r: "/home/mrk/scripts/analysis/R"
+
+
+# Messages
+messages:
+  gc_content: "--- calculating GC content"
+  one2one: "--- running one2one for {org1_short}-{org2_short}"
+  maf_join: "--- maf-join the two .maf files"
+  make_dir: "--- making {dir_path}"
+  file_exists: "{file_name} already exists"
+
+# Error messages
+errors:
+  arg_count: "You need {arg_num} arguments"
+  usage: |
+    You'll get one-to-one alignments of org1-org2 and org1-org3.
+    The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
+    - today's date
+    - path to the org1 reference fasta file (outgroup)
+    - path to the org2 reference fasta file
+    - path to the org3 reference fasta file
+    - org1 full name
+    - org2 full name
+    - org3 full name
+    - path to the dir where you want to place the output dir
+
 
 # Script settings
 settings:
