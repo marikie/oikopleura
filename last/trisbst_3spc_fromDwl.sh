@@ -1,17 +1,24 @@
 #!/bin/bash
 
-argNum=7
+config_file="/home/mrk/scripts/last/dwl_config.yaml"
+
+# Load YAML configuration using yq
+if [ ! -f "$config_file" ]; then
+    echo "Configuration file not found!" 1>&2
+    exit 1
+fi
+
+# Function to get config values using yq
+get_config() {
+    yq eval "$1" "$config_file"
+}
+
+# Get required arguments count from config
+argNum=$(get_config '.settings.required_args')
 if [ $# -ne $argNum ]; then
-	echo "You need $argNum arguments" 1>&2
-	echo "You'll get one-to-one alignments of org1-org2 and org1-org3.\nThe top genome of each alignment .maf file will be org1. org1 should be in the outgroup." 1>&2
-	echo "- today's date" 1>&2                                           # $1
-    echo "- org1 accession ID" 1>&2                                      # $2
-    echo "- org2 accession ID" 1>&2                                      # $3
-    echo "- org3 accession ID" 1>&2                                      # $4
-	echo "- org1 full name: genusSpecies (e.g. 'ulvaProlifera')" 1>&2    # $5
-	echo "- org2 full name: genusSpecies (e.g. 'ulvaMutabilis')" 1>&2    # $6
-	echo "- org3 full name: genusSpecies (e.g. 'ulvaCompressa')" 1>&2    # $7
-	exit 1
+    echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$argNum/g")" 1>&2
+    echo "$(get_config '.errors.usage')" 1>&2
+    exit 1
 fi
 
 DATE=$1
@@ -22,65 +29,50 @@ org1FullName=$5
 org2FullName=$6
 org3FullName=$7
 
-echo "Date: $DATE"
-echo "org1ID: $org1ID"
-echo "org2ID: $org2ID"
-echo "org3ID: $org3ID"
-echo "org1FullName: $org1FullName"
-echo "org2FullName: $org2FullName"
-echo "org3FullName: $org3FullName"
-
-cd /home/mrk/genomes
-if [ ! -d $org1FullName ]; then
-    mkdir $org1FullName
-fi
-if [ ! -d $org2FullName ]; then
-    mkdir $org2FullName
-fi
-if [ ! -d $org3FullName ]; then
-    mkdir $org3FullName
-fi
-
+cd $(get_config '.paths.base_genome')
+for orgFullName in $org1FullName $org2FullName $org3FullName; do
+    if [ ! -d "$orgFullName" ]; then
+        mkdir "$orgFullName"
+    fi
+done
 
 # download from NCBIdatase
-if [ ! -e /home/mrk/genomes/$org1FullName/ncbi_dataset.zip ]; then
-    echo "Downloading $org1FullName from NCBIdataset"
-    cd /home/mrk/genomes/$org1FullName
-    datasets download genome accession $org1ID --include gff3,rna,cds,protein,genome,seq-report &   
-else
-    echo "$org1FullName already downloaded"
-fi
-if [ ! -e /home/mrk/genomes/$org2FullName/ncbi_dataset.zip ]; then
-    echo "Downloading $org2FullName from NCBIdataset"
-    cd /home/mrk/genomes/$org2FullName
-    datasets download genome accession $org2ID --include gff3,rna,cds,protein,genome,seq-report &
-else
-    echo "$org2FullName already downloaded"
-fi
-if [ ! -e /home/mrk/genomes/$org3FullName/ncbi_dataset.zip ]; then
-    echo "Downloading $org3FullName from NCBIdataset"
-    cd /home/mrk/genomes/$org3FullName
-    datasets download genome accession $org3ID --include gff3,rna,cds,protein,genome,seq-report &
-else
-    echo "$org3FullName already downloaded"
-fi
+base_genome=$(get_config '.paths.base_genome')
+includes=$(get_config '.download.includes' | tr '\n' ',' | sed 's/,$//')
+
+# Create arrays
+ids=("$org1ID" "$org2ID" "$org3ID")
+names=("$org1FullName" "$org2FullName" "$org3FullName")
+
+# Iterate over both arrays using an index
+for i in {0..2}; do
+    orgID=${ids[$i]}
+    orgFullName=${names[$i]}
+    if [ ! -e "$base_genome/$orgFullName/ncbi_dataset.zip" ]; then
+        echo "$(get_config '.messages.download' | sed "s/{org_full}/$orgFullName/g")"
+        cd "$base_genome/$orgFullName"
+        datasets download genome accession "$orgID" --include "$includes" &
+    else
+        echo "$(get_config '.messages.already_downloaded' | sed "s/{org_full}/$orgFullName/g")"
+    fi
+done
 wait
 
 # move files and delete unnecessary directories
-echo "move files and delete unnecessary directories"
+echo "$(get_config '.messages.move_files')"
 function processGenomeData() {
     local orgFullName=$1
     local orgID=$2
 
-    cd /home/mrk/genomes/"$orgFullName"
+    cd "$(get_config '.paths.base_genomes')/$orgFullName"
     if [ -z "$(ls *.fna 2>/dev/null)" ]; then
         unzip ncbi_dataset.zip
         wait
         cd ncbi_dataset/data
-        mv $(ls -p | grep -v /) /home/mrk/genomes/"$orgFullName"
+        mv $(ls -p | grep -v /) "$(get_config '.paths.base_genomes')/$orgFullName"
         cd "$orgID"
-        mv * /home/mrk/genomes/"$orgFullName"
-        cd /home/mrk/genomes/"$orgFullName"
+        mv * "$(get_config '.paths.base_genomes')/$orgFullName"
+        cd "$(get_config '.paths.base_genomes')/$orgFullName"
         rm -r ncbi_dataset
     fi
 }
@@ -89,13 +81,13 @@ processGenomeData $org2FullName $org2ID &
 processGenomeData $org3FullName $org3ID &
 wait
 
-org1FASTA="/home/mrk/genomes/$org1FullName/$(ls /home/mrk/genomes/$org1FullName | grep $org1ID)"
-org2FASTA="/home/mrk/genomes/$org2FullName/$(ls /home/mrk/genomes/$org2FullName | grep $org2ID)"
-org3FASTA="/home/mrk/genomes/$org3FullName/$(ls /home/mrk/genomes/$org3FullName | grep $org3ID)"
+org1FASTA="$(get_config '.paths.base_genomes')/$org1FullName/$(ls $(get_config '.paths.base_genomes')/$org1FullName | grep $org1ID)"
+org2FASTA="$(get_config '.paths.base_genomes')/$org2FullName/$(ls $(get_config '.paths.base_genomes')/$org2FullName | grep $org2ID)"
+org3FASTA="$(get_config '.paths.base_genomes')/$org3FullName/$(ls $(get_config '.paths.base_genomes')/$org3FullName | grep $org3ID)"
 echo "org1FASTA: $org1FASTA"
 echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
-echo "Running uvmut_3spc.sh"
-echo "bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName /home/mrk/data"
-bash /home/mrk/scripts/last/uvmut_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName /home/mrk/data
+echo "Running trisbst_3spc.sh"
+echo "bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName $(get_config '.paths.data')"
+bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName $(get_config '.paths.data')
