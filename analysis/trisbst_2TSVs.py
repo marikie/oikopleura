@@ -295,6 +295,10 @@ if __name__ == "__main__":
     outputFilePath2 = args.outputFilePath2 or get_default_output_file_names(joinedAlnFile)[0]
     outputFilePath3 = args.outputFilePath3 or get_default_output_file_names(joinedAlnFile)[1]
 
+    # print(f"joinedAlnFile: {joinedAlnFile}")
+    # print(f"outputFilePath2: {outputFilePath2}")
+    # print(f"outputFilePath3: {outputFilePath3}")
+    # exit(1)
 
     ###################
     # main
