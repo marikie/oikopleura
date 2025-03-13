@@ -4,7 +4,7 @@ settings:
 
 # Directory paths
 paths:
-  base_genome: "/home/mrk/genomes"
+  base_genomes: "/home/mrk/genomes"
   scripts:
     last: "/home/mrk/scripts/last"
   data: "/home/mrk/data"
@@ -12,12 +12,12 @@ paths:
 # NCBI dataset download settings
 download:
   includes:
-    - gff3
-    - rna
-    - cds
-    - protein
-    - genome
-    - seq-report
+    gff3,
+    rna,
+    cds,
+    protein,
+    genome,
+    seq-report
 
 # File patterns
 patterns:
