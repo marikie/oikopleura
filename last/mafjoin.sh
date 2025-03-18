@@ -1,6 +1,6 @@
 #!/bin/bash
 
-argNum=2
+argNum=3
 if [ $# -ne $argNum ]; then
 	echo "You need $argNum arguments" 1>&2
 	echo "You'll get a joined .maf file from two .maf files" 1>&2
