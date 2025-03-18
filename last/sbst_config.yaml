@@ -1,7 +1,9 @@
 # File patterns and suffixes
 patterns:
   gc_content: "{org_short}_gcContent_{date}.out"
-  one2one: "{org1_short}_{org2_short}_one2one_{date}.maf"
+  many2one: "{org1_short}2{org2_short}_many2one_{date}.maf"
+  one2one: "{org1_short}2{org2_short}_one2one_{date}.maf"
+  train: "{org1_short}2{org2_short}_{date}.train"
   maflinked: "{org1_short}_{org2_short}_one2one_{date}_maflinked.maf"
   joined: "{org1_short}_{org2_short}_{org3_short}_{date}.maf"
   joined_maflinked: "{org1_short}_{org2_short}_{org3_short}_{date}_maflinked.maf"
