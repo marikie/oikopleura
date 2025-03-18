@@ -1,37 +1,16 @@
 #!/bin/bash
 
-# module load last/1542
-# lastal --version
-
-argNum=6
-if [ $# -ne $argNum ]; then
-	echo "You need $argNum arguments" 1>&2
-	echo "- today's date" 1>&2                                                   # $1
-	echo "- path to the output dir" 1>&2                                         # $2
-	echo "- path to the org1 reference fasta file (the top genome in .maf)" 1>&2 # $3
-	echo "- path to the org2 reference fasta file" 1>&2                          # $4
-	echo "- org1 name" 1>&2                                                      # $5
-	echo "- org2 name" 1>&2                                                      # $6
-	exit 1
-fi
-
+# Get arguments
 DATE=$1
 outDirPath=$2
 org1FASTA=$3
 org2FASTA=$4
-org1Name=$5
-org2Name=$6
-dbName="$org1Name""db_$DATE"
-trainFile="$org1Name""2""$org2Name""_one2one_$DATE.train"
-m2omaf="$org1Name""2""$org2Name""_many2one_$DATE.maf"
-o2omaf="$org1Name""2""$org2Name""_one2one_$DATE.maf"
-o2omaf_maflinked="$org1Name""2""$org2Name""_one2one_$DATE""_maflinked.maf"
+dbName=$5
+trainFile=$6
+m2omaf=$7
+o2omaf=$8
+o2omaf_maflinked=$9
 
-if [ ! -d $outDirPath ]; then
-	echo "making $outDirPath"
-	mkdir $outDirPath
-fi
-cd $outDirPath
 
 # lastdb
 echo "---lastdb"
