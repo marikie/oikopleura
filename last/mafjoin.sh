@@ -18,16 +18,22 @@ joinedFile=$3
 
 echo "---maf-joining the two .maf files"
 if [ ! -e $org1_org2_sorted ]; then
+	echo "---sorting $org1_org2"
+	echo "time maf-sort $org1_org2 >$org1_org2_sorted"
 	time maf-sort $org1_org2 >$org1_org2_sorted
 else
 	echo "$org1_org2_sorted already exists"
 fi
 if [ ! -e $org1_org3_sorted ]; then
+	echo "---sorting $org1_org3"
+	echo "time maf-sort $org1_org3 >$org1_org3_sorted"
 	time maf-sort $org1_org3 >$org1_org3_sorted
 else
 	echo "$org1_org3_sorted already exists"
 fi
 if [ ! -e $joinedFile ]; then
+	echo "---joining $org1_org2_sorted and $org1_org3_sorted"
+	echo "time maf-join $org1_org2_sorted $org1_org3_sorted >$joinedFile"
 	time maf-join $org1_org2_sorted $org1_org3_sorted >$joinedFile
 else
 	echo "$joinedFile already exists"

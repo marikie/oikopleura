@@ -53,62 +53,44 @@ train12=$(get_config '.patterns.train' | sed "s/{org1_short}/$org1ShortName/g" |
 train13=$(get_config '.patterns.train' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 joinedFile=$(get_config '.patterns.joined' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-echo "joinedFile: $joinedFile"
 
 o2o12_maflinked=$(get_config '.patterns.maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 o2o13_maflinked=$(get_config '.patterns.maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 joinedFile_maflinked=$(get_config '.patterns.joined_maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 org2tsv=$(get_config '.patterns.tsv' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org2tsv: $org2tsv"
 org3tsv=$(get_config '.patterns.tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org3tsv: $org3tsv"
 org2tsv_maflinked=$(get_config '.patterns.tsv_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org2tsv_maflinked: $org2tsv_maflinked"
 org3tsv_maflinked=$(get_config '.patterns.tsv_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org3tsv_maflinked: $org3tsv_maflinked"
 org2tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org2tsv_errprb: $org2tsv_errprb"
 org3tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org3tsv_errprb: $org3tsv_errprb"
 org2tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org2tsv_maflinked_errprb: $org2tsv_maflinked_errprb"
 org3tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-echo "org3tsv_maflinked_errprb: $org3tsv_maflinked_errprb"
 
-org2Graph=$(get_config '.patterns.graphs.sbst3' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph=$(get_config '.patterns.graphs.sbst3' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_sbstCount=$(get_config '.patterns.graphs.sbst_count' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_sbstCount=$(get_config '.patterns.graphs.sbst_count' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_oriCount=$(get_config '.patterns.graphs.ori_count' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_oriCount=$(get_config '.patterns.graphs.ori_count' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_maflinked=$(get_config '.patterns.graphs.sbst3_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_maflinked=$(get_config '.patterns.graphs.sbst3_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_maflinked_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_maflinked_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_maflinked_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_maflinked_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_errprb=$(get_config '.patterns.graphs.sbst_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_errprb=$(get_config '.patterns.graphs.sbst_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_maflinked_errprb=$(get_config '.patterns.graphs.sbst_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_maflinked_errprb=$(get_config '.patterns.graphs.sbst_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_maflinked_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_maflinked_errprb_sbstCount=$(get_config '.patterns.graphs.sbst_count_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2Graph_maflinked_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3Graph_maflinked_errprb_oriCount=$(get_config '.patterns.graphs.ori_count_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-
-org2_out=$(get_config '.patterns.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_out=$(get_config '.patterns.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2_maflinked_out=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_maflinked_out=$(get_config '.patterns.out_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2_errprb_out=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_errprb_out=$(get_config '.patterns.out_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
-org2_maflinked_errprb_out=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
-org3_maflinked_errprb_out=$(get_config '.patterns.out_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out=$(get_config '.patterns.graph.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out=$(get_config '.patterns.graph.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out_sbstCount=$(get_config '.patterns.graph.sbst' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out_sbstCount=$(get_config '.patterns.graph.sbst' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_out_oriCount=$(get_config '.patterns.graph.ori' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_out_oriCount=$(get_config '.patterns.graph.ori' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_out=$(get_config '.patterns.graph_maflinked.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_out=$(get_config '.patterns.graph_maflinked.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_out_sbstCount=$(get_config '.patterns.graph_maflinked.sbst' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_out_sbstCount=$(get_config '.patterns.graph_maflinked.sbst' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_out_oriCount=$(get_config '.patterns.graph_maflinked.ori' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_out_oriCount=$(get_config '.patterns.graph_maflinked.ori' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_errprb_out=$(get_config '.patterns.graph_errprb.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_errprb_out=$(get_config '.patterns.graph_errprb.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_errprb_out_sbstCount=$(get_config '.patterns.graph_errprb.sbst' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_errprb_out_sbstCount=$(get_config '.patterns.graph_errprb.sbst' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_errprb_out_oriCount=$(get_config '.patterns.graph_errprb.ori' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_errprb_out_oriCount=$(get_config '.patterns.graph_errprb.ori' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_errprb_out=$(get_config '.patterns.graph_maflinked_errprb.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_errprb_out=$(get_config '.patterns.graph_maflinked_errprb.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_errprb_out_sbstCount=$(get_config '.patterns.graph_maflinked_errprb.sbst' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_errprb_out_sbstCount=$(get_config '.patterns.graph_maflinked_errprb.sbst' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_maflinked_errprb_out_oriCount=$(get_config '.patterns.graph_maflinked_errprb.ori' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_maflinked_errprb_out_oriCount=$(get_config '.patterns.graph_maflinked_errprb.ori' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 
 if [ ! -d $outDirPath ]; then
@@ -166,6 +148,39 @@ bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
     "$org3tsv_maflinked_errprb" \
     "$(get_config '.paths.scripts.analysis')"
 
+echo "org2tsv: $org2tsv"
+echo "org3tsv: $org3tsv"
+echo "org2tsv_maflinked: $org2tsv_maflinked"
+echo "org3tsv_maflinked: $org3tsv_maflinked"
+echo "org2tsv_errprb: $org2tsv_errprb"
+echo "org3tsv_errprb: $org3tsv_errprb"
+echo "org2tsv_maflinked_errprb: $org2tsv_maflinked_errprb"
+echo "org3tsv_maflinked_errprb: $org3tsv_maflinked_errprb"
+echo "org2_out: $org2_out"
+echo "org3_out: $org3_out"
+echo "org2_out_sbstCount: $org2_out_sbstCount"
+echo "org3_out_sbstCount: $org3_out_sbstCount"
+echo "org2_out_oriCount: $org2_out_oriCount"
+echo "org3_out_oriCount: $org3_out_oriCount"
+echo "org2_maflinked_out: $org2_maflinked_out"
+echo "org3_maflinked_out: $org3_maflinked_out"
+echo "org2_maflinked_out_sbstCount: $org2_maflinked_out_sbstCount"
+echo "org3_maflinked_out_sbstCount: $org3_maflinked_out_sbstCount"
+echo "org2_maflinked_out_oriCount: $org2_maflinked_out_oriCount"
+echo "org3_maflinked_out_oriCount: $org3_maflinked_out_oriCount"
+echo "org2_errprb_out: $org2_errprb_out"
+echo "org3_errprb_out: $org3_errprb_out"
+echo "org2_errprb_out_sbstCount: $org2_errprb_out_sbstCount"
+echo "org3_errprb_out_sbstCount: $org3_errprb_out_sbstCount"
+echo "org2_errprb_out_oriCount: $org2_errprb_out_oriCount"
+echo "org3_errprb_out_oriCount: $org3_errprb_out_oriCount"
+echo "org2_maflinked_errprb_out: $org2_maflinked_errprb_out"
+echo "org3_maflinked_errprb_out: $org3_maflinked_errprb_out"
+echo "org2_maflinked_errprb_out_sbstCount: $org2_maflinked_errprb_out_sbstCount"
+echo "org3_maflinked_errprb_out_sbstCount: $org3_maflinked_errprb_out_sbstCount"
+echo "org2_maflinked_errprb_out_oriCount: $org2_maflinked_errprb_out_oriCount"
+echo "org3_maflinked_errprb_out_oriCount: $org3_maflinked_errprb_out_oriCount"
+
 # Generate all graphs
 bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
     "$org2tsv" \
@@ -176,39 +191,31 @@ bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
     "$org3tsv_errprb" \
     "$org2tsv_maflinked_errprb" \
     "$org3tsv_maflinked_errprb" \
-	"$org2Graph" \
-	"$org3Graph" \
 	"$org2_out" \
 	"$org3_out" \
-	"$org2Graph_sbstCount" \
-	"$org3Graph_sbstCount" \
-	"$org2Graph_oriCount" \
-	"$org3Graph_oriCount" \
-	"$org2Graph_maflinked" \
-	"$org3Graph_maflinked" \
+	"$org2_out_sbstCount" \
+	"$org3_out_sbstCount" \
+	"$org2_out_oriCount" \
+	"$org3_out_oriCount" \
 	"$org2_maflinked_out" \
 	"$org3_maflinked_out" \
-	"$org2Graph_maflinked_sbstCount" \
-	"$org3Graph_maflinked_sbstCount" \
-	"$org2Graph_maflinked_oriCount" \
-	"$org3Graph_maflinked_oriCount" \
-	"$org2Graph_errprb" \
-	"$org3Graph_errprb" \
+	"$org2_maflinked_out_sbstCount" \
+	"$org3_maflinked_out_sbstCount" \
+	"$org2_maflinked_out_oriCount" \
+	"$org3_maflinked_out_oriCount" \
 	"$org2_errprb_out" \
 	"$org3_errprb_out" \
-	"$org2Graph_errprb_sbstCount" \
-	"$org3Graph_errprb_sbstCount" \
-	"$org2Graph_errprb_oriCount" \
-	"$org3Graph_errprb_oriCount" \
-	"$org2Graph_maflinked_errprb" \
-	"$org3Graph_maflinked_errprb" \
+	"$org2_errprb_out_sbstCount" \
+	"$org3_errprb_out_sbstCount" \
+	"$org2_errprb_out_oriCount" \
+	"$org3_errprb_out_oriCount" \
 	"$org2_maflinked_errprb_out" \
 	"$org3_maflinked_errprb_out" \
-	"$org2Graph_maflinked_errprb_sbstCount" \
-	"$org3Graph_maflinked_errprb_sbstCount" \
-	"$org2Graph_maflinked_errprb_oriCount" \
-	"$org3Graph_maflinked_errprb_oriCount" \
-	"$(get_config '.paths.scripts.analysis.r')"
+	"$org2_maflinked_errprb_out_sbstCount" \
+	"$org3_maflinked_errprb_out_sbstCount" \
+	"$org2_maflinked_errprb_out_oriCount" \
+	"$org3_maflinked_errprb_out_oriCount" \
+	"$(get_config '.paths.scripts.r')"
 
 # # make another .tsv file of the trinucleotide mutations
 # # which contains all the substitutions in org2 and org3 with org1's trinucleotide info

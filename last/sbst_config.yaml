@@ -12,26 +12,23 @@ patterns:
   tsv_errprb: "{org_short}_{date}_errprb.tsv"
   tsv_maflinked_errprb: "{org_short}_{date}_maflinked_errprb.tsv"
   cds_gff: "{org_full}_cds.gff"
-  graphs:
-    sbst: "{org_short}_{date}.pdf"
-    sbst_count: "{org_short}_sbstCount_{date}.pdf"
-    ori_count: "{org_short}_oriCount_{date}.pdf"
+  graph:
+    out: "{org_short}_{date}.out"
+    sbst: "{org_short}_{date}_sbstCount.out"
+    ori: "{org_short}_{date}_oriCount.out"
+  graph_maflinked:
+    out: "{org_short}_{date}_maflinked.out"
+    sbst: "{org_short}_{date}_maflinked_sbstCount.out"
+    ori: "{org_short}_{date}_maflinked_oriCount.out"
+  graph_errprb:
+    out: "{org_short}_{date}_errprb.out"
+    sbst: "{org_short}_{date}_errprb_sbstCount.out"
+    ori: "{org_short}_{date}_errprb_oriCount.out"
+  graph_maflinked_errprb:
+    out: "{org_short}_{date}_maflinked_errprb.out"
+    sbst: "{org_short}_{date}_maflinked_errprb_sbstCount.out"
+    ori: "{org_short}_{date}_maflinked_errprb_oriCount.out"
 
-    sbst_maflinked: "{org_short}_{date}_maflinked.pdf"
-    sbst_count_maflinked: "{org_short}_sbstCount_{date}_maflinked.pdf"
-    ori_count_maflinked: "{org_short}_oriCount_{date}_maflinked.pdf"
-
-    sbst_errprb: "{org_short}_{date}.out"
-    sbst_count_errprb: "{org_short}_sbstCount_{date}_errprb.out"
-    ori_count_errprb: "{org_short}_oriCount_{date}_errprb.out"
-
-    sbst_maflinked_errprb: "{org_short}_{date}_mlep.out"
-    sbst_count_maflinked_errprb: "{org_short}_sbstCount_{date}_mlep.out"
-    ori_count_maflinked_errprb: "{org_short}_oriCount_{date}_mlep.out"
-  out: "{org_short}_{date}.out"
-  out_maflinked: "{org_short}_{date}_maflinked.out"
-  out_errprb: "{org_short}_{date}_errprb.out"
-  out_maflinked_errprb: "{org_short}_{date}_mlep.out"
 
 # Paths
 paths:
