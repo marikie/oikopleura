@@ -157,13 +157,10 @@ args <- commandArgs(trailingOnly = TRUE)
 
 # Access the arguments
 tsv_path <- args[1] # File path for the input data, .tsv file
-graph_path <- args[2] # File path for the output graph, .pdf
-ymax_plus <- args[3]
-#orgName <- args[4] # Name of the organism
-#print("ymax_plus:")
-#print(ymax_plus)
-# Extract the path without an extension from graph_path
-# path_without_extension <- tools::file_path_sans_ext(graph_path)
+ymax_plus <- args[2]
+# Extract the path without an extension from tsv_path
+path_without_extension <- tools::file_path_sans_ext(tsv_path)
+graph_path <- paste(path_without_extension, "_sbstCount.pdf", sep="")
 
 # generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus), orgName)
 generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus))
