@@ -5,14 +5,13 @@ generate_graph() {
     local input_file=$1
     local script=$2
     local output_log=$3
-    local height=${4:-0}  # Default to 0 if not provided
 
     if [ -n "$output_log" ]; then
-        echo "time Rscript $script $input_file $height > $output_log"
-        time Rscript "$script" "$input_file" "$height" > "$output_log"
+        echo "time Rscript $script $input_file > $output_log"
+        time Rscript "$script" "$input_file" > "$output_log"
     else
-        echo "time Rscript $script $input_file $height"
-        time Rscript "$script" "$input_file" "$height"
+        echo "time Rscript $script $input_file"
+        time Rscript "$script" "$input_file"
     fi
 }
 
