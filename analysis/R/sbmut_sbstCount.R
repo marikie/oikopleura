@@ -4,7 +4,7 @@ require(stringr)
 library(RColorBrewer)
 library(showtext)
 
-generate_plot<-function(file_path, filename=0, ymax_plus){
+generate_plot<-function(file_path, filename=0){
   ## Perform analysis for the trinucleotide variants
   
   ### Check which of the mutation variant is missing and add that to the named vector
@@ -62,7 +62,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
   
   # Extract the "mutNum" row
   conv.data<-as.numeric(conv.data["mutNum",])
-  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data[conv.label.all.sorted]))))+ymax_plus
+  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data[conv.label.all.sorted]))))
   
 
   ### Barplot for Trinucleotide substitution counts
@@ -85,7 +85,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
                       las=3,
                       names.arg=rep("", length(trinuc.lab.sorted)), # empty labels for now
                       #names.arg=trinuc.lab.sorted,
-                      ylim=c(0,pct_yaxs_max),
+                      ylim=c(0,pct_yaxs_max+0.15*pct_yaxs_max),
                       space = 0) # Increase space between bars
 
     # manually add y axis
@@ -143,8 +143,8 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
       label_mid<-total_size_per_group/2 +(i-1)*total_size_per_group
       
       #rect(left,5.1,right,5.2, col=colour_array[i], border=NA)
-      rect(left,0.90*pct_yaxs_max,right,0.93*pct_yaxs_max, col=colour_array[i], border=NA)
-      text(family="mn", x=label_mid, y=0.97*pct_yaxs_max, labels=text_array[i], cex=2.5) # increase label size with cex
+      rect(left,pct_yaxs_max + 0.05*pct_yaxs_max,right,pct_yaxs_max + 0.08*pct_yaxs_max, col=colour_array[i], border=NA)
+      text(family="mn", x=label_mid, y=pct_yaxs_max + 0.12*pct_yaxs_max, labels=text_array[i], cex=2.5) # increase label size with cex
     }
     
     dev.off()
@@ -157,10 +157,9 @@ args <- commandArgs(trailingOnly = TRUE)
 
 # Access the arguments
 tsv_path <- args[1] # File path for the input data, .tsv file
-ymax_plus <- args[2]
 # Extract the path without an extension from tsv_path
 path_without_extension <- tools::file_path_sans_ext(tsv_path)
 graph_path <- paste(path_without_extension, "_sbstCount.pdf", sep="")
 
 # generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus), orgName)
-generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus))
+generate_plot(tsv_path, filename = graph_path)

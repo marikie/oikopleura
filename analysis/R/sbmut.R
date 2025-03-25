@@ -4,9 +4,9 @@ library(showtext)
 
 # MODIFIED THE CODE FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
-generate_plot<-function(file_path, filename=0, ymax_plus){
+generate_plot<-function(file_path, filename=0){
   ## Perform analysis for the trinucleotide variants
-  
+
   ### Check which of the mutation variant is missing and add that to the named vector
   Letters<-c("A", "T", "C", "G")
   conversion<-c("C>A", "C>G", "C>T", "T>A", "T>C", "T>G")
@@ -56,7 +56,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
   conv.data <- rbind(conv.data, MutationPercentage = mutation_percentage)
   
   conv.data.norm<-as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",]*100)
-  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted]))))+ymax_plus
+  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted]))))
   
   # Transform each column name according to the specified pattern
   transformed_names <- sapply(colnames(conv.data), function(name) {
@@ -121,7 +121,7 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
                       las=3,
                       names.arg=rep("", length(trinuc.lab.sorted)), # empty labels for now
                       #names.arg=trinuc.lab.sorted,
-                      ylim=c(0,pct_yaxs_max),
+                      ylim=c(0,pct_yaxs_max+0.15*pct_yaxs_max),
                       space = 0) # Increase space between bars
 
     # manually add y axis
@@ -171,6 +171,8 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
     
     total_size_per_group = bar_width * 16
     
+    # print("pct_yaxs_max: ")
+    # print(pct_yaxs_max)
     for(i in 1:6){
       # Size of 1.2 per bar.
       # Total size of 19.2 for 16 barplots
@@ -178,9 +180,10 @@ generate_plot<-function(file_path, filename=0, ymax_plus){
       right<-i* total_size_per_group - 0.2
       label_mid<-total_size_per_group/2 +(i-1)*total_size_per_group
       
-      #rect(left,5.1,right,5.2, col=colour_array[i], border=NA)
-      rect(left,0.90*pct_yaxs_max,right,0.93*pct_yaxs_max, col=colour_array[i], border=NA)
-      text(family="mn", x=label_mid, y=0.97*pct_yaxs_max, labels=text_array[i], cex=2.5) # increase label size with cex
+      # rect(left,5.1,right,5.2, col=colour_array[i], border=NA)
+      # rect(left,0.90*pct_yaxs_max,right,0.93*pct_yaxs_max, col=colour_array[i], border=NA)
+      rect(left,pct_yaxs_max + 0.05*pct_yaxs_max,right,pct_yaxs_max + 0.08*pct_yaxs_max, col=colour_array[i], border=NA)
+      text(family="mn", x=label_mid, y=pct_yaxs_max + 0.12*pct_yaxs_max, labels=text_array[i], cex=2.5) # increase label size with cex
     }
     
     dev.off()
@@ -193,10 +196,9 @@ args <- commandArgs(trailingOnly = TRUE)
 
 # Access the arguments
 tsv_path <- args[1] # File path for the input data, .tsv file
-ymax_plus <- args[2]
 # Extract the path without an extension from tsv_path
 path_without_extension <- tools::file_path_sans_ext(tsv_path)
 graph_path <- paste(path_without_extension, ".pdf", sep="")
 
 # generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus), orgName)
-generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus))
+generate_plot(tsv_path, filename = graph_path)
