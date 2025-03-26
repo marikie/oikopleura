@@ -7,7 +7,6 @@ paths:
   base_genomes: "/home/mrk/genomes"
   scripts:
     last: "/home/mrk/scripts/last"
-  data: "/home/mrk/data"
 
 # NCBI dataset download settings
 download:
