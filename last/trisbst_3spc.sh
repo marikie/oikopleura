@@ -29,18 +29,19 @@ DATE=$1
 org1FASTA=$2
 org2FASTA=$3
 org3FASTA=$4
-org1FullName=$5
-org2FullName=$6
-org3FullName=$7
+# Extract the name of the parent directory of $org1FASTA
+org1FullName=$(basename $(dirname $org1FASTA))
+org2FullName=$(basename $(dirname $org2FASTA))
+org3FullName=$(basename $(dirname $org3FASTA))
 
 # make short names
 org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 
-outDirPath=$8/$org1ShortName"_"$org2ShortName"_"$org3ShortName
-
 # Use config patterns to generate filenames
+outDirPath=$(get_config '.paths.out_dir')
+
 gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 gcContent_org3=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
@@ -147,39 +148,6 @@ bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
     "$org2tsv_maflinked_errprb" \
     "$org3tsv_maflinked_errprb" \
     "$(get_config '.paths.scripts.analysis')"
-
-echo "org2tsv: $org2tsv"
-echo "org3tsv: $org3tsv"
-echo "org2tsv_maflinked: $org2tsv_maflinked"
-echo "org3tsv_maflinked: $org3tsv_maflinked"
-echo "org2tsv_errprb: $org2tsv_errprb"
-echo "org3tsv_errprb: $org3tsv_errprb"
-echo "org2tsv_maflinked_errprb: $org2tsv_maflinked_errprb"
-echo "org3tsv_maflinked_errprb: $org3tsv_maflinked_errprb"
-echo "org2_out: $org2_out"
-echo "org3_out: $org3_out"
-echo "org2_out_sbstCount: $org2_out_sbstCount"
-echo "org3_out_sbstCount: $org3_out_sbstCount"
-echo "org2_out_oriCount: $org2_out_oriCount"
-echo "org3_out_oriCount: $org3_out_oriCount"
-echo "org2_maflinked_out: $org2_maflinked_out"
-echo "org3_maflinked_out: $org3_maflinked_out"
-echo "org2_maflinked_out_sbstCount: $org2_maflinked_out_sbstCount"
-echo "org3_maflinked_out_sbstCount: $org3_maflinked_out_sbstCount"
-echo "org2_maflinked_out_oriCount: $org2_maflinked_out_oriCount"
-echo "org3_maflinked_out_oriCount: $org3_maflinked_out_oriCount"
-echo "org2_errprb_out: $org2_errprb_out"
-echo "org3_errprb_out: $org3_errprb_out"
-echo "org2_errprb_out_sbstCount: $org2_errprb_out_sbstCount"
-echo "org3_errprb_out_sbstCount: $org3_errprb_out_sbstCount"
-echo "org2_errprb_out_oriCount: $org2_errprb_out_oriCount"
-echo "org3_errprb_out_oriCount: $org3_errprb_out_oriCount"
-echo "org2_maflinked_errprb_out: $org2_maflinked_errprb_out"
-echo "org3_maflinked_errprb_out: $org3_maflinked_errprb_out"
-echo "org2_maflinked_errprb_out_sbstCount: $org2_maflinked_errprb_out_sbstCount"
-echo "org3_maflinked_errprb_out_sbstCount: $org3_maflinked_errprb_out_sbstCount"
-echo "org2_maflinked_errprb_out_oriCount: $org2_maflinked_errprb_out_oriCount"
-echo "org3_maflinked_errprb_out_oriCount: $org3_maflinked_errprb_out_oriCount"
 
 # Generate all graphs
 bash $(get_config '.paths.scripts.last')/generate_graphs.sh \

@@ -152,5 +152,5 @@ echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
 echo "Running trisbst_3spc.sh"
-echo "bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName $(get_config '.paths.data')"
-bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1FullName $org2FullName $org3FullName $(get_config '.paths.data')
+echo "bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA"
+bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA

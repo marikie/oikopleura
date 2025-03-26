@@ -32,6 +32,7 @@ patterns:
 
 # Paths
 paths:
+  out_dir: "/home/mrk/data"
   scripts:
     analysis: "/home/mrk/scripts/analysis"
     last: "/home/mrk/scripts/last"
@@ -56,13 +57,8 @@ errors:
     - path to the org1 reference fasta file (outgroup)
     - path to the org2 reference fasta file
     - path to the org3 reference fasta file
-    - org1 full name
-    - org2 full name
-    - org3 full name
-    - path to the dir where you want to place the output dir
-
 
 # Script settings
 settings:
-  required_args: 8
+  required_args: 4
   normalize_graphs: 0
