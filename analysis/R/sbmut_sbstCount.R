@@ -74,7 +74,7 @@ generate_plot<-function(file_path, filename=0){
     font_add_google("Courier Prime", "mn", 700)
     font_add_google("Roboto", "os")
     showtext_auto()
-    par(family="mn", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
+    par(family="mn", mar=c(7.5, 6, 4, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
     bar_positions <- barplot(
                       axes = FALSE,
                       family="os",

@@ -64,19 +64,19 @@ generate_plot<-function(file_path, filename=0){
   
   # Extract the "totalRootNum" row
   conv.data<-as.numeric(conv.data["totalRootNum",])
-  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data[conv.label.all.sorted])))
+  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data[conv.label.all.sorted]))))
 #   print(pct_yaxs_max)
 
   ### Barplot for Trinucleotide substitution counts
   # Make the PDF plot of the graph
-  if(!filename==0){
+  if (!filename==0) {
     pdf(filename, width=30, height=8)
     # default: c(5, 4, 4, 2) + 0.1
     # font_add_google("IBM Plex Mono", "mn", 500)
     font_add_google("Courier Prime", "mn", 700)
     font_add_google("Roboto", "os")
     showtext_auto()
-    par(family="mn", mar=c(7.5, 6, 2, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
+    par(family="mn", mar=c(7.5, 6, 4, 1), cex.axis=2) # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
     bar_positions <- barplot(
                       axes = FALSE,
                       family="os",
@@ -100,7 +100,7 @@ generate_plot<-function(file_path, filename=0){
       label <- trinuc.lab.sorted[i]
       x_pos <- bar_positions[i]
       base_y <- par("usr")[3] - 0.03 * (par("usr")[4] - par("usr")[3])
-      if(i%%16!=0){
+      if (i%%16!=0) {
         coln <- i %/% 16 + 1
       }else{
         coln <- i %/% 16
