@@ -1,3 +1,13 @@
+# Paths
+paths:
+  # Change the out_dir path to the path where you want to store the results
+  out_dir: "/home/mrk/data"
+  scripts:
+    last: "."
+    analysis: "../analysis"
+    r: "../analysis/R"
+
+
 # File patterns and suffixes
 patterns:
   gc_content: "{org_short}_gcContent_{date}.out"
@@ -28,15 +38,6 @@ patterns:
     out: "{org_short}_{date}_maflinked_errprb.out"
     sbst: "{org_short}_{date}_maflinked_errprb_sbstCount.out"
     ori: "{org_short}_{date}_maflinked_errprb_oriCount.out"
-
-
-# Paths
-paths:
-  out_dir: "/home/mrk/data"
-  scripts:
-    analysis: "/home/mrk/scripts/analysis"
-    last: "/home/mrk/scripts/last"
-    r: "/home/mrk/scripts/analysis/R"
 
 
 # Messages

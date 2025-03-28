@@ -1,12 +1,15 @@
+# Directory paths
+paths:
+  # Change the base_genomes path to the path where you want to store the genomes
+  base_genomes: "/home/mrk/genomes"
+  scripts:
+    last: "."
+
+
 # Configuration for genome download and processing
 settings:
   required_args: 7  # Number of required arguments
 
-# Directory paths
-paths:
-  base_genomes: "/home/mrk/genomes"
-  scripts:
-    last: "/home/mrk/scripts/last"
 
 # NCBI dataset download settings
 download:

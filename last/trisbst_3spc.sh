@@ -4,7 +4,7 @@ module load last/1608
 lastal --version
 module load yq/4.45.1
 
-config_file="/home/mrk/scripts/last/sbst_config.yaml"
+config_file="./sbst_config.yaml"
 
 # Load YAML configuration using yq
 if [ ! -f $config_file ]; then
