@@ -13,7 +13,7 @@ We also applied two alternative filtering strategies. The first omits isolated a
 #### Install LAST
 https://gitlab.com/mcfrith/last
 #### Install Biopython
-https://biopython.org/
+https://biopython.org
 #### Install yq
 https://github.com/mikefarah/yq
 #### Install R libraries
