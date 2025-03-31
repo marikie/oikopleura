@@ -5,7 +5,7 @@ We aim to observe single-base substitution trends across diverse organisms, taki
 
 Pairwise alignments will be performed between _Species A_ and _Species B_, and between _Species A_ and _Species C_. These two sets of alignments will then be merged into a multiple sequence alignment. We will examine all trinucleotides and infer substitutions in _Species B_ and _Species C_ based on the principle of parsimony.
 
-We also applied two alternative filtering strategies. The first omits isolated alignments using the maf-linked method (https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst). The second filters out aligned columns with an error probability (i.e., the probability that a base should be aligned to a different part of the genome) greater than 0.01, as described in last-split (https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst).
+We also applied two filtering strategies. The first omits isolated alignments using the maf-linked method (https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst). The second filters out aligned columns with an error probability (i.e., the probability that a base should be aligned to a different part of the genome) greater than 0.01, as described in last-split (https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst).
 
 ## How to run the pipeline
 
