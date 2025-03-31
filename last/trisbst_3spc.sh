@@ -1,8 +1,6 @@
 #!/bin/bash
 
-module load last/1608
 lastal --version
-module load yq/4.45.1
 
 config_file="./sbst_config.yaml"
 

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-module load yq/4.45.1
-
 config_file="./dwl_config.yaml"
 
 # Load YAML configuration using yq
