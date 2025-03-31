@@ -46,3 +46,4 @@ Run:
 ```bash
 ./trisbst_3spc.sh <today's date> <path to the org1 reference fasta file> <path to the org2 reference fasta file> <path to the org3 reference fasta file>
 ```
+※ The parent directory of the reference fasta files should be the same as the full names of the species. (e.g. /path/to/your/directory/ulvaProlifera/GCF_023078555.1_Upr_v1.0_genomic.fna)
