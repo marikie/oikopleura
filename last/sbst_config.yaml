@@ -1,6 +1,6 @@
-# Paths
+# Directory paths
 paths:
-  # Change the out_dir path to the path where you want to store the results
+  # Change the paths of your directories and the one to store results
   out_dir: "/home/mrk/data"
   scripts:
     last: "/home/mrk/scripts/last"

@@ -34,17 +34,41 @@ We also applied two filtering strategies. The first omits isolated alignments us
 
 #### 1. Set variables in configuration files
 
-* In `./last/dwl_config.yaml`, set the path to store the genomes:
+* In `./last/dwl_config.yaml`, set the absolute paths:
 
 ```yaml
-base_genomes: "/path/to/your/directory" # Change this to your desired genome storage path
+# Directory paths
+paths:
+  base_genomes: "/absolute/path/to/your/directory" # Change this to your desired genome storage path
+  scripts:
+    last: "/absolute/path/to/your/last/directory" # Change this to your last directory
 ```
 
-* In `./last/sbst_config.yaml`, set the output directory for results:
+* In `./last/sbst_config.yaml`, set the absolute paths:
 
 ```yaml
-out_dir: "/path/to/your/results/directory" # Change this to your desired output path
+# Directory paths
+paths:
+  # Change the paths of your directories and the one to store results
+  out_dir: "/absolute/path/to/your/results/directory" # Change this to your desired output path
+  scripts:
+    last: "/absolute/path/to/your/last" # Change this to your last directory
+    analysis: "/absolute/path/to/your/analysis" # Change this to your analysis directory
+    r: "/absolute/path/to/your/R" # Change this to your R directory
 ```
+
+* In `./last/trisbst_3spc_fromDwl.sh`, set the paths:
+
+```bash
+config_file="/absolute/path/to/your/dwl_config.yaml" # Change this to your config file
+```
+
+* In `./last/trisbst_3spc.sh`, set the paths:
+
+```bash
+config_file="/absolute/path/to/your/sbst_config.yaml" # Change this to your config file
+```
+
 
 #### 2. Run the script under the `./last` directory  
 
