@@ -1,21 +1,21 @@
 # Let’s investigate evolutionary substitution trends across diverse taxonomic groups ─=≡Σ((( つ•̀ω•́)つ !
 
 ## Introduction
-We aim to observe single-base substitution trends across diverse organisms, taking into account the influence of neighboring bases. To do this, we obtain reference genomes for three closely related species (_Species A_, _Species B_, and _Species C_) from NCBI (https://www.ncbi.nlm.nih.gov/datasets), designating _Species A_ as the outgroup in their phylogenetic relationship.
+We aim to observe single-base substitution trends across diverse organisms, taking into account the influence of neighboring bases. To do this, we obtain reference genomes for three closely related species (_Species A_, _Species B_, and _Species C_) from NCBI ([https://www.ncbi.nlm.nih.gov/datasets](https://www.ncbi.nlm.nih.gov/datasets)), designating _Species A_ as the outgroup in their phylogenetic relationship.
 
 Pairwise alignments will be performed between _Species A_ and _Species B_, and between _Species A_ and _Species C_. These two sets of alignments will then be merged into a multiple sequence alignment. We will examine all trinucleotides and infer substitutions in _Species B_ and _Species C_ based on the principle of parsimony.
 
-We also applied two filtering strategies. The first omits isolated alignments using the maf-linked method (https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst). The second filters out aligned columns with an error probability (i.e., the probability that a base should be aligned to a different part of the genome) greater than 0.01, as described in last-split (https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst).
+We also applied two filtering strategies. The first omits isolated alignments using the maf-linked method ([https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst](https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst)). The second filters out aligned columns with an error probability (i.e., the probability that a base should be aligned to a different part of the genome) greater than 0.01, as described in last-split ([https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst](https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst)).
 
 ## How to run the pipeline
 
 ### 1. Install Dependencies
 #### Install LAST
-https://gitlab.com/mcfrith/last
+[https://gitlab.com/mcfrith/last](https://gitlab.com/mcfrith/last)
 #### Install Biopython
-https://biopython.org
+[https://biopython.org](https://biopython.org)
 #### Install yq
-https://github.com/mikefarah/yq
+[https://github.com/mikefarah/yq](https://github.com/mikefarah/yq)
 #### Install R libraries
 * stringr
 * RColorBrewer
