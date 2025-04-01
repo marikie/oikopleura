@@ -38,7 +38,7 @@ org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z
 org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
 
 # Use config patterns to generate filenames
-outDirPath="$(get_config '.paths.out_dir')/$org1ShortName_$org2ShortName_$org3ShortName"
+outDirPath="$(get_config '.paths.out_dir')/""$org1ShortName""_""$org2ShortName""_""$org3ShortName"
 
 gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 gcContent_org3=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
@@ -97,6 +97,7 @@ if [ ! -d $outDirPath ]; then
 	mkdir $outDirPath
 fi
 cd $outDirPath
+echo "pwd: $(pwd)"
 
 # GC content
 echo "$(get_config '.messages.gc_content')"
