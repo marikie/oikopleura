@@ -3,9 +3,9 @@ paths:
   # Change the out_dir path to the path where you want to store the results
   out_dir: "/home/mrk/data"
   scripts:
-    last: "."
-    analysis: "../analysis"
-    r: "../analysis/R"
+    last: "/home/mrk/scripts/last"
+    analysis: "/home/mrk/scripts/last/analysis"
+    r: "/home/mrk/scripts/last/analysis/R"
 
 
 # File patterns and suffixes

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-config_file="./dwl_config.yaml"
+config_file="/home/mrk/scripts/last/dwl_config.yaml"
 
 # Load YAML configuration using yq
 if [ ! -f "$config_file" ]; then

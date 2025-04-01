@@ -3,7 +3,7 @@ paths:
   # Change the base_genomes path to the path where you want to store the genomes
   base_genomes: "/home/mrk/genomes"
   scripts:
-    last: "."
+    last: "/home/mrk/scripts/last"
 
 
 # Configuration for genome download and processing
