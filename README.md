@@ -12,6 +12,10 @@ We also applied two filtering strategies. The first omits isolated alignments us
 
 ### 1. Install Dependencies
 
+#### Install NCBI Datasets command-line tools
+
+[https://www.ncbi.nlm.nih.gov/datasets/docs/v2/command-line-tools/download-and-install/](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/command-line-tools/download-and-install/)
+
 #### Install LAST
 
 [https://gitlab.com/mcfrith/last](https://gitlab.com/mcfrith/last)
