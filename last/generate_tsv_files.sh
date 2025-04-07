@@ -37,9 +37,9 @@ echo "---making .tsv trinucleotide substitution files (with maf-linked)"
 generate_tsv "$joinedFile_maflinked" "$org2tsv_maflinked" "$org3tsv_maflinked" "$scripts_analysis_path/trisbst_2TSVs.py"
 
 # Error probability TSV files
-echo "---making .tsv trinucleotide substitution files (with errprb)"
-generate_tsv "$joinedFile" "$org2tsv_errprb" "$org3tsv_errprb" "$scripts_analysis_path/trisbst_2TSVs_errprb.py"
+# echo "---making .tsv trinucleotide substitution files (with errprb)"
+# generate_tsv "$joinedFile" "$org2tsv_errprb" "$org3tsv_errprb" "$scripts_analysis_path/trisbst_2TSVs_errprb.py"
 
 # Error probability with maf-linked TSV files
-echo "---making .tsv trinucleotide substitution files (with errprb and maf-linked)"
-generate_tsv "$joinedFile_maflinked" "$org2tsv_maflinked_errprb" "$org3tsv_maflinked_errprb" "$scripts_analysis_path/trisbst_2TSVs_errprb.py"
+# echo "---making .tsv trinucleotide substitution files (with errprb and maf-linked)"
+# generate_tsv "$joinedFile_maflinked" "$org2tsv_maflinked_errprb" "$org3tsv_maflinked_errprb" "$scripts_analysis_path/trisbst_2TSVs_errprb.py"

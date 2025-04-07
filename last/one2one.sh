@@ -18,8 +18,8 @@ if [ ! -d $outDirPath/$dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName
-	echo "time lastdb -P8 -c $dbName $org1FASTA"
-	time lastdb -P8 -c $dbName $org1FASTA
+	echo "time lastdb -P8 -c -uRY4 $dbName $org1FASTA"
+	time lastdb -P8 -c -uRY4 $dbName $org1FASTA
 	cd ..
 else
 	echo "$dbName already exists"
@@ -29,6 +29,7 @@ fi
 #     these sequences to some other sequences using lastal, lowercase
 #     letters will be excluded from initial matches.  This will apply
 #     to lowercase letters in both sets of sequences.
+# -uRY4: selects a seeding scheme that reduces the run time and memory use, but also reduces sensitivity.
 
 # last-train
 echo "--last-train"
@@ -46,12 +47,12 @@ fi
 # lastal
 echo "---lastal"
 if [ ! -e $m2omaf ]; then
-	echo "time lastal -P8 -j4 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf"
-	time lastal -P8 -j4 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
+	echo "time lastal -P8 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf"
+	time lastal -P8 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
 else
 	echo "$m2omaf already exists"
 fi
-# -j4: show the confidence of each alignment column
+#(-j4: show the confidence of each alignment column)
 # -H EXPECT: report alignments that are expected by chance at most EXPECT times, in all the sequences. This option requires reading the queries twice (to get their lengths before finding alignments), so it doesn't allow piped-in queries.
 # -j4 and --split-f=MAF+: lastal can optionally write "p" lines, indicating the probability that each base is misaligned due to wrong gap placement. last-split, on the other hand, writes "p" lines indicating the probability that each base is aligned to the wrong genomic locus. You can combine both sources of error (roughly) by taking the maximum of the two error probabilities for each base.
 
