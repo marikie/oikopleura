@@ -4,8 +4,8 @@ paths:
   out_dir: "/home/mrk/data"
   scripts:
     last: "/home/mrk/scripts/last"
-    analysis: "/home/mrk/scripts/last/analysis"
-    r: "/home/mrk/scripts/last/analysis/R"
+    analysis: "/home/mrk/scripts/analysis"
+    r: "/home/mrk/scripts/analysis/R"
 
 
 # File patterns and suffixes
