@@ -20,10 +20,6 @@ We also applied two filtering strategies. The first omits isolated alignments us
 
 [https://gitlab.com/mcfrith/last](https://gitlab.com/mcfrith/last)
 
-#### Install Biopython
-
-[https://biopython.org](https://biopython.org)
-
 #### Install yq
 
 [https://github.com/mikefarah/yq](https://github.com/mikefarah/yq)
