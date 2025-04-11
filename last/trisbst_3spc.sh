@@ -102,14 +102,14 @@ echo "pwd: $(pwd)"
 # GC content
 echo "$(get_config '.messages.gc_content')"
 if [ ! -e $gcContent_org2 ]; then
-	echo "time python $(get_config '.paths.scripts.analysis')/gc_content.py $org2FASTA >$gcContent_org2"
-	time python $(get_config '.paths.scripts.analysis')/gc_content.py $org2FASTA >$gcContent_org2
+	echo "time bash $(get_config '.paths.scripts.last')/gc_content.sh $org2FASTA >$gcContent_org2"
+	time bash $(get_config '.paths.scripts.last')/gc_content.sh $org2FASTA >$gcContent_org2
 else
 	echo "$gcContent_org2 already exists"
 fi
 if [ ! -e $gcContent_org3 ]; then
-	echo "time python $(get_config '.paths.scripts.analysis')/gc_content.py $org3FASTA >$gcContent_org3"
-	time python $(get_config '.paths.scripts.analysis')/gc_content.py $org3FASTA >$gcContent_org3
+	echo "time bash $(get_config '.paths.scripts.last')/gc_content.sh $org3FASTA >$gcContent_org3"
+	time bash $(get_config '.paths.scripts.last')/gc_content.sh $org3FASTA >$gcContent_org3
 else
 	echo "$gcContent_org3 already exists"
 fi
