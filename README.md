@@ -29,6 +29,8 @@ We also applied two filtering strategies. The first omits isolated alignments us
 * stringr
 * RColorBrewer
 * showtext
+* jsonlite
+* curl
 
 ### 2. Run The Pipeline
 
