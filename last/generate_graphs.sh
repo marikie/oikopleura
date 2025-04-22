@@ -94,19 +94,19 @@ r_scripts_path=${33}
 echo "---making graphs of the trinucleotide substitutions"
 generate_graph "$org2tsv" "$r_scripts_path/sbmut.R" "$org2_out"
 generate_graph "$org3tsv" "$r_scripts_path/sbmut.R" "$org3_out"
-generate_graph "$org2tsv" "$r_scripts_path/sbmut_sbstCount.R" "$org2_out_sbstCount"
-generate_graph "$org3tsv" "$r_scripts_path/sbmut_sbstCount.R" "$org3_out_sbstCount"
-generate_graph "$org2tsv" "$r_scripts_path/sbmut_oriCount.R" "$org2_out_oriCount"
-generate_graph "$org3tsv" "$r_scripts_path/sbmut_oriCount.R" "$org3_out_oriCount"
+# generate_graph "$org2tsv" "$r_scripts_path/sbmut_sbstCount.R" "$org2_out_sbstCount"
+# generate_graph "$org3tsv" "$r_scripts_path/sbmut_sbstCount.R" "$org3_out_sbstCount"
+# generate_graph "$org2tsv" "$r_scripts_path/sbmut_oriCount.R" "$org2_out_oriCount"
+# generate_graph "$org3tsv" "$r_scripts_path/sbmut_oriCount.R" "$org3_out_oriCount"
 
 # Trinucleotide substitutions graphs (with maf-linked)
 echo "---making graphs of the trinucleotide substitutions (with maf-linked)"
 generate_graph "$org2tsv_maflinked" "$r_scripts_path/sbmut.R" "$org2_maflinked_out"
 generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut.R" "$org3_maflinked_out"
-generate_graph "$org2tsv_maflinked" "$r_scripts_path/sbmut_sbstCount.R" "$org2_maflinked_out_sbstCount"
-generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut_sbstCount.R" "$org3_maflinked_out_sbstCount"
-generate_graph "$org2tsv_maflinked" "$r_scripts_path/sbmut_oriCount.R" "$org2_maflinked_out_oriCount"
-generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut_oriCount.R" "$org3_maflinked_out_oriCount"
+# generate_graph "$org2tsv_maflinked" "$r_scripts_path/sbmut_sbstCount.R" "$org2_maflinked_out_sbstCount"
+# generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut_sbstCount.R" "$org3_maflinked_out_sbstCount"
+# generate_graph "$org2tsv_maflinked" "$r_scripts_path/sbmut_oriCount.R" "$org2_maflinked_out_oriCount"
+# generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut_oriCount.R" "$org3_maflinked_out_oriCount"
 
 # Trinucleotide substitutions graphs (with error probability)
 # echo "---making graphs of the trinucleotide substitutions (with error probability)"
@@ -125,12 +125,3 @@ generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut_oriCount.R" "$org3_ma
 # generate_graph "$org3tsv_maflinked_errprb" "$r_scripts_path/sbmut_sbstCount.R" "$org3_maflinked_errprb_out_sbstCount"
 # generate_graph "$org2tsv_maflinked_errprb" "$r_scripts_path/sbmut_oriCount.R" "$org2_maflinked_errprb_out_oriCount"
 # generate_graph "$org3tsv_maflinked_errprb" "$r_scripts_path/sbmut_oriCount.R" "$org3_maflinked_errprb_out_oriCount"
-
-
-
-
-
-
-
-
-
