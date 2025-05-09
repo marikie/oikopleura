@@ -6,9 +6,9 @@ Input:
     - outputFilePath2
 Output:
     - two tsv files with the following columns:
-                - substitution type
-                - sbstNum
-                - oriNum
+                - mutType
+                - mutNum
+                - totalRootNum
     - two bed files with the following columns:
                 [Species B]				 [Species C]
                 - chrB					 - chrC
@@ -18,7 +18,7 @@ Output:
                 - score				 	 - score
                 - strandB				 - strandC
                 - trinucB				 - trinucC
-                - sbst					 - sbst
+                - mutType				 - mutType
                 - chrA					 - chrA
                 - startA				 - startA
                 - endA					 - endA
@@ -88,45 +88,45 @@ def rev(triNuc):
     return revDict[triNuc[2]] + revDict[triNuc[1]] + revDict[triNuc[0]]
 
 
-def sbstType(gTri, ori, sbst):
+def mutType(gTri, ori, mut):
     if ori in set(["C", "T"]):
-        return gTri[0] + ori + gTri[2] + sbst
+        return gTri[0] + ori + gTri[2] + mut
     else:
-        return revDict[gTri[2]] + revDict[ori] + revDict[gTri[0]] + revDict[sbst]
+        return revDict[gTri[2]] + revDict[ori] + revDict[gTri[0]] + revDict[mut]
 
 
 # ACTG -> ACT
 # ACGG -> ACG
-def ori(sbstType):
-    return sbstType[0:3]
+def ori(mutType):
+    return mutType[0:3]
 
 
-def add2totalNum(sbstDict, triNuc):
+def add2totalNum(mutDict, triNuc):
     if triNuc[1] == "A" or triNuc[1] == "G":
         oriNuc = rev(triNuc)
     else:
         oriNuc = triNuc
 
-    for sbstType in oriDict[oriNuc]:
-        sbstDict[sbstType]["totalRootNum"] += 1
+    for mutType in oriDict[oriNuc]:
+        mutDict[mutType]["totalRootNum"] += 1
 
 
-def add2DictList(g1Tri, g2Tri, g3Tri, sbstDict2, sbstDict3, recList2, recList3):
+def add2DictList(g1Tri, g2Tri, g3Tri, mutDict2, mutDict3):
     """
     If the middle bases are all different to each other,
     do nothing.
     If the substitution happened on genome2,
-    add the substitution count to sbstDict2 (N[majority > minority]N),
-    add the total count to sbstDict2 (N(majority)N),
-    and add the total count to sbstDict3 (N(majority)N).
+    add the substitution count to mutDict2 (N[majority > minority]N),
+    add the total count to mutDict2 (N(majority)N),
+    and add the total count to mutDict3 (N(majority)N).
     If the substitution happened on genome3,
-    add the substitution count to sbstDict3 (N[majority > minority]N),
-    add the total count to sbstDict3 (N(majority)N),
-    and add the total count to sbstDict2 (N(majority)N).
+    add the substitution count to mutDict3 (N[majority > minority]N),
+    add the total count to mutDict3 (N(majority)N),
+    and add the total count to mutDict2 (N(majority)N).
     If the substitution happend on genome1,
     do nothing.
     """
-    # print("add2sbstDict called")
+    # print("add2mutDict called")
     # print("g1Tri: ", g1Tri)
     # print("g2Tri: ", g2Tri)
     # print("g3Tri: ", g3Tri)
@@ -139,8 +139,8 @@ def add2DictList(g1Tri, g2Tri, g3Tri, sbstDict2, sbstDict3, recList2, recList3):
 
     if len(set(middleList)) == 1:
         # only original count
-        add2totalNum(sbstDict2, g1Tri)
-        add2totalNum(sbstDict3, g1Tri)
+        add2totalNum(mutDict2, g1Tri)
+        add2totalNum(mutDict3, g1Tri)
     # if there is a substitution on org1, org2, or org3
     elif len(set(middleList)) == 2:
         for base in set(middleList):
@@ -157,39 +157,38 @@ def add2DictList(g1Tri, g2Tri, g3Tri, sbstDict2, sbstDict3, recList2, recList3):
             # print("g1Tri[1] == minority")
             pass
         # if the substitution is on org2
-        # majority > minority on sbstDict2
+        # majority > minority on mutDict2
         elif g2Tri[1] == minority:
             # print("g2Tri[1] == minority")
             # substitution count
             # print(
-            #     "sbstType(g2Tri, majority, minority): ",
-            #     sbstType(g2Tri, majority, minority),
+            #     "mutType(g2Tri, majority, minority): ",
+            #     mutType(g2Tri, majority, minority),
             # )
-            sbstDict2[sbstType(g2Tri, majority, minority)]["sbstNum"] += 1
-            # total count (original is g1Tri) to sbstDict2 and sbstDict3
-            add2totalNum(sbstDict2, g1Tri)
-            add2totalNum(sbstDict3, g1Tri)
-            recList2.append(SbstRecord(g1Tri, g2Tri, g3Tri))
+            mutDict2[mutType(g2Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is g1Tri) to mutDict2 and mutDict3
+            add2totalNum(mutDict2, g1Tri)
+            add2totalNum(mutDict3, g1Tri)
         # if the substitution is on org3
-        # majority > minority on sbstDict3
+        # majority > minority on mutDict3
         elif g3Tri[1] == minority:
             # print("g3Tri[1] == minority")
             # substitution count
-            sbstDict3[sbstType(g3Tri, majority, minority)]["sbstNum"] += 1
-            # total count (original is g1Tri) to sbstDict2 and sbstDict3
-            add2totalNum(sbstDict2, g1Tri)
-            add2totalNum(sbstDict3, g1Tri)
+            mutDict3[mutType(g3Tri, majority, minority)]["mutNum"] += 1
+            # total count (original is g1Tri) to mutDict2 and mutDict3
+            add2totalNum(mutDict2, g1Tri)
+            add2totalNum(mutDict3, g1Tri)
 
 
-def initialize_sbst_dict():
+def initialize_mut_dict():
     """
-    key: sbstType (e.g. ACGA which means ACG -> AAG)
+    key: mutType (e.g. ACGA which means ACG -> AAG)
     value: {
-        "sbstNum": 0,
+        "mutNum": 0,
         "oriNum": 0
     }
     """
-    sbstDict = {}
+    mutDict = {}
     letters = ["A", "C", "G", "T"]
     midLetters = ["C", "T"]
     cSubs = ["A", "G", "T"]
@@ -199,35 +198,29 @@ def initialize_sbst_dict():
             if j == "C":
                 for k in cSubs:
                     for l in letters:
-                        sbstType = i + j + l + k
-                        sbstDict[sbstType] = {"sbstNum": 0, "oriNum": 0}
+                        mutType = i + j + l + k
+                        mutDict[mutType] = {"mutNum": 0, "oriNum": 0}
             if j == "T":
                 for k in tSubs:
                     for l in letters:
-                        sbstType = i + j + l + k
-                        sbstDict[sbstType] = {"sbstNum": 0, "oriNum": 0}
-    return sbstDict
+                        mutType = i + j + l + k
+                        mutDict[mutType] = {"mutNum": 0, "oriNum": 0}
+    return mutDict
 
 
-def write_tsv_file(outputFilePath, sbstDict):
+def write_tsv_file(outputFilePath, mutDict):
     with open(outputFilePath, "w") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-        writer.writerow(["sbstType", "sbstNum", "oriNum"])
-        sbstTypeList = sorted(
-            list(sbstDict.keys()), key=lambda x: (x[1], x[3], x[0], x[2])
+        writer.writerow(["mutType", "mutNum", "oriNum"])
+        mutTypeList = sorted(
+            list(mutDict.keys()), key=lambda x: (x[1], x[3], x[0], x[2])
         )
-        for sbstType in sbstTypeList:
+        for mutType in mutTypeList:
             writer.writerow(
                 [
-                    sbstType[0]
-                    + "["
-                    + sbstType[1]
-                    + ">"
-                    + sbstType[3]
-                    + "]"
-                    + sbstType[2],
-                    sbstDict[sbstType]["sbstNum"],
-                    sbstDict[sbstType]["oriNum"],
+                    mutType[0] + "[" + mutType[1] + ">" + mutType[3] + "]" + mutType[2],
+                    mutDict[mutType]["mutNum"],
+                    mutDict[mutType]["oriNum"],
                 ]
             )
 
@@ -242,11 +235,17 @@ def main(
     outputBedFilePath2,
     outputBedFilePath3,
 ):
-    sbstDict2 = initialize_sbst_dict()
-    sbstDict3 = initialize_sbst_dict()
-    # print("sbstDict2: ", len(sbstDict2.keys()))
-    recList2 = []
-    recList3 = []
+    originalTripletCounts = collections.Counter()
+    mutCounts2 = collections.Counter()
+    mutCounts3 = collections.Counter()
+    with open(outputBedFilePath2, "w") as bedFile2:
+        bedFile2.write(
+            "chrB\tstartB\tendB\tname\tscore\tstrandB\ttrinucB\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrC\tstartC\tendC\tstrandC\ttrinucC\n"
+        )
+    with open(outputBedFilePath3, "w") as bedFile3:
+        bedFile3.write(
+            "chrC\tstartC\tendC\tname\tscore\tstrandC\ttrinucC\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\n"
+        )
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
         gSeq2 = aln.gSeq2.upper()
@@ -257,31 +256,29 @@ def main(
             and len(gSeq2) == len(gSeq3)
         ), "gSeq1, gSeq2, and gSeq3 should have the same length"
         for i in range(len(gSeq1) - 2):
-            g1Tri = gSeq1[i : i + 3]
-            g2Tri = gSeq2[i : i + 3]
-            g3Tri = gSeq3[i : i + 3]
-            # if indels are included, go next
-            # if not all (i in "ACGT" for i in gTri)
-            if not (
-                all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g1Tri)))
-                and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g2Tri)))
-                and all(list(map(lambda b: b in set(["A", "C", "G", "T"]), g3Tri)))
-            ):
-                continue
-            # if there are no indels
-            # and the edge bases are the same,
-            # count original trinucs as total and count substitutions if there is a substitution
-            if bothEdgeBasesSame(g1Tri, g2Tri, g3Tri):
-                add2DictList(
-                    g1Tri, g2Tri, g3Tri, sbstDict2, sbstDict3, recList2, recList3
-                )
-
+            x, y, z = gSeq1[i : i + 3]
+            a, b, c = gSeq2[i : i + 3]
+            d, e, f = gSeq3[i : i + 3]
+            # if both edge bases same, and outgroup middle base not unique:
+            if x == a and x == d and z == c and z == f and (y == b or y == e):
+                # skip cases with gaps or any other non-ACGT symbols:
+                if x in "ACGT" and z in "ACGT" and b in "ACGT" and e in "ACGT":
+                    originalTriplet = x + y + z
+                    originalTripletCounts[originalTriplet] += 1
+                    if b != y:
+                        mutCounts2[originalTriplet + b] += 1
+                        with open(outputBedFilePath2, "a") as bedFile2:
+                            bedFile2.write(
+                                f"{aln.gChr2}\t{aln.gStart2}\t{aln.gEnd2}\t.\t.\t{aln.gStrand2}\t{a}{b}{c}\t{originalTriplet+b}\t{aln.gChr1}\t{aln.gStart1}\t{aln.gEnd1}\t{aln.gStrand1}\t{originalTriplet}\t{aln.gChr3}\t{aln.gStart3}\t{aln.gEnd3}\t{aln.gStrand3}\t{d}{e}{f}\n"
+                            )
+                    if e != y:
+                        mutCounts3[originalTriplet + e] += 1
     alnFileHandle.close()
 
     # write to outputFilePath2
-    write_tsv_file(outputTsvFilePath2, sbstDict2)
+    write_tsv_file(outputTsvFilePath2, mutDict2)
     # write to outputFilePath3
-    write_tsv_file(outputTsvFilePath3, sbstDict3)
+    write_tsv_file(outputTsvFilePath3, mutDict3)
 
 
 def get_default_output_file_names(joinedAlnFile):
