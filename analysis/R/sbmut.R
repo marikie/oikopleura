@@ -4,7 +4,7 @@ library(showtext)
 
 # MODIFIED THE CODE FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
-generate_plot<-function(file_path, filename=0){
+generate_plot<-function(file_path, filename=0, graph_type){
   ## Perform analysis for the trinucleotide variants
 
   ### Check which of the mutation variant is missing and add that to the named vector
@@ -55,8 +55,26 @@ generate_plot<-function(file_path, filename=0){
   mutation_percentage <- as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",])*100
   conv.data <- rbind(conv.data, MutationPercentage = mutation_percentage)
   
-  conv.data.norm<-as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",]*100)
-  pct_yaxs_max <- ceiling(max(na.omit(as.numeric(conv.data.norm[conv.label.all.sorted]))))
+  if (graph_type == "norm") {
+    conv.data.norm<-as.numeric(conv.data["mutNum",]/conv.data["totalRootNum",]*100)
+  } else if (graph_type == "sbst") {
+    conv.data.norm<-as.numeric(conv.data["mutNum",])
+  } else if (graph_type == "ori") {
+    conv.data.norm<-as.numeric(conv.data["totalRootNum",])
+  }else{
+    stop("Invalid graph type")
+  }
+  # Compute y-axis maximum with conditional rounding when ceiling(raw_max) == 1
+  raw_max <- max(na.omit(conv.data.norm[conv.label.all.sorted]))
+  if (ceiling(raw_max) == 1) {
+    if (raw_max < 0.1) {
+      pct_yaxs_max <- round(raw_max, 2)
+    } else {
+      pct_yaxs_max <- round(raw_max, 1)
+    }
+  } else {
+    pct_yaxs_max <- ceiling(raw_max)
+  }
   
   # Transform each column name according to the specified pattern
   transformed_names <- sapply(colnames(conv.data), function(name) {
@@ -198,7 +216,11 @@ args <- commandArgs(trailingOnly = TRUE)
 tsv_path <- args[1] # File path for the input data, .tsv file
 # Extract the path without an extension from tsv_path
 path_without_extension <- tools::file_path_sans_ext(tsv_path)
-graph_path <- paste(path_without_extension, ".pdf", sep="")
+normgraph_path <- paste(path_without_extension, ".pdf", sep="")
+sbstgraph_path <- paste(path_without_extension, "_sbstCount.pdf", sep="")
+origraph_path <- paste(path_without_extension, "_oriCount.pdf", sep="")
 
 # generate_plot(tsv_path, filename = graph_path, as.numeric(ymax_plus), orgName)
-generate_plot(tsv_path, filename = graph_path)
+generate_plot(tsv_path, filename = normgraph_path, graph_type = "norm")
+generate_plot(tsv_path, filename = sbstgraph_path, graph_type = "sbst")
+generate_plot(tsv_path, filename = origraph_path, graph_type = "ori")
