@@ -32,47 +32,60 @@ We also applied two filtering strategies. The first omits isolated alignments us
 * jsonlite
 * curl
 
-### 2. Run The Pipeline
+### 2. Git Clone the Repository
 
-#### 1. Set variables in configuration files
+```bash
+git clone git@bitbucket.org:mrknkgw/oikopleura.git scripts
+```
 
-* In `./last/dwl_config.yaml`, set the absolute paths:
+### 3. Run The Pipeline
+
+#### 1. Make directories
+
+```bash
+mkdir genomes # to store genome data downloaded from NCBI
+mkdir results # to store results (alignment.maf files, .tsv files, pdf files, etc.)
+```
+
+#### 2. Set variables in configuration files
+
+* In `scripts/last/dwl_config.yaml`, set the absolute paths:
 
 ```yaml
 # Directory paths
 paths:
-  base_genomes: "/absolute/path/to/your/directory" # Change this to your desired genome storage path
+  base_genomes: "/absolute/path/to/your/directory/genomes" # Change this to your desired genome storage path you made in step 1
   scripts:
-    last: "/absolute/path/to/your/last/directory" # Change this to your last directory
+    last: "/absolute/path/to/your/scripts/last" # Change this to your last directory under the scripts directory you cloned
 ```
 
-* In `./last/sbst_config.yaml`, set the absolute paths:
+* In `scripts/last/sbst_config.yaml`, set the absolute paths:
 
 ```yaml
 # Directory paths
 paths:
   # Change the paths of your directories and the one to store results
-  out_dir: "/absolute/path/to/your/results/directory" # Change this to your desired output path
+  out_dir: "/absolute/path/to/your/directory/results" # Change this to your desired output path you made in step 1
   scripts:
-    last: "/absolute/path/to/your/last" # Change this to your last directory
-    analysis: "/absolute/path/to/your/analysis" # Change this to your analysis directory
-    r: "/absolute/path/to/your/R" # Change this to your R directory
+    last: "/absolute/path/to/your/scripts/last" # Change this to your last directory under the scripts directory you cloned
+    analysis: "/absolute/path/to/your/scripts/analysis" # Change this to your analysis directory under the scripts directory you cloned
+    r: "/absolute/path/to/your/scripts/analysis/R" # Change this to your R directory under the scripts/analysis directory you cloned
 ```
 
-* In `./last/trisbst_3spc_fromDwl.sh`, set the paths:
+* In `scripts/last/trisbst_3spc_fromDwl.sh`, set the paths:
 
 ```bash
-config_file="/absolute/path/to/your/dwl_config.yaml" # Change this to your config file
+config_file="/absolute/path/to/your/scripts/last/dwl_config.yaml" # Change this to your config file
 ```
 
-* In `./last/trisbst_3spc.sh`, set the paths:
+* In `scripts/last/trisbst_3spc.sh`, set the paths:
 
 ```bash
-config_file="/absolute/path/to/your/sbst_config.yaml" # Change this to your config file
+config_file="/absolute/path/to/your/scripts/last/sbst_config.yaml" # Change this to your config file
 ```
 
 
-#### 2. Run the script under the `./last` directory  
+#### 3. Run the script under the `scripts/last` directory  
 
 #### To start from downloading genomes:
 
