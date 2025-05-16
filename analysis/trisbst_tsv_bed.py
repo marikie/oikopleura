@@ -121,11 +121,11 @@ def main(
     mutCounts3 = collections.Counter()
     with open(outputBedFilePath2, "w") as bedFile2:
         bedFile2.write(
-            "chrB\tstartB\tendB\tname\tscore\tstrandB\ttrinucB\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrC\tstartC\tendC\tstrandC\ttrinucC\n"
+            "# chrB\tstartB\tendB\tname\tscore\tstrandB\ttrinucB\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrC\tstartC\tendC\tstrandC\ttrinucC\n"
         )
     with open(outputBedFilePath3, "w") as bedFile3:
         bedFile3.write(
-            "chrC\tstartC\tendC\tname\tscore\tstrandC\ttrinucC\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\n"
+            "# chrC\tstartC\tendC\tname\tscore\tstrandC\ttrinucC\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\n"
         )
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
