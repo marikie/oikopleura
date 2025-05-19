@@ -179,7 +179,13 @@ generate_plot<-function(file_path, filename=0, graph_type){
 
     # add xlab and ylab
     mtext(family="os", "Original Trinucleotides", side=1, line=5.5, cex=2.5) # modify size by cex
-    mtext(family="os", "#Subs/#OrigTrinucs (%)", side=2, line=0.5, cex=2.5) # cexでサイズ調整
+    if (graph_type == "norm") {
+      mtext(family="os", "#Subs/#OrigTrinucs (%)", side=2, line=0.5, cex=2.5) # cexでサイズ調整
+    } else if (graph_type == "sbst") {
+      mtext(family="os", "Count of Substitutions", side=2, line=0.5, cex=2.5) # cexでサイズ調整
+    } else if (graph_type == "ori") {
+      mtext(family="os", "Count of Original Trinucleotides", side=2, line=0.5, cex=2.5) # cexでサイズ調整
+    }
     
     # Calculate the width of the bars
     bar_widths <- diff(bar_positions)
