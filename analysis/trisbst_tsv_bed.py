@@ -277,11 +277,6 @@ if __name__ == "__main__":
         args.outputBedFilePath3 or get_default_output_file_names(joinedAlnFile)[3]
     )
 
-    # print(f"joinedAlnFile: {joinedAlnFile}")
-    # print(f"outputFilePath2: {outputFilePath2}")
-    # print(f"outputFilePath3: {outputFilePath3}")
-    # exit(1)
-
     ###################
     # main
     ###################
