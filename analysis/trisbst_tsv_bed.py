@@ -119,14 +119,13 @@ def main(
     originalTripletCounts = collections.Counter()
     mutCounts2 = collections.Counter()
     mutCounts3 = collections.Counter()
+
+    header = "# chrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\tchrC\tstartC\tendC\tstrandC\ttrinucC\tsbstType\n"
     with open(outputBedFilePath2, "w") as bedFile2:
-        bedFile2.write(
-            "# chrB\tstartB\tendB\tname\tscore\tstrandB\ttrinucB\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrC\tstartC\tendC\tstrandC\ttrinucC\n"
-        )
+        bedFile2.write(header)
     with open(outputBedFilePath3, "w") as bedFile3:
-        bedFile3.write(
-            "# chrC\tstartC\tendC\tname\tscore\tstrandC\ttrinucC\tsbstType\tchrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\n"
-        )
+        bedFile3.write(header)
+
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
         gSeq2 = aln.gSeq2.upper()
@@ -146,6 +145,8 @@ def main(
                 if x in "ACGT" and z in "ACGT" and b in "ACGT" and e in "ACGT":
                     originalTriplet = x + y + z
                     originalTripletCounts[originalTriplet] += 1
+                    trinuc2 = a + b + c
+                    trinuc3 = d + e + f
                     # only write the coordinates of the middle base
                     start1, end1 = set2PosCoord(
                         aln.gStrand1,
@@ -166,52 +167,10 @@ def main(
                         aln.gLength3,
                     )
                     variants = [
-                        (
-                            b,
-                            mutCounts2,
-                            outputBedFilePath2,
-                            aln.gChr2,
-                            start2,
-                            end2,
-                            aln.gStrand2,
-                            f"{a}{b}{c}",
-                            aln.gChr3,
-                            start3,
-                            end3,
-                            aln.gStrand3,
-                            f"{d}{e}{f}",
-                        ),
-                        (
-                            e,
-                            mutCounts3,
-                            outputBedFilePath3,
-                            aln.gChr3,
-                            start3,
-                            end3,
-                            aln.gStrand3,
-                            f"{d}{e}{f}",
-                            aln.gChr2,
-                            start2,
-                            end2,
-                            aln.gStrand2,
-                            f"{a}{b}{c}",
-                        ),
+                        (b, mutCounts2, outputBedFilePath2),
+                        (e, mutCounts3, outputBedFilePath3),
                     ]
-                    for (
-                        alt,
-                        mutCounts,
-                        outputFile,
-                        chr,
-                        start,
-                        end,
-                        strand,
-                        trinuc,
-                        otherChr,
-                        otherStart,
-                        otherEnd,
-                        otherStrand,
-                        otherTrinuc,
-                    ) in variants:
+                    for alt, mutCounts, outputFile in variants:
                         if alt != y:
                             mutCounts[originalTriplet + alt] += 1
                             if y in ("A", "G"):
@@ -228,9 +187,9 @@ def main(
                                 sbstType = x + "[" + y + ">" + alt + "]" + z
                             with open(outputFile, "a") as bedFile:
                                 bedFile.write(
-                                    f"{chr}\t{start}\t{end}\t.\t.\t{strand}\t{trinuc}\t{sbstType}\t"
                                     f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t"
-                                    f"{otherChr}\t{otherStart}\t{otherEnd}\t{otherStrand}\t{otherTrinuc}\n"
+                                    f"{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t"
+                                    f"{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{sbstType}\n"
                                 )
     alnFileHandle.close()
 
