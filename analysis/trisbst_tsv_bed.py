@@ -2,33 +2,32 @@
 Input:
     - a 3-genome joined alignment .maf file
       (the top sequence should be the outgroup)
-    - outputFilePath1
-    - outputFilePath2
+    - outputTsvFilePath2
+    - outputTsvFilePath3
+    - outputBedFilePath2
+    - outputBedFilePath3
 Output:
     - two tsv files with the following columns:
                 - mutType
                 - mutNum
                 - totalRootNum
     - two bed files with the following columns:
-                [Species B]				 [Species C]
-                - chrB					 - chrC
-                - startB				 - startC
-                - endB					 - endC
-                - name					 - name
-                - score				 	 - score
-                - strandB				 - strandC
-                - trinucB				 - trinucC
-                - mutType				 - mutType
-                - chrA					 - chrA
-                - startA				 - startA
-                - endA					 - endA
-                - strandA				 - strandA
-                - trinucA				 - trinucA
-                - chrC					 - chrB
-                - startC				 - startB
-                - endC					 - endB
-                - strandC				 - strandB
-                - trinucC				 - trinucB
+                - chrA
+                - startA
+                - endA
+                - strandA
+                - trinucA
+                - chrB
+                - startB
+                - endB
+                - strandB
+                - trinucB
+                - chrC
+                - startC
+                - endC
+                - strandC
+                - trinucC
+                - sbstType
 """
 
 import argparse
