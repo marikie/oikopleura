@@ -21,7 +21,9 @@ patterns:
   tsv_maflinked: "{org_short}_{date}_maflinked.tsv"
   tsv_errprb: "{org_short}_{date}_errprb.tsv"
   tsv_maflinked_errprb: "{org_short}_{date}_maflinked_errprb.tsv"
-  cds_gff: "{org_full}_cds.gff"
+  bed: "{org_short}_{date}.bed"
+  bed_maflinked: "{org_short}_{date}_maflinked.bed"
+
   graph:
     out: "{org_short}_{date}.out"
     sbst: "{org_short}_{date}_sbstCount.out"
@@ -58,8 +60,9 @@ errors:
     - path to the org1 reference fasta file (outgroup)
     - path to the org2 reference fasta file
     - path to the org3 reference fasta file
+    - path to the org1 reference gff file (if there is no gff file, set it to NO_GFF_FILE)
 
 # Script settings
 settings:
-  required_args: 4
+  required_args: 5
   normalize_graphs: 0
