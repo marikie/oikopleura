@@ -149,6 +149,17 @@ echo "org1FASTA: $org1FASTA"
 echo "org2FASTA: $org2FASTA"
 echo "org3FASTA: $org3FASTA"
 
-echo "Running trisbst_3spc.sh"
-echo "bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA"
-bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA
+gffFilePath="$(get_config '.paths.base_genomes')/$org1FullName/*.gff"
+gffFiles=($gffFilePath)
+if [ ${#gffFiles[@]} -eq 1 ]; then
+    org1GFF="${gffFiles[0]}" # set $org1GFF as the path to the gff file
+elif [ ${#gffFiles[@]} -gt 1 ]; then
+    echo "Error: Multiple .gff files found for $org1FullName" >&2
+    exit 1
+else
+    org1GFF="NO_GFF_FILE" # set a special flag to $org1GFF
+fi
+
+echo "Running trisbst_3spc.sh with GFF check"
+echo "bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1GFF"
+bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA $org1GFF

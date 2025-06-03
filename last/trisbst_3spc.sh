@@ -27,6 +27,7 @@ DATE=$1
 org1FASTA=$2
 org2FASTA=$3
 org3FASTA=$4
+org1GFF=$5
 # Extract the name of the parent directory of $org1FASTA
 org1FullName=$(basename $(dirname $org1FASTA))
 org2FullName=$(basename $(dirname $org2FASTA))
@@ -65,6 +66,11 @@ org2tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org2Sho
 org3tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
+org2bed=$(get_config '.patterns.bed' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3bed=$(get_config '.patterns.bed' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2bed_maflinked=$(get_config '.patterns.bed_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3bed_maflinked=$(get_config '.patterns.bed_maflinked' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 org2_out=$(get_config '.patterns.graph.out' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3_out=$(get_config '.patterns.graph.out' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
@@ -134,19 +140,50 @@ echo "$(get_config '.messages.maf_join') with maf-linked"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked"
 bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked
 
-# Generate all TSV files
-bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
-    "$joinedFile" \
-    "$joinedFile_maflinked" \
-    "$org2tsv" \
-    "$org3tsv" \
-    "$org2tsv_maflinked" \
-    "$org3tsv_maflinked" \
-    "$org2tsv_errprb" \
-    "$org3tsv_errprb" \
-    "$org2tsv_maflinked_errprb" \
-    "$org3tsv_maflinked_errprb" \
-    "$(get_config '.paths.scripts.analysis')"
+# If there is a gff file of org1, generate .tsv file and .bed file
+# and count the number of substitutions in coding and non-coding regions
+if [ $org1GFF -ne "NO_GFF_FILE" ]; then
+	echo "There is a gff file of org1"
+	echo "Making .tsv and .bed files"
+	bash $(get_config '.paths.scripts.last')/generate_tsv_bed_files.sh \
+		"$joinedFile" \
+		"$org2tsv" \
+		"$org3tsv" \
+		"$org2bed" \
+		"$org3bed" \
+		"$joinedFile_maflinked" \
+		"$org2tsv_maflinked" \
+		"$org3tsv_maflinked" \
+		"$org2bed_maflinked" \
+		"$org3bed_maflinked"
+
+	echo "Counting the number of substitutions in coding and non-coding regions"
+	bash $(get_config '.paths.scripts.last')/count_coding_noncoding.sh \
+		"$org1GFF" \
+		"$org2tsv" \
+		"$org2bed" \
+		"$org3tsv" \
+		"$org3bed" \
+		"$org2tsv_maflinked" \
+		"$org3tsv_maflinked" \
+		"$org2bed_maflinked" \
+		"$org3bed_maflinked"
+else
+	echo "There is no gff file of org1"
+	# Generate all TSV files
+	bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
+		"$joinedFile" \
+		"$joinedFile_maflinked" \
+		"$org2tsv" \
+		"$org3tsv" \
+		"$org2tsv_maflinked" \
+		"$org3tsv_maflinked" \
+		"$org2tsv_errprb" \
+		"$org3tsv_errprb" \
+		"$org2tsv_maflinked_errprb" \
+		"$org3tsv_maflinked_errprb" \
+		"$(get_config '.paths.scripts.analysis')"
+fi
 
 # Generate all graphs
 bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
@@ -183,87 +220,3 @@ bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
 	"$org2_maflinked_errprb_out_oriCount" \
 	"$org3_maflinked_errprb_out_oriCount" \
 	"$(get_config '.paths.scripts.r')"
-
-# # make another .tsv file of the trinucleotide mutations
-# # which contains all the substitutions in org2 and org3 with org1's trinucleotide info
-# echo "---making another .tsv file of all the trinucleotide substitutions in org2 and org3 with org1's trinucleotide info"
-# if [ ! -e $sbstFile ]; then
-# 	python ~/scripts/analysis/triSbstTSV.py $joinedFile "./"$sbstFile
-# else
-# 	echo "$sbstFile already exists"
-# fi
-
-# # split the $sbstFile into $sbstFile_org2 and $sbstFile_org3
-# echo "---splitting the $sbstFile into $sbstFile_org2 and $sbstFile_org3"
-# if [ ! -e $sbstFile_org2 ] && [ ! -e $sbstFile_org3 ]; then
-# 	python ~/scripts/analysis/split2twoFiles.py $sbstFile "./"$sbstFile_org2 "./"$sbstFile_org3
-# else
-# 	echo "$sbstFile_org2 and $sbstFile_org3 already exist"
-# fi
-
-# # assert $sbst3File_org2 and $sbstFile_org2 doesn't contradict each other
-# echo "---asserting $sbst3File_org2 and $sbstFile_org2 doesn't contradict each other"
-# # Extract and count sbstSig occurrences in sbstFile_org2
-# awk '{count[$7]++} END {for (sig in count) print sig, count[sig]}' "$sbstFile_org2" > sbst_counts2.txt
-# # Compare with mutNum in sbst3File_org2
-# awk 'NR==FNR {mutNum[$1]=$2; next} {if (mutNum[$1] != $2) {print "Mismatch for", $1, ": expected", mutNum[$1], "found", $2; exit 1}}' "$sbst3File_org2" sbst_counts2.txt
-# if [ $? -eq 0 ]; then
-#     echo "Assertion passed: Files match"
-# else
-#     echo "Assertion failed: Files do not match"
-#     exit 1
-# fi
-
-# # assert $sbst3File_org3 and $sbstFile_org3 doesn't contradict each other
-# echo "---asserting $sbst3File_org3 and $sbstFile_org3 doesn't contradict each other"
-# awk '{count[$7]++} END {for (sig in count) print sig, count[sig]}' "$sbstFile_org3" > sbst_counts3.txt
-# awk 'NR==FNR {mutNum[$1]=$2; next} {if (mutNum[$1] != $2) {print "Mismatch for", $1, ": expected", mutNum[$1], "found", $2; exit 1}}' "$sbst3File_org3" sbst_counts3.txt
-# if [ $? -eq 0 ]; then
-#     echo "Assertion passed: Files match"
-# else
-#     echo "Assertion failed: Files do not match"
-#     exit 1
-# fi
-
-# # make gff files for the CDSs
-# echo "---making gff files for the CDSs"
-# awk 'BEGIN {OFS="\t"} $3 == "CDS"' $org2gff > $org2cdsGFF
-# awk 'BEGIN {OFS="\t"} $3 == "CDS"' $org3gff > $org3cdsGFF
-
-# # bedtools intersect to get the trinucleotide substitutions in the CDSs
-# # all
-# echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (all)"
-# if [ ! -e $cdsIntsct_all_org2 ]; then
-# 	bedtools intersect -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_all_org2
-# else
-# 	echo "$cdsIntsct_all_org2 already exists"
-# fi
-# if [ ! -e $cdsIntsct_all_org3 ]; then
-# 	bedtools intersect -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_all_org3
-# else
-# 	echo "$cdsIntsct_all_org3 already exists"
-# fi
-# # same strand
-# echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (same strand)"
-# if [ ! -e $cdsIntsct_sameStrand_org2 ]; then
-# 	bedtools intersect -s -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_sameStrand_org2
-# else
-# 	echo "$cdsIntsct_sameStrand_org2 already exists"
-# fi
-# if [ ! -e $cdsIntsct_sameStrand_org3 ]; then
-# 	bedtools intersect -s -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_sameStrand_org3
-# else
-# 	echo "$cdsIntsct_sameStrand_org3 already exists"
-# fi
-# # different strand
-# echo "---bedtools intersect to get the trinucleotide substitutions in the CDSs (different strand)"
-# if [ ! -e $cdsIntsct_diffStrand_org2 ]; then
-# 	bedtools intersect -S -wb -a $org2cdsGFF -b $sbstFile_org2 >$cdsIntsct_diffStrand_org2
-# else
-# 	echo "$cdsIntsct_diffStrand_org2 already exists"
-# fi
-# if [ ! -e $cdsIntsct_diffStrand_org3 ]; then
-# 	bedtools intersect -S -wb -a $org3cdsGFF -b $sbstFile_org3 >$cdsIntsct_diffStrand_org3
-# else
-# 	echo "$cdsIntsct_diffStrand_org3 already exists"
-# fi
