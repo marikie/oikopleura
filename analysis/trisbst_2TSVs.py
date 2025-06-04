@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+# Modified by: Martin C. Frith
+
 """
 Input:
     - a 3-genome joined alignment .maf file
@@ -170,8 +172,12 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     joinedAlnFile = args.joinedAlignmentFile
-    outputFilePath2 = args.outputFilePath2 or get_default_output_file_names(joinedAlnFile)[0]
-    outputFilePath3 = args.outputFilePath3 or get_default_output_file_names(joinedAlnFile)[1]
+    outputFilePath2 = (
+        args.outputFilePath2 or get_default_output_file_names(joinedAlnFile)[0]
+    )
+    outputFilePath3 = (
+        args.outputFilePath3 or get_default_output_file_names(joinedAlnFile)[1]
+    )
 
     # print(f"joinedAlnFile: {joinedAlnFile}")
     # print(f"outputFilePath2: {outputFilePath2}")
