@@ -182,7 +182,11 @@ else
 		"$org3tsv_errprb" \
 		"$org2tsv_maflinked_errprb" \
 		"$org3tsv_maflinked_errprb" \
-		"$(get_config '.paths.scripts.analysis')"
+		"$(get_config '.paths.scripts.analysis')" \
+		"$org2_dinuc_tsv" \
+		"$org3_dinuc_tsv" \
+		"$org2_dinuc_tsv_maflinked" \
+		"$org3_dinuc_tsv_maflinked"
 fi
 
 # Generate all graphs
