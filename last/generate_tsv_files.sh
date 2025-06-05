@@ -7,7 +7,7 @@ generate_tsv() {
     local output3=$3
     local script=$4
 
-    if [ ! -e "$output2" ] && [ ! -e "$output3" ]; then
+    if [ ! -e "$output2" ] || [ ! -e "$output3" ]; then
         echo "time python $script $input_file -o2 ./$output2 -o3 ./$output3"
         time python "$script" "$input_file" -o2 "./$output2" -o3 "./$output3"
     else
@@ -28,6 +28,15 @@ org2tsv_maflinked_errprb=$9
 org3tsv_maflinked_errprb=${10}
 scripts_analysis_path=${11}
 
+org2_dinuc_tsv=${12}
+org3_dinuc_tsv=${13}
+org2_dinuc_tsv_maflinked=${14}
+org3_dinuc_tsv_maflinked=${15}
+# org2_dinuc_tsv_errprb=${16}
+# org3_dinuc_tsv_errprb=${17}
+# org2_dinuc_tsv_maflinked_errprb=${18}
+# org3_dinuc_tsv_maflinked_errprb=${19}
+
 # Regular TSV files
 echo "---making .tsv trinucleotide substitution files"
 generate_tsv "$joinedFile" "$org2tsv" "$org3tsv" "$scripts_analysis_path/trisbst_2TSVs.py"
@@ -35,6 +44,14 @@ generate_tsv "$joinedFile" "$org2tsv" "$org3tsv" "$scripts_analysis_path/trisbst
 # Maf-linked TSV files
 echo "---making .tsv trinucleotide substitution files (with maf-linked)"
 generate_tsv "$joinedFile_maflinked" "$org2tsv_maflinked" "$org3tsv_maflinked" "$scripts_analysis_path/trisbst_2TSVs.py"
+
+# Dinucleotide substitution TSV files for regular files
+echo "---making .tsv dinucleotide substitution files"
+generate_tsv "$joinedFile" "$org2_dinuc_tsv" "$org3_dinuc_tsv" "$scripts_analysis_path/disbst_2TSVs.py"
+
+# Dinucleotide substitution TSV files for maf-linked files
+echo "---making .tsv dinucleotide substitution files (with maf-linked)"
+generate_tsv "$joinedFile_maflinked" "$org2_dinuc_tsv_maflinked" "$org3_dinuc_tsv_maflinked" "$scripts_analysis_path/disbst_2TSVs.py"
 
 # Error probability TSV files
 # echo "---making .tsv trinucleotide substitution files (with errprb)"
