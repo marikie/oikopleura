@@ -30,7 +30,7 @@ def check_counts(tsv_df):
 
 def makeAnnoTsv(bedFile, tsvFile, outputFilePath):
     # read bed file
-    bed_df = pd.read_csv(bedFile, sep="\t", header=None)
+    bed_df = pd.read_csv(bedFile, sep="\t")
 
     # read tsv file
     tsv_df = pd.read_csv(tsvFile, sep="\t")
