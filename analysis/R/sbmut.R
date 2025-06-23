@@ -1,4 +1,4 @@
-require(stringr)
+library(stringr)
 library(RColorBrewer)
 library(showtext)
 
