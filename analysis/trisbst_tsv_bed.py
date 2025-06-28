@@ -105,6 +105,13 @@ def set2PosCoord(strand, start, end, length):
         return length - end, length - start
 
 
+def get_substitution_type(x, y, z, alt):
+    if y == "A" or y == "G":
+        return revDict[z] + "[" + revDict[y] + ">" + revDict[alt] + "]" + revDict[x]
+    else:
+        return x + "[" + y + ">" + alt + "]" + z
+
+
 ###################
 # main procedures
 ###################
@@ -165,31 +172,26 @@ def main(
                         aln.gStart3 + i + 2,
                         aln.gLength3,
                     )
-                    variants = [
-                        (b, mutCounts2, outputBedFilePath2),
-                        (e, mutCounts3, outputBedFilePath3),
-                    ]
-                    for alt, mutCounts, outputFile in variants:
-                        if alt != y:
-                            mutCounts[originalTriplet + alt] += 1
-                            if y in ("A", "G"):
-                                sbstType = (
-                                    revDict[z]
-                                    + "["
-                                    + revDict[y]
-                                    + ">"
-                                    + revDict[alt]
-                                    + "]"
-                                    + revDict[x]
-                                )
-                            else:
-                                sbstType = x + "[" + y + ">" + alt + "]" + z
-                            with open(outputFile, "a") as bedFile:
-                                bedFile.write(
-                                    f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t"
-                                    f"{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t"
-                                    f"{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{sbstType}\n"
-                                )
+                    if y == b and y == e:
+                        bed_line = f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t.\n"
+                        with open(outputBedFilePath2, "a") as bedFile2, open(outputBedFilePath3, "a") as bedFile3:
+                            bedFile2.write(bed_line)
+                            bedFile3.write(bed_line)
+                    else:
+                        variants = [
+                            (b, mutCounts2, outputBedFilePath2),
+                            (e, mutCounts3, outputBedFilePath3),
+                        ]
+                        for alt, mutCounts, outputFile in variants:
+                            if alt != y:
+                                mutCounts[originalTriplet + alt] += 1
+                                sbstType = get_substitution_type(x, y, z, alt)
+                                with open(outputFile, "a") as bedFile:
+                                    bedFile.write(
+                                        f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t"
+                                        f"{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t"
+                                        f"{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{sbstType}\n"
+                                    )
     alnFileHandle.close()
 
     mutDict2 = mutDictFromCounts(mutCounts2)
@@ -200,6 +202,7 @@ def main(
     write_tsv_file(outputTsvFilePath2, mutDict2, totDict)
     # write to outputFilePath3
     write_tsv_file(outputTsvFilePath3, mutDict3, totDict)
+
 
 
 def get_default_output_file_names(joinedAlnFile):
