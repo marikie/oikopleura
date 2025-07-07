@@ -63,7 +63,7 @@ def initialize_mut_dict():
 def write_tsv_file(outputFilePath, mutDict, totDict):
     with open(outputFilePath, "w") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-        writer.writerow(["mutType", "mutNum", "totalRootNum"])
+        writer.writerow(["mutType", "oriType", "mutNum", "totalRootNum"])
         mutTypeList = sorted(
             list(mutDict.keys()), key=lambda x: (x[1], x[3], x[0], x[2])
         )
@@ -72,6 +72,7 @@ def write_tsv_file(outputFilePath, mutDict, totDict):
             writer.writerow(
                 [
                     mutType[0] + "[" + mutType[1] + ">" + mutType[3] + "]" + mutType[2],
+                    originalTriplet,
                     mutDict[mutType],
                     totDict[originalTriplet],
                 ]
@@ -112,6 +113,13 @@ def get_substitution_type(x, y, z, alt):
         return x + "[" + y + ">" + alt + "]" + z
 
 
+def get_original_type(x, y, z):
+    if y == "A" or y == "G":
+        return revDict[z] + revDict[y] + revDict[x]
+    else:
+        return x + y + z
+
+
 ###################
 # main procedures
 ###################
@@ -126,11 +134,11 @@ def main(
     mutCounts2 = collections.Counter()
     mutCounts3 = collections.Counter()
 
-    header = "# chrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\tchrC\tstartC\tendC\tstrandC\ttrinucC\tsbstType\n"
-    with open(outputBedFilePath2, "w") as bedFile2:
-        bedFile2.write(header)
-    with open(outputBedFilePath3, "w") as bedFile3:
-        bedFile3.write(header)
+    bed_lines2 = []
+    bed_lines3 = []
+    header = "# chrA\tstartA\tendA\tstrandA\ttrinucA\tchrB\tstartB\tendB\tstrandB\ttrinucB\tchrC\tstartC\tendC\tstrandC\ttrinucC\toriType\tsbstType\n"
+    bed_lines2.append(header)
+    bed_lines3.append(header)
 
     for aln in getJoinedAlignmentObj(alnFileHandle):
         gSeq1 = aln.gSeq1.upper()
@@ -151,6 +159,7 @@ def main(
                 if x in "ACGT" and z in "ACGT" and b in "ACGT" and e in "ACGT":
                     originalTriplet = x + y + z
                     originalTripletCounts[originalTriplet] += 1
+                    oriType = get_original_type(x, y, z)
                     trinuc2 = a + b + c
                     trinuc3 = d + e + f
                     # only write the coordinates of the middle base
@@ -172,11 +181,10 @@ def main(
                         aln.gStart3 + i + 2,
                         aln.gLength3,
                     )
+                    bed_line_ori = f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{oriType}\t.\n"
                     if y == b and y == e:
-                        bed_line = f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t.\n"
-                        with open(outputBedFilePath2, "a") as bedFile2, open(outputBedFilePath3, "a") as bedFile3:
-                            bedFile2.write(bed_line)
-                            bedFile3.write(bed_line)
+                        bed_lines2.append(bed_line_ori)
+                        bed_lines3.append(bed_line_ori)
                     else:
                         variants = [
                             (b, mutCounts2, outputBedFilePath2),
@@ -186,21 +194,27 @@ def main(
                             if alt != y:
                                 mutCounts[originalTriplet + alt] += 1
                                 sbstType = get_substitution_type(x, y, z, alt)
-                                with open(outputFile, "a") as bedFile:
-                                    bedFile.write(
-                                        f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t"
-                                        f"{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t"
-                                        f"{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{sbstType}\n"
-                                    )
+                                bed_line_sbst = f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{oriType}\t{sbstType}\n"
+                                if outputFile == outputBedFilePath2:
+                                    bed_lines2.append(bed_line_sbst)
+                                    bed_lines3.append(bed_line_ori)
+                                else:
+                                    bed_lines2.append(bed_line_ori)
+                                    bed_lines3.append(bed_line_sbst)
     alnFileHandle.close()
+
+    # write to outputBedFilePath2 and outputBedFilePath3
+    with open(outputBedFilePath2, "w") as bedFile2:
+        bedFile2.write("".join(bed_lines2))
+    with open(outputBedFilePath3, "w") as bedFile3:
+        bedFile3.write("".join(bed_lines3))
 
     mutDict2 = mutDictFromCounts(mutCounts2)
     mutDict3 = mutDictFromCounts(mutCounts3)
     totDict = totDictFromCounts(originalTripletCounts)
 
-    # write to outputFilePath2
+    # write to outputTsvFilePath2 and outputTsvFilePath3
     write_tsv_file(outputTsvFilePath2, mutDict2, totDict)
-    # write to outputFilePath3
     write_tsv_file(outputTsvFilePath3, mutDict3, totDict)
 
 
