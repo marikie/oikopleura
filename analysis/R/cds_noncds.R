@@ -1,8 +1,7 @@
 library(stringr)
 library(RColorBrewer)
 library(showtext)
-library(ggplot2)
-library(reshape2)
+library(sysfonts)
 
 generate_plot <- function(file_path, filename, graph_type) {
   # read file
@@ -34,9 +33,10 @@ generate_plot <- function(file_path, filename, graph_type) {
   font_add_google("Courier Prime", "mn", 700)
   font_add_google("Roboto", "os")
   showtext_auto()
-  # Increase the size of y-axis numbers # Increase the bottom, left, top, and right margins
-  par(family = "mn", mar = c(7.5, 6, 7.5, 1), cex.axis = 2)
-
+  # Set the bottom, left, top, and right margins
+  par(family = "mn", mar = c(7.5, 6, 3, 1), cex.axis = 2)
+  # Set the axis style to internal to reduce space
+  par(xaxs = "i")
   # Draw Coding part (add black border with border="black" and adjust line width with lwd=1)
   bp <- barplot(
     coding_vals,
@@ -44,8 +44,9 @@ generate_plot <- function(file_path, filename, graph_type) {
     border = "black",
     lwd = 1,
     axes = FALSE,
-    ylim = c(0, 100),
+    ylim = c(0, 115),
     space = 0,
+    xlim = c(-1, length(coding_vals) + 0.5)
   )
 
   # Draw Non-coding part (add black border with border="black" and adjust line width with lwd=1)
