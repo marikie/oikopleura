@@ -20,9 +20,13 @@ generate_plot <- function(file_path, filename, graph_type) {
   text_array <- c("C > A", "C > G", "C > T", "T > A", "T > C", "T > G")
 
   # Extract values into vectors
-  coding_vals <- as.numeric((data.trans["coding", ] / data.trans["mutNum", ]) * 100)
-  noncoding_vals <- as.numeric((data.trans["non.coding", ] / data.trans["mutNum", ]) * 100)
-
+  if (graph_type == "sbst") {
+    coding_vals <- as.numeric((as.numeric(data.trans["s_cds", ]) / as.numeric(data.trans["mutNum", ])) * 100)
+    noncoding_vals <- as.numeric((as.numeric(data.trans["s_ncds", ]) / as.numeric(data.trans["mutNum", ])) * 100)
+  } else if (graph_type == "ori") {
+    coding_vals <- as.numeric((as.numeric(data.trans["o_cds", ]) / as.numeric(data.trans["totalRootNum", ])) * 100)
+    noncoding_vals <- as.numeric((as.numeric(data.trans["o_ncds", ]) / as.numeric(data.trans["totalRootNum", ])) * 100)
+  }
   # Create color vector for Coding (6 colors × 16 = 96 bars)
   coding_cols <- rep(brewer.pal(6, "Dark2"), each = 16)
 
@@ -34,7 +38,7 @@ generate_plot <- function(file_path, filename, graph_type) {
   font_add_google("Roboto", "os")
   showtext_auto()
   # Set the bottom, left, top, and right margins
-  par(family = "mn", mar = c(7.5, 6, 3, 1), cex.axis = 2)
+  par(family = "mn", mar = c(7.5, 11, 3, 0.5), cex.axis = 2)
   # Set the axis style to internal to reduce space
   par(xaxs = "i")
   # Draw Coding part (add black border with border="black" and adjust line width with lwd=1)
@@ -98,7 +102,11 @@ generate_plot <- function(file_path, filename, graph_type) {
 
   # add xlab and ylab
   mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5) # modify size by cex
-  # mtext(family = "os", "#Subs/#OrigTrinucs (%)", side = 2, line = 0.5, cex = 2.5) # cexでサイズ調整
+  if (graph_type == "sbst") {
+    mtext(family = "os", "#sbstInCDS/#AllSbst (colored) [%]\n#sbstInNonCDS/#AllSbst (grey) [%]", side = 2, line = 5.5, cex = 2.5)
+  } else if (graph_type == "ori") {
+    mtext(family = "os", "#origInCDS/#AllOrig (colored) [%]\n#origInNonCDS/#AllOrig (grey) [%]", side = 2, line = 5.5, cex = 2.5)
+  }
 
 
   # Calculate the width of the bars
@@ -117,15 +125,6 @@ generate_plot <- function(file_path, filename, graph_type) {
     text(family = "mn", x = label_mid, y = pct_yaxs_max + 0.12 * pct_yaxs_max, labels = text_array[i], cex = 2.5) # increase label size with cex
   }
 
-  # Add legend
-  legend(
-    "bottomright",
-    legend = c("Coding", "Non-coding"),
-    fill   = c("white", "grey70"),
-    border = NA,
-    bty    = "n"
-  )
-
   dev.off()
 }
 
@@ -135,6 +134,8 @@ args <- commandArgs(trailingOnly = TRUE)
 tsv_path <- args[1] # File path for the input data, .tsv file
 # Extract the path without an extension from tsv_path
 path_without_extension <- tools::file_path_sans_ext(tsv_path)
-stackedBarChart_path <- paste(path_without_extension, "_stackedBarChart.pdf", sep = "")
+sbst_path <- paste(path_without_extension, "_stacked_sbst.pdf", sep = "")
+ori_path <- paste(path_without_extension, "_stacked_ori.pdf", sep = "")
 
-generate_plot(tsv_path, filename = stackedBarChart_path, graph_type = "stacked")
+generate_plot(tsv_path, filename = sbst_path, graph_type = "sbst")
+generate_plot(tsv_path, filename = ori_path, graph_type = "ori")
