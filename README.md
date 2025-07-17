@@ -31,6 +31,7 @@ We also applied two filtering strategies. The first omits isolated alignments us
 * showtext
 * jsonlite
 * curl
+* dplyr
 
 ### 2. Git Clone the Repository
 
