@@ -1,7 +1,7 @@
 library(dplyr)
 library(ggplot2)
 
-tsv_path <- "~/biohazard/data/mytTro_mytEdu_mytGal/mytEdu_20250407_maflinked_annot.tsv"
+# tsv_path <- "~/biohazard/data/mytTro_mytEdu_mytGal/mytEdu_20250407_maflinked_annot.tsv"
 generate_plots <- function(tsv_path) {
   data <- read.csv(tsv_path, sep = "\t", header = TRUE)
 
@@ -26,10 +26,20 @@ generate_plots <- function(tsv_path) {
   allsbst_over_allori <- (data %>% select(mutNum) %>% sum()) / all_ori_sum
   allsbst_ncds_over_allori_ncds <- (data %>% select(s_ncds) %>% sum()) / all_ori_sum_ncds
 
+  print(paste("all_ori_sum: ", all_ori_sum))
+  print(paste("all_sbst_sum: ", data %>% select(mutNum) %>% sum()))
+  print(paste("allsbst_over_allori: ", allsbst_over_allori))
+  
+  print(paste("all_ori_sum_ncds: ", all_ori_sum_ncds))
+  print(paste("all_sbst_sum_ncds: ", data %>% select(s_ncds) %>% sum()))
+  print(paste("allsbst_ncds_over_allori_ncds", allsbst_ncds_over_allori_ncds))
+  
   data <- data %>%
     mutate(logRatio = log2(obs_mut_over_ori / allsbst_over_allori)) %>%
     mutate(logRatio_ncds = log2(obs_snc_over_onc / allsbst_ncds_over_allori_ncds))
 
+  print(data)
+  
   # Calculate mean and standard deviation
   mean_val <- mean(data$logRatio_ncds, na.rm = TRUE)
   sd_val <- sd(data$logRatio_ncds, na.rm = TRUE)
