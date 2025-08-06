@@ -5,16 +5,13 @@ paths:
   scripts:
     last: "/home/mrk/scripts/last"
 
-
 # Configuration for genome download and processing
 settings:
-  required_args: 7  # Number of required arguments
-
+  required_args: 7 # Number of required arguments
 
 # NCBI dataset download settings
 download:
-  includes:
-    gff3,
+  includes: gff3,
     rna,
     cds,
     protein,
@@ -25,12 +22,12 @@ download:
 patterns:
   # Directory pattern for each organism
   org_dir: "{org_full}"
-  
+
   # Download files
   ncbi_dataset: "ncbi_dataset.zip"
-  
+
   # Generated files
-  fasta: "{org_id}*.fna"  # Pattern for matching FASTA files
+  fasta: "{org_id}*.fna" # Pattern for matching FASTA files
 
 # Messages
 messages:
@@ -46,7 +43,7 @@ errors:
     You'll get one-to-one alignments of org1-org2 and org1-org3.
     The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
     - today's date
-    - org1 accession ID (e.g. 'GCA_023078555.1')
+    - org1 accession ID << Outgroup >> (e.g. 'GCA_023078555.1')
     - org2 accession ID (e.g. 'GCA_900538255.1')
     - org3 accession ID (e.g. 'GCA_024500015.1')
     - org1 full name: genusSpecies (e.g. 'ulvaProlifera')

@@ -16,13 +16,6 @@ org3ShortName=$6
 dbName="${org2ShortName}db_${DATE}"
 trainFile="${org2ShortName}2${org3ShortName}_${DATE}.train"
 
-if [ ! -d $outDirPath ]; then
-	echo "---making $outDirPath"
-	mkdir $outDirPath
-fi
-cd $outDirPath
-echo "pwd: $(pwd)"
-
 # lastdb
 echo "---lastdb"
 if [ ! -d $outDirPath/$dbName ]; then

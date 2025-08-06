@@ -7,6 +7,38 @@ paths:
     analysis: "/home/mrk/scripts/analysis"
     r: "/home/mrk/scripts/analysis/R"
 
+# Script settings
+settings:
+  required_args: 6
+  normalize_graphs: 0
+
+# Messages
+messages:
+  gc_content: "--- calculating GC content"
+  one2one: "--- running one2one for {org1_short}-{org2_short}"
+  maf_join: "--- maf-join the two .maf files"
+  make_dir: "--- making {dir_path}"
+  file_exists: "{file_name} already exists"
+
+# Error messages
+errors:
+  arg_count: "You need {arg_num} arguments"
+  usage: |
+    You'll get one-to-one alignments of org1-org2 and org1-org3.
+    The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
+    - today's date
+    - path to the org1 reference fasta file << outgroup >>
+    - path to the org2 reference fasta file
+    - path to the org3 reference fasta file
+    - checkInnerGroupIdt option (true/false)
+    - path to the org1 reference gff file (if there is no gff file, set it to NO_GFF_FILE)
+
+# Options
+options:
+  checkInnerGroupIdt:
+    description: "Run inner group substitution percent identity check"
+    enabled_message: "Running inner group substitution percent identity check..."
+    completed_message: "Inner group substitution percent identity check completed"
 
 # File patterns and suffixes
 patterns:
@@ -40,29 +72,3 @@ patterns:
     out: "{org_short}_{date}_maflinked_errprb.out"
     sbst: "{org_short}_{date}_maflinked_errprb_sbstCount.out"
     ori: "{org_short}_{date}_maflinked_errprb_oriCount.out"
-
-
-# Messages
-messages:
-  gc_content: "--- calculating GC content"
-  one2one: "--- running one2one for {org1_short}-{org2_short}"
-  maf_join: "--- maf-join the two .maf files"
-  make_dir: "--- making {dir_path}"
-  file_exists: "{file_name} already exists"
-
-# Error messages
-errors:
-  arg_count: "You need {arg_num} arguments"
-  usage: |
-    You'll get one-to-one alignments of org1-org2 and org1-org3.
-    The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
-    - today's date
-    - path to the org1 reference fasta file (outgroup)
-    - path to the org2 reference fasta file
-    - path to the org3 reference fasta file
-    - path to the org1 reference gff file (if there is no gff file, set it to NO_GFF_FILE)
-
-# Script settings
-settings:
-  required_args: 5
-  normalize_graphs: 0

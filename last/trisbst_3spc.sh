@@ -27,7 +27,8 @@ DATE=$1
 org1FASTA=$2
 org2FASTA=$3
 org3FASTA=$4
-org1GFF=$5
+checkInnerGroupIdt=$5
+org1GFF=$6
 # Extract the name of the parent directory of $org1FASTA
 org1FullName=$(basename $(dirname $org1FASTA))
 org2FullName=$(basename $(dirname $org2FASTA))
@@ -98,47 +99,55 @@ org2_maflinked_errprb_out_oriCount=$(get_config '.patterns.graph_maflinked_errpr
 org3_maflinked_errprb_out_oriCount=$(get_config '.patterns.graph_maflinked_errprb.ori' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 
-if [ ! -d $outDirPath ]; then
+if [ ! -d "$outDirPath" ]; then
 	echo "---making $outDirPath"
-	mkdir $outDirPath
+	mkdir "$outDirPath"
 fi
-cd $outDirPath
+cd "$outDirPath"
 echo "pwd: $(pwd)"
 
 # GC content
 echo "$(get_config '.messages.gc_content')"
-if [ ! -e $gcContent_org2 ]; then
+if [ ! -e "$gcContent_org2" ]; then
 	echo "time bash $(get_config '.paths.scripts.last')/gc_content.sh $org2FASTA >$gcContent_org2"
-	time bash $(get_config '.paths.scripts.last')/gc_content.sh $org2FASTA >$gcContent_org2
+	time bash $(get_config '.paths.scripts.last')/gc_content.sh "$org2FASTA" >"$gcContent_org2"
 else
 	echo "$gcContent_org2 already exists"
 fi
-if [ ! -e $gcContent_org3 ]; then
+if [ ! -e "$gcContent_org3" ]; then
 	echo "time bash $(get_config '.paths.scripts.last')/gc_content.sh $org3FASTA >$gcContent_org3"
-	time bash $(get_config '.paths.scripts.last')/gc_content.sh $org3FASTA >$gcContent_org3
+	time bash $(get_config '.paths.scripts.last')/gc_content.sh "$org3FASTA" >"$gcContent_org3"
 else
 	echo "$gcContent_org3 already exists"
+fi
+
+# Check if checkInnerGroupIdt option was specified
+if [ "$checkInnerGroupIdt" = "true" ]; then
+    echo "$(get_config '.options.checkInnerGroupIdt.enabled_message')"
+	# last-train to check substitution percent identity between org2 and org3 (inner group)
+	time bash $(get_config '.paths.scripts.last')/last-train.sh "$DATE" "$outDirPath" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
+    echo "$(get_config '.options.checkInnerGroupIdt.completed_message')"
 fi
 
 # one2one for org1-org2
 echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g")"
 echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $dbName $train12 $m2o12 $o2o12 $o2o12_maflinked"
-bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $dbName $train12 $m2o12 $o2o12 $o2o12_maflinked
+bash $(get_config '.paths.scripts.last')/one2one.sh "$DATE" "$outDirPath" "$org1FASTA" "$org2FASTA" "$dbName" "$train12" "$m2o12" "$o2o12" "$o2o12_maflinked"
 
 # one2one for org1-org3
 echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g")"
 echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $dbName $train13 $m2o13 $o2o13 $o2o13_maflinked"
-bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $dbName $train13 $m2o13 $o2o13 $o2o13_maflinked
+bash $(get_config '.paths.scripts.last')/one2one.sh "$DATE" "$outDirPath" "$org1FASTA" "$org3FASTA" "$dbName" "$train13" "$m2o13" "$o2o13" "$o2o13_maflinked"
 
 # maf-join the two .maf files (without maf-linked)
 echo "$(get_config '.messages.maf_join')"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12 $o2o13 $joinedFile"
-bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12 $o2o13 $joinedFile
+bash $(get_config '.paths.scripts.last')/mafjoin.sh "$o2o12" "$o2o13" "$joinedFile"
 
 # maf-join the two .maf files (with maf-linked)
 echo "$(get_config '.messages.maf_join') with maf-linked"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked"
-bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked
+bash $(get_config '.paths.scripts.last')/mafjoin.sh "$o2o12_maflinked" "$o2o13_maflinked" "$joinedFile_maflinked"
 
 # If there is a gff file of org1, generate .tsv file and .bed file
 # and count the number of substitutions in coding and non-coding regions
