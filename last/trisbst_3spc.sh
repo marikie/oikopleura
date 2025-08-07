@@ -45,6 +45,8 @@ outDirPath="$(get_config '.paths.out_dir')/""$org1ShortName""_""$org2ShortName""
 gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 gcContent_org3=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
+sbstRatio=$(get_config '.patterns.sbst_ratio' | sed "s/{date}/$DATE/g")
+
 dbName="$org1ShortName""db_$DATE"
 m2o12=$(get_config '.patterns.many2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 m2o13=$(get_config '.patterns.many2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
@@ -121,6 +123,14 @@ else
 	echo "$gcContent_org3 already exists"
 fi
 
+# Calculate the substitution ratio without considering neighboring bases
+echo "$(get_config '.messages.sbst_ratio')"
+if [ ! -e "$sbstRatio" ]; then
+	echo "time python $(get_config '.paths.scripts.analysis')/subRatio.py $joinedFile >$sbstRatio"
+	time python $(get_config '.paths.scripts.analysis')/subRatio.py "$joinedFile" >"$sbstRatio"
+else
+	echo "$sbstRatio already exists"
+	
 # Check if checkInnerGroupIdt option was specified
 if [ "$checkInnerGroupIdt" = "true" ]; then
     echo "$(get_config '.options.checkInnerGroupIdt.enabled_message')"

@@ -43,6 +43,7 @@ options:
 # File patterns and suffixes
 patterns:
   gc_content: "{org_short}_gcContent_{date}.out"
+  sbst_ratio: "sbstRatio_{date}.out"
   many2one: "{org1_short}2{org2_short}_many2one_{date}.maf"
   one2one: "{org1_short}2{org2_short}_one2one_{date}.maf"
   train: "{org1_short}2{org2_short}_{date}.train"
