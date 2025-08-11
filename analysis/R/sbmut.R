@@ -153,32 +153,32 @@ add_labels <- function(trinuc.lab, bar_positions) {
 
 add_axis_names <- function(graph_type) {
   if (graph_type == "norm") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#Sbst/#OrigTrinucs (%)", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#Sbst/#AncTrinucs (%)", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "sbst") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "# Substitutions", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#Substitutions", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "ori") {
     mtext(family = "os", "Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "# Original Trinucleotides", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "#Trinucleotides", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "cds") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInCDS/#OrigTrinucsInCDS (%)", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#SbstInCDS/#AncTrinucsInCDS (%)", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "noncds") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInNonCDS/#OrigInNonCDS (%)", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#SbstInNoncds/#AncInNoncds (%)", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "sbstcds") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
     mtext(family = "os", "#SbstInCDS", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "sbstnoncds") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInNonCDS", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#SbstInNoncds", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "oricds") {
-    mtext(family = "os", "Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#OrigInCDS", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#AncInCDS", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "orinoncds") {
     mtext(family = "os", "Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#OrigInNonCDS", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "#AncInNoncds", side = 2, line = 0.5, cex = 2.5)
   }
 }
 
