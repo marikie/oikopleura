@@ -1,33 +1,33 @@
 #!/bin/bash
 
-config_file="/home/mrk/scripts/last/dwl_config.yaml"
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+config_file="$SCRIPT_DIR/dwl_config.yaml"
 # Load YAML configuration using yq
 if [ ! -f "$config_file" ]; then
     echo "Configuration file not found!" 1>&2
     exit 1
 fi
-
 # Function to get config values using yq
 get_config() {
     yq eval "$1" "$config_file"
 }
 
-# Get required arguments count from config
-argNum=$(get_config '.settings.required_args')
-if [ $# -ne $argNum ]; then
-    echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$argNum/g")" 1>&2
-    echo "$(get_config '.errors.usage')" 1>&2
+# Parse positional arguments
+DATE="$1"
+org1ID="$2"
+org2ID="$3"
+org3ID="$4"
+org1FullName="$5"
+org2FullName="$6"
+org3FullName="$7"
+
+
+# Check if all required arguments are provided
+if [ -z "$DATE" ] || [ -z "$org1ID" ] || [ -z "$org2ID" ] || [ -z "$org3ID" ] || [ -z "$org1FullName" ] || [ -z "$org2FullName" ] || [ -z "$org3FullName" ]; then
+    echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$(get_config '.settings.required_args')/g")" >&2
+    echo "$(get_config '.errors.usage')" >&2
     exit 1
 fi
-
-DATE=$1
-org1ID=$2
-org2ID=$3
-org3ID=$4
-org1FullName=$5
-org2FullName=$6
-org3FullName=$7
 
 cd $(get_config '.paths.base_genomes')
 for orgFullName in $org1FullName $org2FullName $org3FullName; do
@@ -36,7 +36,6 @@ for orgFullName in $org1FullName $org2FullName $org3FullName; do
     fi
 done
 
-# download from NCBIdatase
 base_genomes=$(get_config '.paths.base_genomes')
 includes=$(get_config '.download.includes'|tr -d ' '|tr '\n' ','|sed 's/,$//')
 echo "includes: $includes"
@@ -142,13 +141,40 @@ done
 
 echo "All genome data processed successfully"
 
-org1FASTA="$(get_config '.paths.base_genomes')/$org1FullName/$(ls $(get_config '.paths.base_genomes')/$org1FullName | grep $org1ID)"
-org2FASTA="$(get_config '.paths.base_genomes')/$org2FullName/$(ls $(get_config '.paths.base_genomes')/$org2FullName | grep $org2ID)"
-org3FASTA="$(get_config '.paths.base_genomes')/$org3FullName/$(ls $(get_config '.paths.base_genomes')/$org3FullName | grep $org3ID)"
-echo "org1FASTA: $org1FASTA"
-echo "org2FASTA: $org2FASTA"
-echo "org3FASTA: $org3FASTA"
+fasta_pat1=$(get_config '.patterns.fasta' | sed "s/{org_id}/$org1ID/g")
+fasta_pat2=$(get_config '.patterns.fasta' | sed "s/{org_id}/$org2ID/g")
+fasta_pat3=$(get_config '.patterns.fasta' | sed "s/{org_id}/$org3ID/g")
 
-echo "Running trisbst_3spc.sh"
-echo "bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA"
-bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh $DATE $org1FASTA $org2FASTA $org3FASTA
+org1FASTA=$(compgen -G "$(get_config '.paths.base_genomes')/$org1FullName/$fasta_pat1" | head -n1)
+org2FASTA=$(compgen -G "$(get_config '.paths.base_genomes')/$org2FullName/$fasta_pat2" | head -n1)
+org3FASTA=$(compgen -G "$(get_config '.paths.base_genomes')/$org3FullName/$fasta_pat3" | head -n1)
+
+# Fallback to first *.fna if accession-specific pattern not found
+if [ -z "$org1FASTA" ]; then org1FASTA=$(compgen -G "$(get_config '.paths.base_genomes')/$org1FullName/*.fna" | head -n1); fi
+if [ -z "$org2FASTA" ]; then org2FASTA=$(compgen -G "$(get_config '.paths.base_genomes')/$org2FullName/*.fna" | head -n1); fi
+if [ -z "$org3FASTA" ]; then org3FASTA=$(compgen -G "$(get_config '.paths.base_genomes')/$org3FullName/*.fna" | head -n1); fi
+
+echo "org1FASTA: ${org1FASTA:-NOT_FOUND}"
+echo "org2FASTA: ${org2FASTA:-NOT_FOUND}"
+echo "org3FASTA: ${org3FASTA:-NOT_FOUND}"
+
+for f in "$org1FASTA" "$org2FASTA" "$org3FASTA"; do
+    if [ -z "$f" ]; then
+        echo "Error: Could not determine FASTA file path(s). Please ensure .fna files exist in the respective genome directories." >&2
+        exit 1
+    fi
+done
+
+# Check if GFF file exists in org1 (auto-detect)
+gffFilePath="$(get_config '.paths.base_genomes')/$org1FullName/genomic.gff"
+
+if [ -e "$gffFilePath" ]; then
+    org1GFF="$gffFilePath" # set $org1GFF as the path to the gff file
+    echo "GFF file found: $org1GFF"
+else
+    org1GFF="NO_GFF_FILE" # set a special flag to $org1GFF
+    echo "No GFF file found for $org1FullName. Please download the GFF file manually."
+fi
+
+# Run downstream pipeline (no checkInnerGroupIdt argument anymore)
+bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh "$DATE" "$org1FASTA" "$org2FASTA" "$org3FASTA" "$org1GFF"

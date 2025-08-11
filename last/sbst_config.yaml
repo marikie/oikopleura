@@ -7,10 +7,44 @@ paths:
     analysis: "/home/mrk/scripts/analysis"
     r: "/home/mrk/scripts/analysis/R"
 
+# Script settings
+settings:
+  required_args: 5
+  normalize_graphs: 0
+
+# Messages
+messages:
+  gc_content: "--- calculating GC content"
+  one2one: "--- running one2one for {org1_short}-{org2_short}"
+  maf_join: "--- maf-join the two .maf files"
+  make_dir: "--- making {dir_path}"
+  file_exists: "{file_name} already exists"
+  dinuc_tsv: "--- generating dinuc .tsv files"
+
+# Error messages
+errors:
+  arg_count: "You need {arg_num} arguments"
+  usage: |
+    You'll get one-to-one alignments of org1-org2 and org1-org3.
+    The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
+    - today's date
+    - path to the org1 reference fasta file << outgroup >>
+    - path to the org2 reference fasta file
+    - path to the org3 reference fasta file
+    - path to the org1 reference gff file (if there is no gff file, set it to NO_GFF_FILE)
+
+# Options
+options:
+  checkInnerGroupIdt:
+    description: "Run inner group substitution percent identity check"
+    enabled_message: "Running inner group substitution percent identity check..."
+    completed_message: "Inner group substitution percent identity check completed"
 
 # File patterns and suffixes
 patterns:
   gc_content: "{org_short}_gcContent_{date}.out"
+  sbst_ratio: "sbstRatio_{date}.out"
+  sbst_ratio_maflinked: "sbstRatio_{date}_maflinked.out"
   many2one: "{org1_short}2{org2_short}_many2one_{date}.maf"
   one2one: "{org1_short}2{org2_short}_one2one_{date}.maf"
   train: "{org1_short}2{org2_short}_{date}.train"
@@ -21,7 +55,11 @@ patterns:
   tsv_maflinked: "{org_short}_{date}_maflinked.tsv"
   tsv_errprb: "{org_short}_{date}_errprb.tsv"
   tsv_maflinked_errprb: "{org_short}_{date}_maflinked_errprb.tsv"
-  cds_gff: "{org_full}_cds.gff"
+  dinuc_tsv: "{org_short}_{date}_dinuc.tsv"
+  dinuc_maflinked_tsv: "{org_short}_{date}_maflinked_dinuc.tsv"
+  bed: "{org_short}_{date}.bed"
+  bed_maflinked: "{org_short}_{date}_maflinked.bed"
+
   graph:
     out: "{org_short}_{date}.out"
     sbst: "{org_short}_{date}_sbstCount.out"
@@ -38,28 +76,3 @@ patterns:
     out: "{org_short}_{date}_maflinked_errprb.out"
     sbst: "{org_short}_{date}_maflinked_errprb_sbstCount.out"
     ori: "{org_short}_{date}_maflinked_errprb_oriCount.out"
-
-
-# Messages
-messages:
-  gc_content: "--- calculating GC content"
-  one2one: "--- running one2one for {org1_short}-{org2_short}"
-  maf_join: "--- maf-join the two .maf files"
-  make_dir: "--- making {dir_path}"
-  file_exists: "{file_name} already exists"
-
-# Error messages
-errors:
-  arg_count: "You need {arg_num} arguments"
-  usage: |
-    You'll get one-to-one alignments of org1-org2 and org1-org3.
-    The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
-    - today's date
-    - path to the org1 reference fasta file (outgroup)
-    - path to the org2 reference fasta file
-    - path to the org3 reference fasta file
-
-# Script settings
-settings:
-  required_args: 4
-  normalize_graphs: 0

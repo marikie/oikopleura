@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Modified by: Martin C. Frith
+# Written by: Martin C. Frith
 
 """
 Input:
@@ -18,6 +18,7 @@ Output:
 import argparse
 import collections
 import csv
+import itertools
 import os
 from Util import getJoinedAlignmentObj
 
@@ -29,22 +30,39 @@ from Util import getJoinedAlignmentObj
 
 revDict = {"A": "T", "T": "A", "C": "G", "G": "C"}
 
+# We don't want to count any original doublet separately from its
+# reverse complement.  So use the reverse-complement of these (arbitrary?) ones
+reversedOriginalDoublets = "AA GT AG CA GG GA"
+
 
 def initialize_mut_dict():
     """
-    key: mutType (e.g. ACGA which means ACG -> AAG)
+    key: mutType (e.g. ACGA which means AC -> GA)
     value: 0
     """
     mutDict = {}
-    letters = "ACGT"
-    midLetters = "CT"
-    for i in letters:
-        for j in midLetters:
-            for k in letters:
-                for l in letters:
-                    if l != j:
-                        mutType = i + j + k + l
-                        mutDict[mutType] = 0
+
+    for x, y, b, c in itertools.product("ACGT", repeat=4):
+        originalDoublet = x + y
+        mutatedDoublet = b + c
+        # require both bases to be different:
+        if x == b or y == c:
+            continue
+        # arbitrarily(?) exclude cases whose reverse-complement is included:
+        if (
+            originalDoublet in reversedOriginalDoublets
+            or originalDoublet == "AT"
+            and mutatedDoublet in "GG TC TG"
+            or originalDoublet == "CG"
+            and mutatedDoublet in "AA AC GA"
+            or originalDoublet == "GC"
+            and mutatedDoublet in "CT TG TT"
+            or originalDoublet == "TA"
+            and mutatedDoublet in "AC AG CC"
+        ):
+            continue
+        mutType = originalDoublet + mutatedDoublet
+        mutDict[mutType] = 0
     return mutDict
 
 
@@ -52,16 +70,13 @@ def write_output_file(outputFilePath, mutDict, totDict):
     with open(outputFilePath, "w") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
         writer.writerow(["mutType", "mutNum", "totalRootNum"])
-        mutTypeList = sorted(
-            list(mutDict.keys()), key=lambda x: (x[1], x[3], x[0], x[2])
-        )
-        for mutType in mutTypeList:
-            originalTriplet = mutType[0:3]
+        for mutType in sorted(mutDict):
+            originalDoublet = mutType[0:2]
             writer.writerow(
                 [
-                    mutType[0] + "[" + mutType[1] + ">" + mutType[3] + "]" + mutType[2],
+                    originalDoublet + ">" + mutType[2:4],
                     mutDict[mutType],
-                    totDict[originalTriplet],
+                    totDict[originalDoublet],
                 ]
             )
 
@@ -69,20 +84,20 @@ def write_output_file(outputFilePath, mutDict, totDict):
 def mutDictFromCounts(counts):
     mutDict = initialize_mut_dict()
     for key, count in counts.items():
-        x, y, z, b = key
-        if y == "A" or y == "G":
-            key = revDict[z] + revDict[y] + revDict[x] + revDict[b]
+        if key not in mutDict:
+            x, y, b, c = key
+            key = revDict[y] + revDict[x] + revDict[c] + revDict[b]
         mutDict[key] += count
     return mutDict
 
 
 def totDictFromCounts(counts):
     totDict = collections.Counter()
-    for triplet, count in counts.items():
-        x, y, z = triplet
-        if y == "A" or y == "G":
-            triplet = revDict[z] + revDict[y] + revDict[x]
-        totDict[triplet] += count
+    for doublet, count in counts.items():
+        if doublet in reversedOriginalDoublets:
+            x, y = doublet
+            doublet = revDict[y] + revDict[x]
+        totDict[doublet] += count
     return totDict
 
 
@@ -90,7 +105,7 @@ def totDictFromCounts(counts):
 # main procedures
 ###################
 def main(alnFileHandle, outputFilePath2, outputFilePath3):
-    originalTripletCounts = collections.Counter()
+    originalDoubletCounts = collections.Counter()
     mutCounts2 = collections.Counter()
     mutCounts3 = collections.Counter()
 
@@ -103,26 +118,40 @@ def main(alnFileHandle, outputFilePath2, outputFilePath3):
             and len(gSeq1) == len(gSeq3)
             and len(gSeq2) == len(gSeq3)
         ), "gSeq1, gSeq2, and gSeq3 should have the same length"
-        for i in range(len(gSeq1) - 2):
-            x, y, z = gSeq1[i : i + 3]
-            a, b, c = gSeq2[i : i + 3]
-            d, e, f = gSeq3[i : i + 3]
-            # if both edge bases same, and outgroup middle base not unique:
-            if x == a and x == d and z == c and z == f and (y == b or y == e):
-                # skip cases with gaps or any other non-ACGT symbols:
-                if x in "ACGT" and z in "ACGT" and b in "ACGT" and e in "ACGT":
-                    originalTriplet = x + y + z
-                    originalTripletCounts[originalTriplet] += 1
-                    if b != y:
-                        mutCounts2[originalTriplet + b] += 1
-                    if e != y:
-                        mutCounts3[originalTriplet + e] += 1
+        for i in range(len(gSeq1) - 3):
+            # Maybe we could ignore edge bases, but this code checks
+            # they're the same, which might avoid unreliable alignment(?)
+            w, x, y, z = gSeq1[i : i + 4]
+            a, b, c, d = gSeq2[i : i + 4]
+            e, f, g, h = gSeq3[i : i + 4]
+            # if both edge bases same
+            # and outgroup middle bases not unique
+            # and there are no gaps or non-ACGT symbols:
+            if (
+                w == a
+                and w == e
+                and z == d
+                and z == h
+                and (x + y == b + c or x + y == f + g)
+                and w in "ACGT"
+                and z in "ACGT"
+                and b in "ACGT"
+                and c in "ACGT"
+                and f in "ACGT"
+                and g in "ACGT"
+            ):
+                originalDoublet = x + y
+                originalDoubletCounts[originalDoublet] += 1
+                if b != x and c != y:
+                    mutCounts2[originalDoublet + b + c] += 1
+                if f != x and g != y:
+                    mutCounts3[originalDoublet + f + g] += 1
 
     alnFileHandle.close()
 
     mutDict2 = mutDictFromCounts(mutCounts2)
     mutDict3 = mutDictFromCounts(mutCounts3)
-    totDict = totDictFromCounts(originalTripletCounts)
+    totDict = totDictFromCounts(originalDoubletCounts)
 
     write_output_file(outputFilePath2, mutDict2, totDict)
     write_output_file(outputFilePath3, mutDict3, totDict)
@@ -141,11 +170,11 @@ def get_default_output_file_names(joinedAlnFile):
     org3 = filename_parts[2]
     rest = "_".join(filename_parts[3:])
     if rest == "":
-        outFile2 = f"{org2}.tsv"
-        outFile3 = f"{org3}.tsv"
+        outFile2 = f"{org2}_dinuc.tsv"
+        outFile3 = f"{org3}_dinuc.tsv"
     else:
-        outFile2 = f"{org2}_{rest}.tsv"
-        outFile3 = f"{org3}_{rest}.tsv"
+        outFile2 = f"{org2}_{rest}_dinuc.tsv"
+        outFile3 = f"{org3}_{rest}_dinuc.tsv"
     outputFilePath2 = os.path.join(path_before_filename, outFile2)
     outputFilePath3 = os.path.join(path_before_filename, outFile3)
     return outputFilePath2, outputFilePath3
