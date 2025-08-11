@@ -9,7 +9,7 @@ paths:
 
 # Script settings
 settings:
-  required_args: 6
+  required_args: 5
   normalize_graphs: 0
 
 # Messages
@@ -19,6 +19,7 @@ messages:
   maf_join: "--- maf-join the two .maf files"
   make_dir: "--- making {dir_path}"
   file_exists: "{file_name} already exists"
+  dinuc_tsv: "--- generating dinuc .tsv files"
 
 # Error messages
 errors:
@@ -30,7 +31,6 @@ errors:
     - path to the org1 reference fasta file << outgroup >>
     - path to the org2 reference fasta file
     - path to the org3 reference fasta file
-    - checkInnerGroupIdt option (true/false)
     - path to the org1 reference gff file (if there is no gff file, set it to NO_GFF_FILE)
 
 # Options
@@ -54,6 +54,8 @@ patterns:
   tsv_maflinked: "{org_short}_{date}_maflinked.tsv"
   tsv_errprb: "{org_short}_{date}_errprb.tsv"
   tsv_maflinked_errprb: "{org_short}_{date}_maflinked_errprb.tsv"
+  dinuc_tsv: "{org_short}_{date}_dinuc.tsv"
+  dinuc_maflinked_tsv: "{org_short}_{date}_maflinked_dinuc.tsv"
   bed: "{org_short}_{date}.bed"
   bed_maflinked: "{org_short}_{date}_maflinked.bed"
 

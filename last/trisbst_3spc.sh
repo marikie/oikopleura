@@ -2,7 +2,9 @@
 
 lastal --version
 
-config_file="/home/mrk/scripts/last/sbst_config.yaml"
+# Resolve config path relative to this script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+config_file="$SCRIPT_DIR/sbst_config.yaml"
 
 # Load YAML configuration using yq
 if [ ! -f $config_file ]; then
@@ -17,7 +19,7 @@ get_config() {
 
 # Get required arguments count from config
 argNum=$(get_config '.settings.required_args')
-if [ $# -ne $argNum ]; then
+if [ $# -ne "$argNum" ]; then
     echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$argNum/g")" 1>&2
     echo "$(get_config '.errors.usage')" 1>&2
     exit 1
@@ -27,8 +29,8 @@ DATE=$1
 org1FASTA=$2
 org2FASTA=$3
 org3FASTA=$4
-checkInnerGroupIdt=$5
-org1GFF=$6
+org1GFF=$5
+
 # Extract the name of the parent directory of $org1FASTA
 org1FullName=$(basename $(dirname $org1FASTA))
 org2FullName=$(basename $(dirname $org2FASTA))
@@ -70,6 +72,11 @@ org3tsv_errprb=$(get_config '.patterns.tsv_errprb' | sed "s/{org_short}/$org3Sho
 org2tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3tsv_maflinked_errprb=$(get_config '.patterns.tsv_maflinked_errprb' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
+org2_dinuc_tsv=$(get_config '.patterns.dinuc_tsv' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_dinuc_tsv=$(get_config '.patterns.dinuc_tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_dinuc_tsv_maflinked=$(get_config '.patterns.dinuc_maflinked_tsv' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_dinuc_tsv_maflinked=$(get_config '.patterns.dinuc_maflinked_tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
 org2bed=$(get_config '.patterns.bed' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3bed=$(get_config '.patterns.bed' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2bed_maflinked=$(get_config '.patterns.bed_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
@@ -106,6 +113,12 @@ if [ ! -d "$outDirPath" ]; then
 	mkdir "$outDirPath"
 fi
 cd "$outDirPath"
+if [ ! -d "$DATE" ]; then
+	echo "---making $DATE"
+	mkdir "$DATE"
+fi
+cd "$DATE"
+outDirPath=$(pwd)
 echo "pwd: $(pwd)"
 
 # GC content
@@ -129,15 +142,13 @@ if [ ! -e "$sbstRatio" ]; then
 	echo "time python $(get_config '.paths.scripts.analysis')/subRatio.py $joinedFile >$sbstRatio"
 	time python $(get_config '.paths.scripts.analysis')/subRatio.py "$joinedFile" >"$sbstRatio"
 else
-	echo "$sbstRatio already exists"
-	
-# Check if checkInnerGroupIdt option was specified
-if [ "$checkInnerGroupIdt" = "true" ]; then
-    echo "$(get_config '.options.checkInnerGroupIdt.enabled_message')"
-	# last-train to check substitution percent identity between org2 and org3 (inner group)
-	time bash $(get_config '.paths.scripts.last')/last-train.sh "$DATE" "$outDirPath" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
-    echo "$(get_config '.options.checkInnerGroupIdt.completed_message')"
+    echo "$sbstRatio already exists"
 fi
+
+# Run last-train to check substitution percent identity between org2 and org3 (inner group)
+echo "$(get_config '.options.checkInnerGroupIdt.enabled_message')"
+time bash $(get_config '.paths.scripts.last')/last-train.sh "$DATE" "$outDirPath" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
+echo "$(get_config '.options.checkInnerGroupIdt.completed_message')"
 
 # one2one for org1-org2
 echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g")"
@@ -159,9 +170,19 @@ echo "$(get_config '.messages.maf_join') with maf-linked"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked"
 bash $(get_config '.paths.scripts.last')/mafjoin.sh "$o2o12_maflinked" "$o2o13_maflinked" "$joinedFile_maflinked"
 
+# Generate dinuc .tsv files
+echo "$(get_config '.messages.dinuc_tsv')"
+echo "time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py $joinedFile -o2 $org2_dinuc_tsv -o3 $org3_dinuc_tsv"
+time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py "$joinedFile" -o2 "$org2_dinuc_tsv" -o3 "$org3_dinuc_tsv"
+
+# Generate dinuc .tsv files (with maf-linked)
+echo "$(get_config '.messages.dinuc_tsv') with maf-linked"
+echo "time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py $joinedFile_maflinked -o2 $org2_dinuc_tsv_maflinked -o3 $org3_dinuc_tsv_maflinked"
+time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py "$joinedFile_maflinked" -o2 "$org2_dinuc_tsv_maflinked" -o3 "$org3_dinuc_tsv_maflinked"
+
 # If there is a gff file of org1, generate .tsv file and .bed file
 # and count the number of substitutions in coding and non-coding regions
-if [ $org1GFF -ne "NO_GFF_FILE" ]; then
+if [ "$org1GFF" != "NO_GFF_FILE" ]; then
 	echo "There is a gff file of org1"
 	echo "Making .tsv and .bed files"
 	bash $(get_config '.paths.scripts.last')/generate_tsv_bed_files.sh \
