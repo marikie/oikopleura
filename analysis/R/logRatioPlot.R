@@ -64,17 +64,25 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
   # Header rectangles like sbmut.R's add_colored_rectangles
   color_array <- RColorBrewer::brewer.pal(6, "Dark2")
   fill_map <- setNames(color_array, group_order)
+  # Line colors: use Dark2 7th and 8th colors
+  line_palette <- RColorBrewer::brewer.pal(8, "Dark2")
+  line_base_col_a <- line_palette[7] # for y=0 and mean
+  line_base_col_b <- line_palette[8] # for ±SD and ±2SD
+  line_col_0 <- grDevices::adjustcolor(line_base_col_b, alpha.f = 1.00)
+  line_col_mean <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
+  line_col_sd <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
+  line_col_2sd <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
 
   yr <- range(data[[value_col]], na.rm = TRUE)
   y_span <- diff(yr)
   if (!is.finite(y_span) || y_span == 0) y_span <- 1
-  yrect_low <- yr[2] + 0.20 * y_span
-  yrect_high <- yr[2] + 0.22 * y_span
+  yrect_low <- yr[2] + 0.16 * y_span
+  yrect_high <- yr[2] + 0.20 * y_span
   y_text <- yr[2] + 0.24 * y_span
   # Custom x labels positions (moved further down)
-  y_label3 <- yr[1] - 0.08 * y_span
-  y_label2 <- yr[1] - 0.12 * y_span
-  y_label1 <- yr[1] - 0.16 * y_span
+  y_label3 <- yr[1] - 0.10 * y_span
+  y_label2 <- yr[1] - 0.14 * y_span
+  y_label1 <- yr[1] - 0.18 * y_span
 
   gdf <- data %>%
     group_by(trans) %>%
@@ -103,62 +111,65 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
       inherit.aes = FALSE, show.legend = FALSE
     ) +
     scale_fill_manual(values = fill_map, guide = "none") +
-    annotate("text", x = gdf$xmid, y = y_text, label = gdf$label, size = 5, family = "os") +
+    # Make the header labels bold by setting fontface = "bold"
+    annotate("text", x = gdf$xmid, y = y_text, label = gdf$label, size = 10, family = "os", fontface = "bold") +
     geom_segment(
       data = data,
       aes(x = pos, xend = pos, y = mean_val, yend = !!value_sym, color = trans),
       inherit.aes = FALSE,
-      linewidth = 0.4, alpha = 0.8, show.legend = FALSE
+      linewidth = 0.6, alpha = 0.8, show.legend = FALSE
     ) +
     scale_color_manual(values = fill_map, guide = "none") +
-    geom_point(size = 2, aes(color = trans), show.legend = FALSE) +
+    geom_point(size = 4, aes(color = trans), show.legend = FALSE) +
     # Custom x labels: outer letters in black, middle letter in group color
     geom_text(
       data = labels_df, aes(x = pos, y = y_label3, label = c3),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = "black"
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = "black"
     ) +
     geom_text(
       data = labels_df, aes(x = pos, y = y_label1, label = c1),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = "black"
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = "black"
     ) +
     geom_text(
       data = subset(labels_df, trans == "C>A"), aes(x = pos, y = y_label2, label = c2),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = fill_map["C>A"]
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["C>A"]
     ) +
     geom_text(
       data = subset(labels_df, trans == "C>G"), aes(x = pos, y = y_label2, label = c2),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = fill_map["C>G"]
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["C>G"]
     ) +
     geom_text(
       data = subset(labels_df, trans == "C>T"), aes(x = pos, y = y_label2, label = c2),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = fill_map["C>T"]
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["C>T"]
     ) +
     geom_text(
       data = subset(labels_df, trans == "T>A"), aes(x = pos, y = y_label2, label = c2),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = fill_map["T>A"]
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["T>A"]
     ) +
     geom_text(
       data = subset(labels_df, trans == "T>C"), aes(x = pos, y = y_label2, label = c2),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = fill_map["T>C"]
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["T>C"]
     ) +
     geom_text(
       data = subset(labels_df, trans == "T>G"), aes(x = pos, y = y_label2, label = c2),
-      inherit.aes = FALSE, angle = 90, size = 5, family = "mn", color = fill_map["T>G"]
+      inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["T>G"]
     ) +
-    geom_hline(yintercept = 0, linetype = "dotted", color = "grey") +
-    geom_hline(yintercept = mean_val, linetype = "solid", color = "blue", linewidth = 0.6) +
-    geom_hline(yintercept = mean_val + sd_val, linetype = "dashed", color = "green4") +
-    geom_hline(yintercept = mean_val - sd_val, linetype = "dashed", color = "green4") +
-    geom_hline(yintercept = mean_val + 2 * sd_val, linetype = "dashed", color = "red") +
-    geom_hline(yintercept = mean_val - 2 * sd_val, linetype = "dashed", color = "red") +
+    geom_hline(yintercept = 0, linetype = "dotted", color = line_col_0) +
+    geom_hline(yintercept = mean_val, linetype = "solid", color = line_col_mean, linewidth = 0.8) +
+    geom_hline(yintercept = mean_val + sd_val, linetype = "dashed", color = line_col_sd) +
+    geom_hline(yintercept = mean_val - sd_val, linetype = "dashed", color = line_col_sd) +
+    geom_hline(yintercept = mean_val + 2 * sd_val, linetype = "dashed", color = line_col_2sd) +
+    geom_hline(yintercept = mean_val - 2 * sd_val, linetype = "dashed", color = line_col_2sd) +
     scale_x_continuous(breaks = x_breaks, labels = x_labels, expand = c(0, 0), minor_breaks = NULL) +
-    labs(x = "Original Trinucleotides", y = "Log2{(#Observed sbst/#Observed ori) / (sum of all sbst/sum of all ori)}") +
+    labs(x = "Ancestral Trinucleotides", y = "Log2{(#Observed sbst/#Observed ans)\n/ (sum of all sbst/sum of all ans)}") +
     theme_minimal(base_size = 12) +
     ggplot2::theme(
       axis.text.x = element_blank(),
-      axis.title.x = element_text(size = 18, margin = margin(t = 40), family = "os"),
-      axis.title.y = element_text(size = 14),
-      panel.grid.minor.x = element_blank()
+      axis.title.x = element_text(size = 26, margin = margin(t = 60), family = "os"),
+      axis.title.y = element_text(size = 26, margin = margin(r = 10), family = "os"),
+      axis.text.y = element_text(size = 22, margin = margin(r = 8)),
+      panel.grid.minor.x = element_blank(),
+      plot.margin = margin(t = 12, r = 12, b = 12, l = 20)
     ) +
     coord_cartesian(ylim = c(yr[1], y_text), clip = "off")
 
