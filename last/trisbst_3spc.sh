@@ -48,6 +48,7 @@ gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2Sho
 gcContent_org3=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 sbstRatio=$(get_config '.patterns.sbst_ratio' | sed "s/{date}/$DATE/g")
+sbstRatio_maflinked=$(get_config '.patterns.sbst_ratio_maflinked' | sed "s/{date}/$DATE/g")
 
 dbName="$org1ShortName""db_$DATE"
 m2o12=$(get_config '.patterns.many2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
@@ -136,19 +137,10 @@ else
 	echo "$gcContent_org3 already exists"
 fi
 
-# Calculate the substitution ratio without considering neighboring bases
-echo "$(get_config '.messages.sbst_ratio')"
-if [ ! -e "$sbstRatio" ]; then
-	echo "time python $(get_config '.paths.scripts.analysis')/subRatio.py $joinedFile >$sbstRatio"
-	time python $(get_config '.paths.scripts.analysis')/subRatio.py "$joinedFile" >"$sbstRatio"
-else
-    echo "$sbstRatio already exists"
-fi
 
 # Run last-train to check substitution percent identity between org2 and org3 (inner group)
 echo "$(get_config '.options.checkInnerGroupIdt.enabled_message')"
-time bash $(get_config '.paths.scripts.last')/last-train.sh "$DATE" "$outDirPath" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
-echo "$(get_config '.options.checkInnerGroupIdt.completed_message')"
+time bash $(get_config '.paths.scripts.last')/last_train.sh "$DATE" "$outDirPath" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
 
 # one2one for org1-org2
 echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g")"
@@ -170,15 +162,41 @@ echo "$(get_config '.messages.maf_join') with maf-linked"
 echo "bash $(get_config '.paths.scripts.last')/mafjoin.sh $o2o12_maflinked $o2o13_maflinked $joinedFile_maflinked"
 bash $(get_config '.paths.scripts.last')/mafjoin.sh "$o2o12_maflinked" "$o2o13_maflinked" "$joinedFile_maflinked"
 
+# Calculate the substitution ratio without considering neighboring bases
+echo "$(get_config '.messages.sbst_ratio')"
+if [ ! -e "$sbstRatio" ]; then
+	echo "time python $(get_config '.paths.scripts.analysis')/subRatio.py $joinedFile >$sbstRatio"
+	time python $(get_config '.paths.scripts.analysis')/subRatio.py "$joinedFile" >"$sbstRatio"
+else
+    echo "$sbstRatio already exists"
+fi
+
+# Calculate the substitution ratio without considering neighboring bases for maf-linked
+echo "$(get_config '.messages.sbst_ratio') with maf-linked"
+if [ ! -e "$sbstRatio_maflinked" ]; then
+	echo "time python $(get_config '.paths.scripts.analysis')/subRatio.py $joinedFile_maflinked >$sbstRatio_maflinked"
+	time python $(get_config '.paths.scripts.analysis')/subRatio.py "$joinedFile_maflinked" >"$sbstRatio_maflinked"
+else
+    echo "$sbstRatio_maflinked already exists"
+fi
+
 # Generate dinuc .tsv files
-echo "$(get_config '.messages.dinuc_tsv')"
-echo "time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py $joinedFile -o2 $org2_dinuc_tsv -o3 $org3_dinuc_tsv"
-time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py "$joinedFile" -o2 "$org2_dinuc_tsv" -o3 "$org3_dinuc_tsv"
+if [ ! -e "$org2_dinuc_tsv" ] || [ ! -e "$org3_dinuc_tsv" ]; then
+	echo "$(get_config '.messages.dinuc_tsv')"
+	echo "time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py $joinedFile -o2 $org2_dinuc_tsv -o3 $org3_dinuc_tsv"
+	time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py "$joinedFile" -o2 "$org2_dinuc_tsv" -o3 "$org3_dinuc_tsv"
+else
+	echo "$org2_dinuc_tsv and $org3_dinuc_tsv already exists"
+fi
 
 # Generate dinuc .tsv files (with maf-linked)
-echo "$(get_config '.messages.dinuc_tsv') with maf-linked"
-echo "time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py $joinedFile_maflinked -o2 $org2_dinuc_tsv_maflinked -o3 $org3_dinuc_tsv_maflinked"
-time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py "$joinedFile_maflinked" -o2 "$org2_dinuc_tsv_maflinked" -o3 "$org3_dinuc_tsv_maflinked"
+if [ ! -e "$org2_dinuc_tsv_maflinked" ] || [ ! -e "$org3_dinuc_tsv_maflinked" ]; then
+	echo "$(get_config '.messages.dinuc_tsv') with maf-linked"
+	echo "time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py $joinedFile_maflinked -o2 $org2_dinuc_tsv_maflinked -o3 $org3_dinuc_tsv_maflinked"
+	time python $(get_config '.paths.scripts.analysis')/disbst_2TSVs.py "$joinedFile_maflinked" -o2 "$org2_dinuc_tsv_maflinked" -o3 "$org3_dinuc_tsv_maflinked"
+else
+	echo "$org2_dinuc_tsv_maflinked and $org3_dinuc_tsv_maflinked already exists"
+fi
 
 # If there is a gff file of org1, generate .tsv file and .bed file
 # and count the number of substitutions in coding and non-coding regions
@@ -186,6 +204,7 @@ if [ "$org1GFF" != "NO_GFF_FILE" ]; then
 	echo "There is a gff file of org1"
 	echo "Making .tsv and .bed files"
 	bash $(get_config '.paths.scripts.last')/generate_tsv_bed_files.sh \
+		"$(get_config '.paths.scripts.analysis')" \
 		"$joinedFile" \
 		"$org2tsv" \
 		"$org3tsv" \

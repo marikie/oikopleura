@@ -166,18 +166,14 @@ for f in "$org1FASTA" "$org2FASTA" "$org3FASTA"; do
 done
 
 # Check if GFF file exists in org1 (auto-detect)
-gffFilePath="$(get_config '.paths.base_genomes')/$org1FullName/*.gff*"
-gffFiles=($gffFilePath)
+gffFilePath="$(get_config '.paths.base_genomes')/$org1FullName/genomic.gff"
 
-if [ ${#gffFiles[@]} -eq 1 ]; then
-    org1GFF="${gffFiles[0]}" # set $org1GFF as the path to the gff file
+if [ -e "$gffFilePath" ]; then
+    org1GFF="$gffFilePath" # set $org1GFF as the path to the gff file
     echo "GFF file found: $org1GFF"
-elif [ ${#gffFiles[@]} -gt 1 ]; then
-    echo "Error: Multiple .gff files found for $org1FullName" >&2
-    exit 1
 else
     org1GFF="NO_GFF_FILE" # set a special flag to $org1GFF
-    echo "No GFF file found for $org1FullName"
+    echo "No GFF file found for $org1FullName. Please download the GFF file manually."
 fi
 
 # Run downstream pipeline (no checkInnerGroupIdt argument anymore)

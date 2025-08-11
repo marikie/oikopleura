@@ -22,6 +22,14 @@ count_coding_noncoding() {
 	bed_annot="${bed%.bed}_annot.bed"
 	tsv_tmp="${tsv%.tsv}_tmp.tsv"
 	tsv_annot="${tsv%.tsv}_annot.tsv"
+
+	if [ ! -e "$tsv_annot" ]; then
+		echo "Counting the number of substitutions in coding and non-coding regions for $tsv"
+	else
+		echo "$tsv_annot already exists. Skipping."
+		return 0
+	fi
+
 	awk -F"\t" '$3=="CDS"' $org1GFF > $org1GFF_CDS
 	bedtools intersect -c -header -a $bed -b $org1GFF_CDS | awk -F"\t" 'NR==1{$0=$0"\tcount"}1' > $bed_annot
 	# add the count of substitutions in the coding region and non-coding region to the tsv file
@@ -45,11 +53,9 @@ count_coding_noncoding() {
 }
 
 # Regular files
-echo "Counting the number of substitutions in coding and non-coding regions for regular files"
 count_coding_noncoding "$org1GFF" "$org2tsv" "$org2bed"
 count_coding_noncoding "$org1GFF" "$org3tsv" "$org3bed"
 
 # Maf-linked files
-echo "Counting the number of substitutions in coding and non-coding regions for maf-linked files"
 count_coding_noncoding "$org1GFF" "$org2tsv_maflinked" "$org2bed_maflinked"
 count_coding_noncoding "$org1GFF" "$org3tsv_maflinked" "$org3bed_maflinked"
