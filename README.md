@@ -36,6 +36,7 @@ We also applied two filtering strategies. The first omits isolated alignments us
 * jsonlite
 * curl
 * dplyr
+* ggplot2
 
 ### 2. Git Clone the Repository
 
