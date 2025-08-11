@@ -37,6 +37,8 @@ We also applied two filtering strategies. The first omits isolated alignments us
 * curl
 * dplyr
 * ggplot2
+* rlang
+* sysfonts
 
 ### 2. Git Clone the Repository
 
