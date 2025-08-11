@@ -80,18 +80,6 @@ paths:
     r: "/absolute/path/to/your/scripts/analysis/R" # Change this to your R directory under the scripts/analysis directory you cloned
 ```
 
-* In `scripts/last/trisbst_3spc_fromDwl.sh`, set the paths:
-
-```bash
-config_file="/absolute/path/to/your/scripts/last/dwl_config.yaml" # Change this to your config file
-```
-
-* In `scripts/last/trisbst_3spc.sh`, set the paths:
-
-```bash
-config_file="/absolute/path/to/your/scripts/last/sbst_config.yaml" # Change this to your config file
-```
-
 
 #### 3. Run the script under the `scripts/last` directory  
 
