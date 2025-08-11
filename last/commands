@@ -751,3 +751,18 @@ $ ./uvmut_3spc.sh 20240610 ~/genomes/ulvaProlifera/GCA_023078555.1_ASM2307855v1_
 ./uvmut_3spc.sh 20241004 /home/mrk/genomes/plastids/Prototheca_bovis_plastid.fasta /home/mrk/genomes/plastids/Prototheca_ciferrii_plastid.fasta /home/mrk/genomes/plastids/Prototheca_zopfii_ATTCC16533_plastid.fasta proBovPl proCifPl proZofPl /home/mrk/data/
 
 ./uvmut_3spc.sh 20241004 /home/mrk/genomes/plastids/Prototheca_cerasi_JCM9400_plastid.fasta /home/mrk/genomes/plastids/Prototheca_bovis_plastid.fasta /home/mrk/genomes/plastids/Prototheca_vistulensis_W3_plastid.fasta proCerPl proBovPl proVisPl /home/mrk/data/
+
+# July 24, 2025
+./last_train.sh 20250724 ~/data/cyaGra_parMar_proMar/ ~/genomes/parasynechococcusMarenigrum/GCF_000195975.1_ASM19597v1_genomic.fna ~/genomes/prochlorococcusMarinus/GCF_000015665.1_ASM1566v1_genomic.fna parMar proMar &> ~/log/20250724_lt_parMar_proMar.log &
+
+# July 30, 2025
+./last_train.sh 20250730 ~/data/oikDio_oikAlb_oikVan/ ~/genomes/oikopleuraAlbicans/GCA_004367875.1_ASM436787v1_genomic.fna ~/genomes/oikopleuraVanhoeffeni/GCA_004367855.1_ASM436785v1_genomic.fna oikAlb oikVan &> ~/log/20250730_lt_oikAlb_oikVan.log &
+
+./last_train.sh 20250730 ~/data/proWic_proBov_proCif/ ~/genomes/protothecaBovis/GCA_003612995.1_ASM361299v1_genomic.fna ~/genomes/protothecaCiferrii/GCA_003613005.1_ASM361300v1_genomic.fna proBov proCif &> ~/log/20250730_lt_proBov_proCif.log
+
+./last_train.sh 20250730 ~/data/pseAzo_theVes_theSic/ ~/genomes/thermosynechococcusVestitus/GCF_000011345.1_ASM1134v1_genomic.fna ~/genomes/thermosynechococcusSichuanensis/GCF_003555505.1_ASM355550v2_genomic.fna theVes theSic &> ~/log/20250730_lt_theVes_theSic.log &
+
+./last_train.sh 20250730 ~/data/arcCen_ampZal_ampCit/ ~/genomes/amphilophusZaliosus/GCA_015108585.1_JWE1.scf_genomic.fna ~/genomes/amphilophusCitrinellus/GCA_013435755.1_ASM1343575v1_genomic.fna ampZal ampCit &> ~/log/20250730_lt_ampZal_ampCit.log &
+
+./last_train.sh 20250730 ~/data/mytTro_mytEdu_mytGal/ ~/genomes/mytilusEdulis/GCA_019925275.1_PEIMed_genomic.fna ~/genomes/mytilusGalloprovincialis/GCA_037788925.1_MytGallo_primary_0.1_genomic.fna mytTro mytGal &> ~/log/20250730_lt_mytEdu_mytGal.log &
+
