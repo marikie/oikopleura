@@ -13,9 +13,9 @@ generate_plots <- function(tsv_path) {
   # Extract the path without an extension from tsv_path
   path_without_extension <- tools::file_path_sans_ext(tsv_path)
   # Create file paths for the plots (PNG)
-  normgraph_path <- paste(path_without_extension, "_norm.png", sep = "")
-  sbstgraph_path <- paste(path_without_extension, "_sbst.png", sep = "")
-  origraph_path <- paste(path_without_extension, "_ori.png", sep = "")
+  normgraph_path <- paste(path_without_extension, "_norm.pdf", sep = "")
+  sbstgraph_path <- paste(path_without_extension, "_sbst.pdf", sep = "")
+  origraph_path <- paste(path_without_extension, "_ori.pdf", sep = "")
 
   print(paste("Creating norm graph...", normgraph_path))
   create_pdf_plot(normgraph_path, data, trinuc.lab, "norm")
@@ -26,12 +26,12 @@ generate_plots <- function(tsv_path) {
 
   # Generate additional plots if annotation data is present
   if (isAnno) {
-    cdsgraph_path <- paste(path_without_extension, "_norm_cds.png", sep = "")
-    noncdsgraph_path <- paste(path_without_extension, "_norm_noncds.png", sep = "")
-    sbstcdsgraph_path <- paste(path_without_extension, "_sbst_cds.png", sep = "")
-    oricdsgraph_path <- paste(path_without_extension, "_ori_cds.png", sep = "")
-    sbstnoncdsgraph_path <- paste(path_without_extension, "_sbst_noncds.png", sep = "")
-    orinoncdsgraph_path <- paste(path_without_extension, "_ori_noncds.png", sep = "")
+    cdsgraph_path <- paste(path_without_extension, "_norm_cds.pdf", sep = "")
+    noncdsgraph_path <- paste(path_without_extension, "_norm_noncds.pdf", sep = "")
+    sbstcdsgraph_path <- paste(path_without_extension, "_sbst_cds.pdf", sep = "")
+    oricdsgraph_path <- paste(path_without_extension, "_ori_cds.pdf", sep = "")
+    sbstnoncdsgraph_path <- paste(path_without_extension, "_sbst_noncds.pdf", sep = "")
+    orinoncdsgraph_path <- paste(path_without_extension, "_ori_noncds.pdf", sep = "")
     print(paste("Creating cds graph...", cdsgraph_path))
     create_pdf_plot(cdsgraph_path, data, trinuc.lab, "cds")
     print(paste("Creating noncds graph...", noncdsgraph_path))
@@ -110,7 +110,7 @@ create_pdf_plot <- function(filename, data, trinuc.lab, graph_type) {
   conv.data.norm <- extract_values(data, graph_type)
   pct_yaxs_max <- compute_y_axis_max(conv.data.norm)
   color_array <- brewer.pal(6, "Dark2")
-  png(filename, width = 30, height = 8, units = "in", res = 300)
+  pdf(filename, width = 30, height = 8)
   font_add_google("Courier Prime", "mn", 700)
   font_add_google("Roboto", "os")
   showtext_auto()

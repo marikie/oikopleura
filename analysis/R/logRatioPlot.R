@@ -12,12 +12,12 @@ generate_plots <- function(tsv_path) {
 
   path_without_extension <- tools::file_path_sans_ext(tsv_path)
 
-  graph_path <- paste(path_without_extension, "_logRatio.png", sep = "")
+  graph_path <- paste(path_without_extension, "_logRatio.pdf", sep = "")
   data <- add_logRatio(data)
   create_pdf(graph_path, data, value_col = "logRatio")
 
   if (isAnno) {
-    graph_path_ncds <- paste(path_without_extension, "_logRatio_ncds.png", sep = "")
+    graph_path_ncds <- paste(path_without_extension, "_logRatio_ncds.pdf", sep = "")
     data <- add_logRatio_ncds(data)
     create_pdf(graph_path_ncds, data, value_col = "logRatio_ncds")
   }
@@ -173,7 +173,7 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
     ) +
     coord_cartesian(ylim = c(yr[1], y_text), clip = "off")
 
-  ggsave(filename = graph_path, plot = p, device = "png", width = 30, height = 8, dpi = 300)
+  ggsave(filename = graph_path, plot = p, device = "pdf", width = 30, height = 8)
 }
 
 add_logRatio <- function(data) {
