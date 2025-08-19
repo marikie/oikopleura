@@ -43,7 +43,7 @@ We also applied two filtering strategies. The first omits isolated alignments us
 ### 2. Git Clone the Repository
 
 ```bash
-git clone git@bitbucket.org:mrknkgw/oikopleura.git scripts
+git clone https://mrknkgw@bitbucket.org/mrknkgw/oikopleura.git scripts
 ```
 
 ### 3. Run The Pipeline
