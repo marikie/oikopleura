@@ -766,3 +766,5 @@ $ ./uvmut_3spc.sh 20240610 ~/genomes/ulvaProlifera/GCA_023078555.1_ASM2307855v1_
 
 ./last_train.sh 20250730 ~/data/mytTro_mytEdu_mytGal/ ~/genomes/mytilusEdulis/GCA_019925275.1_PEIMed_genomic.fna ~/genomes/mytilusGalloprovincialis/GCA_037788925.1_MytGallo_primary_0.1_genomic.fna mytTro mytGal &> ~/log/20250730_lt_mytEdu_mytGal.log &
 
+20250822
+./trisbst_3spc_fromDwl.sh 20250822 GCA_000739165.1 GCA_015852385.1 GCA_016098005.1 mortierellaVerticillata podilaClonocystis podilaMinutissima &> 20250822_morVer_podClo_podMin.log &
