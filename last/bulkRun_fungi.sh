@@ -12,7 +12,7 @@ Date=$1
 script=${HOME}/scripts/last/trisbst_3spc_fromDwl.sh
 logDir=${HOME}/log
 
-bash ${script} ${Date} GCA_000739165.1 GCA_015852385.1 GCA_016098005.1 mortierellaVerticillata podilaClonocystis podilaMinutissima &> ${logDir}/${Date}_morVer_podClo_podMin.log
+# bash ${script} ${Date} GCA_000739165.1 GCA_015852385.1 GCA_016098005.1 mortierellaVerticillata podilaClonocystis podilaMinutissima &> ${logDir}/${Date}_morVer_podClo_podMin.log
 
 bash ${script} ${Date} GCA_016098005.1 GCA_000739165.1 GCA_025677895.1 podilaMinutissima mortierellaVerticillata podilaHumilis &> ${logDir}/${Date}_podMin_morVer_podHum.log
 
