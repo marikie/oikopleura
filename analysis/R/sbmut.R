@@ -2,6 +2,7 @@ library(stringr)
 library(RColorBrewer)
 library(showtext)
 library(sysfonts)
+library(dplyr)
 
 # MODIFIED THE CODE FROM https://github.com/kartong88/Plot-Mutation-Landscape
 
