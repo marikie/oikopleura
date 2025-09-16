@@ -12,6 +12,46 @@ get_config() {
     yq eval "$1" "$config_file"
 }
 
+# Function to derive organism full name from NCBI Datasets summary JSON
+# - Writes summary to "$orgID.json" in current working directory
+# - Base name: reports[0].organism.organism_name (spaces -> underscores)
+# - If infraspecific_names exists, append all values joined by '_'
+get_org_full_name_from_id() {
+    local accession="$1"
+    local json_file="${accession}.json"
+
+    # Require jq
+    if ! command -v jq >/dev/null 2>&1; then
+        echo "Error: 'jq' is required but not found in PATH." >&2
+        return 1
+    fi
+
+    # Fetch summary JSON
+    if ! datasets summary genome accession "$accession" > "$json_file"; then
+        echo "Error: Failed to run 'datasets summary' for $accession" >&2
+        return 1
+    fi
+
+    # Parse organism name
+    local base_name
+    base_name=$(jq -r 'try .reports[0].organism.organism_name catch ""' "$json_file")
+    if [ -z "$base_name" ] || [ "$base_name" = "null" ]; then
+        echo "Error: '.reports[0].organism.organism_name' not found in $json_file" >&2
+        return 1
+    fi
+    base_name=${base_name// /_}
+
+    # Parse infraspecific names (optional)
+    local infra
+    infra=$(jq -r 'try [.reports[0].organism.infraspecific_names[]] | map(tostring) | join("_") catch ""' "$json_file")
+
+    if [ -n "$infra" ] && [ "$infra" != "null" ]; then
+        echo "${base_name}_${infra}"
+    else
+        echo "$base_name"
+    fi
+}
+
 # Parse positional arguments
 DATE="$1"
 org1ID="$2"
@@ -22,11 +62,25 @@ org2FullName="$6"
 org3FullName="$7"
 
 
-# Check if all required arguments are provided
-if [ -z "$DATE" ] || [ -z "$org1ID" ] || [ -z "$org2ID" ] || [ -z "$org3ID" ] || [ -z "$org1FullName" ] || [ -z "$org2FullName" ] || [ -z "$org3FullName" ]; then
+# Check minimally required arguments (DATE and 3 accessions)
+if [ -z "$DATE" ] || [ -z "$org1ID" ] || [ -z "$org2ID" ] || [ -z "$org3ID" ]; then
     echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$(get_config '.settings.required_args')/g")" >&2
     echo "$(get_config '.errors.usage')" >&2
     exit 1
+fi
+
+# Auto-generate org full names from NCBI Datasets summary if not provided
+if [ -z "$org1FullName" ]; then
+    org1FullName=$(get_org_full_name_from_id "$org1ID") || exit 1
+    echo "Derived org1FullName: $org1FullName"
+fi
+if [ -z "$org2FullName" ]; then
+    org2FullName=$(get_org_full_name_from_id "$org2ID") || exit 1
+    echo "Derived org2FullName: $org2FullName"
+fi
+if [ -z "$org3FullName" ]; then
+    org3FullName=$(get_org_full_name_from_id "$org3ID") || exit 1
+    echo "Derived org3FullName: $org3FullName"
 fi
 
 cd $(get_config '.paths.base_genomes')
