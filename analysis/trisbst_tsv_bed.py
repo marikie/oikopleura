@@ -149,6 +149,7 @@ def main(
             and len(gSeq1) == len(gSeq3)
             and len(gSeq2) == len(gSeq3)
         ), "gSeq1, gSeq2, and gSeq3 should have the same length"
+        i1 = i2 = i3 = 0
         for i in range(len(gSeq1) - 2):
             x, y, z = gSeq1[i : i + 3]
             a, b, c = gSeq2[i : i + 3]
@@ -165,20 +166,20 @@ def main(
                     # only write the coordinates of the middle base
                     start1, end1 = set2PosCoord(
                         aln.gStrand1,
-                        aln.gStart1 + i + 1,
-                        aln.gStart1 + i + 2,
+                        aln.gStart1 + i1 + 1,
+                        aln.gStart1 + i1 + 2,
                         aln.gLength1,
                     )
                     start2, end2 = set2PosCoord(
                         aln.gStrand2,
-                        aln.gStart2 + i + 1,
-                        aln.gStart2 + i + 2,
+                        aln.gStart2 + i2 + 1,
+                        aln.gStart2 + i2 + 2,
                         aln.gLength2,
                     )
                     start3, end3 = set2PosCoord(
                         aln.gStrand3,
-                        aln.gStart3 + i + 1,
-                        aln.gStart3 + i + 2,
+                        aln.gStart3 + i3 + 1,
+                        aln.gStart3 + i3 + 2,
                         aln.gLength3,
                     )
                     bed_line_ori = f"{aln.gChr1}\t{start1}\t{end1}\t{aln.gStrand1}\t{originalTriplet}\t{aln.gChr2}\t{start2}\t{end2}\t{aln.gStrand2}\t{trinuc2}\t{aln.gChr3}\t{start3}\t{end3}\t{aln.gStrand3}\t{trinuc3}\t{oriType}\t.\n"
@@ -201,6 +202,9 @@ def main(
                                 else:
                                     bed_lines2.append(bed_line_ori)
                                     bed_lines3.append(bed_line_sbst)
+            if x != "-": i1 += 1
+            if a != "-": i2 += 1
+            if d != "-": i3 += 1
     alnFileHandle.close()
 
     # write to outputBedFilePath2 and outputBedFilePath3
