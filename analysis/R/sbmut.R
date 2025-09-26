@@ -8,7 +8,6 @@ library(dplyr)
 
 generate_plots <- function(tsv_path) {
   data <- read_and_transform_data(tsv_path)
-  isAnno <- check_annotation_columns(data)
   trinuc.lab <- generate_trinuc_labels(data)
 
   # Extract the path without an extension from tsv_path
@@ -24,28 +23,6 @@ generate_plots <- function(tsv_path) {
   create_pdf_plot(sbstgraph_path, data, trinuc.lab, "sbst")
   print(paste("Creating ori graph...", origraph_path))
   create_pdf_plot(origraph_path, data, trinuc.lab, "ori")
-
-  # Generate additional plots if annotation data is present
-  if (isAnno) {
-    cdsgraph_path <- paste(path_without_extension, "_norm_cds.pdf", sep = "")
-    noncdsgraph_path <- paste(path_without_extension, "_norm_noncds.pdf", sep = "")
-    sbstcdsgraph_path <- paste(path_without_extension, "_sbst_cds.pdf", sep = "")
-    oricdsgraph_path <- paste(path_without_extension, "_ori_cds.pdf", sep = "")
-    sbstnoncdsgraph_path <- paste(path_without_extension, "_sbst_noncds.pdf", sep = "")
-    orinoncdsgraph_path <- paste(path_without_extension, "_ori_noncds.pdf", sep = "")
-    print(paste("Creating cds graph...", cdsgraph_path))
-    create_pdf_plot(cdsgraph_path, data, trinuc.lab, "cds")
-    print(paste("Creating noncds graph...", noncdsgraph_path))
-    create_pdf_plot(noncdsgraph_path, data, trinuc.lab, "noncds")
-    print(paste("Creating sbst cds graph...", sbstcdsgraph_path))
-    create_pdf_plot(sbstcdsgraph_path, data, trinuc.lab, "sbstcds")
-    print(paste("Creating ori cds graph...", oricdsgraph_path))
-    create_pdf_plot(oricdsgraph_path, data, trinuc.lab, "oricds")
-    print(paste("Creating sbst noncds graph...", sbstnoncdsgraph_path))
-    create_pdf_plot(sbstnoncdsgraph_path, data, trinuc.lab, "sbstnoncds")
-    print(paste("Creating ori noncds graph...", orinoncdsgraph_path))
-    create_pdf_plot(orinoncdsgraph_path, data, trinuc.lab, "orinoncds")
-  }
 
   process_norm_graph(data)
 }
