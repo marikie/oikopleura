@@ -48,3 +48,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Nextflow work directories and logs
+nextflow/work/
+nextflow/.nextflow.log.*
+nextflow/.nextflow.history
+
