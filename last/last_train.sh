@@ -2,23 +2,22 @@
 
 argNum=$#
 if [ $argNum -ne 6 ]; then
-    echo "Usage: $0 <Today's Date> <outDirPath> <org2FASTA> <org3FASTA> <org2ShortName> <org3ShortName>"
+    echo "Usage: $0 <Today's Date> <org2FASTA> <org3FASTA> <org2ShortName> <org3ShortName>"
     exit 1
 fi
 # Get arguments
 DATE=$1
-outDirPath=$2
-org2FASTA=$3
-org3FASTA=$4
-org2ShortName=$5
-org3ShortName=$6
+org2FASTA=$2
+org3FASTA=$3
+org2ShortName=$4
+org3ShortName=$5
 
 dbName="${org2ShortName}db_${DATE}"
 trainFile="${org2ShortName}2${org3ShortName}_${DATE}.train"
 
 # lastdb
 echo "---lastdb"
-if [ ! -d $outDirPath/$dbName ]; then
+if [ ! -d $dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName

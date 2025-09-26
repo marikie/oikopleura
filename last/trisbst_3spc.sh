@@ -32,14 +32,14 @@ org3FASTA=$4
 org1GFF=$5
 
 # Extract the name of the parent directory of $org1FASTA
-org1FullName=$(basename $(dirname $org1FASTA))
-org2FullName=$(basename $(dirname $org2FASTA))
-org3FullName=$(basename $(dirname $org3FASTA))
+org1FullName="$(basename $(dirname $org1FASTA))_1"
+org2FullName="$(basename $(dirname $org2FASTA))_2"
+org3FullName="$(basename $(dirname $org3FASTA))_3"
 
 # make short names
-org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
-org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
-org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)"
+org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)1"
+org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)2"
+org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)3"
 
 # Use config patterns to generate filenames
 outDirPath="$(get_config '.paths.out_dir')/""$org1ShortName""_""$org2ShortName""_""$org3ShortName"
@@ -140,17 +140,17 @@ fi
 
 # Run last-train to check substitution percent identity between org2 and org3 (inner group)
 echo "$(get_config '.options.checkInnerGroupIdt.enabled_message')"
-time bash $(get_config '.paths.scripts.last')/last_train.sh "$DATE" "$outDirPath" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
+time bash $(get_config '.paths.scripts.last')/last_train.sh "$DATE" "$org2FASTA" "$org3FASTA" "$org2ShortName" "$org3ShortName"
 
 # one2one for org1-org2
 echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g")"
-echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org2FASTA $dbName $train12 $m2o12 $o2o12 $o2o12_maflinked"
-bash $(get_config '.paths.scripts.last')/one2one.sh "$DATE" "$outDirPath" "$org1FASTA" "$org2FASTA" "$dbName" "$train12" "$m2o12" "$o2o12" "$o2o12_maflinked"
+echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $org1FASTA $org2FASTA $dbName $train12 $m2o12 $o2o12 $o2o12_maflinked"
+bash $(get_config '.paths.scripts.last')/one2one.sh "$DATE" "$org1FASTA" "$org2FASTA" "$dbName" "$train12" "$m2o12" "$o2o12" "$o2o12_maflinked"
 
 # one2one for org1-org3
 echo "$(get_config '.messages.one2one' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g")"
-echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $outDirPath $org1FASTA $org3FASTA $dbName $train13 $m2o13 $o2o13 $o2o13_maflinked"
-bash $(get_config '.paths.scripts.last')/one2one.sh "$DATE" "$outDirPath" "$org1FASTA" "$org3FASTA" "$dbName" "$train13" "$m2o13" "$o2o13" "$o2o13_maflinked"
+echo "bash $(get_config '.paths.scripts.last')/one2one.sh $DATE $org1FASTA $org3FASTA $dbName $train13 $m2o13 $o2o13 $o2o13_maflinked"
+bash $(get_config '.paths.scripts.last')/one2one.sh "$DATE" "$org1FASTA" "$org3FASTA" "$dbName" "$train13" "$m2o13" "$o2o13" "$o2o13_maflinked"
 
 # maf-join the two .maf files (without maf-linked)
 echo "$(get_config '.messages.maf_join')"

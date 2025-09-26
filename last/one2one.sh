@@ -2,19 +2,18 @@
 
 # Get arguments
 DATE=$1
-outDirPath=$2
-org1FASTA=$3
-org2FASTA=$4
-dbName=$5
-trainFile=$6
-m2omaf=$7
-o2omaf=$8
-o2omaf_maflinked=$9
+org1FASTA=$2
+org2FASTA=$3
+dbName=$4
+trainFile=$5
+m2omaf=$6
+o2omaf=$7
+o2omaf_maflinked=$8
 
 
 # lastdb
 echo "---lastdb"
-if [ ! -d $outDirPath/$dbName ]; then
+if [ ! -d $dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName
