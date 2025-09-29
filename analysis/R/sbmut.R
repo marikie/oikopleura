@@ -8,7 +8,7 @@ library(dplyr)
 
 generate_plots <- function(tsv_path) {
   data <- read_and_transform_data(tsv_path)
-  trinuc.lab <- generate_trinuc_labels(data)
+  trinuc.lab <- data %>% pull(oriType)
 
   # Extract the path without an extension from tsv_path
   path_without_extension <- tools::file_path_sans_ext(tsv_path)
@@ -22,57 +22,44 @@ generate_plots <- function(tsv_path) {
   print(paste("Creating sbst graph...", sbstgraph_path))
   create_pdf_plot(sbstgraph_path, data, trinuc.lab, "sbst")
   print(paste("Creating ori graph...", origraph_path))
-  create_pdf_plot(origraph_path, data, trinuc.lab, "ori")
+  create_pdf_plot_ori(origraph_path, data, trinuc.lab)
 
   process_norm_graph(data)
 }
 
 read_and_transform_data <- function(file_path) {
-  data <- read.csv(file_path, sep = "\t", header = TRUE)
-  data.trans <- setNames(data.frame(t(data[, -1])), data[, 1])
-  return(data.trans)
-}
+  data <- read.csv(file_path, sep = "\t", header = TRUE) %>%
+    as_tibble()
 
-check_annotation_columns <- function(data) {
-  required_rows <- c("s_cds", "s_ncds", "o_cds", "o_ncds")
-  return(all(required_rows %in% rownames(data)))
-}
+  # Add oriType column using string manipulation on mutType
+  data <- data %>%
+    mutate(
+      oriType = paste0(
+        str_sub(mutType, 1, 1),
+        str_sub(mutType, 3, 3),
+        str_sub(mutType, 7, 7)
+      )
+    )
 
-generate_trinuc_labels <- function(data) {
-  data.names <- names(data)
-  firstchar <- str_extract(data.names, "^.")
-  lastchar <- str_extract(data.names, ".$")
-  midorichar <- str_extract(str_extract(data.names, "(.)>"), "^.")
-  trinuc.lab <- paste(firstchar, midorichar, lastchar, sep = "")
-  return(trinuc.lab)
+  return(data)
 }
 
 extract_values <- function(data, graph_type) {
   if (graph_type == "norm") {
-    return(as.numeric(as.numeric(data["mutNum", ]) / as.numeric(data["totalRootNum", ]) * 100))
+    return(data %>%
+      mutate(value = mutNum / totalRootNum * 100) %>%
+      pull(value))
   } else if (graph_type == "sbst") {
-    return(as.numeric(data["mutNum", ]))
+    return(data %>% pull(mutNum))
   } else if (graph_type == "ori") {
-    return(as.numeric(data["totalRootNum", ]))
-  } else if (graph_type == "cds") {
-    return(as.numeric(as.numeric(data["s_cds", ]) / as.numeric(data["o_cds", ]) * 100))
-  } else if (graph_type == "noncds") {
-    return(as.numeric(as.numeric(data["s_ncds", ]) / as.numeric(data["o_ncds", ]) * 100))
-  } else if (graph_type == "sbstcds") {
-    return(as.numeric(data["s_cds", ]))
-  } else if (graph_type == "sbstnoncds") {
-    return(as.numeric(data["s_ncds", ]))
-  } else if (graph_type == "oricds") {
-    return(as.numeric(data["o_cds", ]))
-  } else if (graph_type == "orinoncds") {
-    return(as.numeric(data["o_ncds", ]))
+    return(data %>% pull(totalRootNum))
   } else {
     stop("Invalid graph type")
   }
 }
 
-compute_y_axis_max <- function(conv.data.norm) {
-  raw_max <- max(na.omit(conv.data.norm))
+compute_y_axis_max <- function(conv_data_norm) {
+  raw_max <- max(conv_data_norm, na.rm = TRUE)
   if (ceiling(raw_max) == 1) {
     if (raw_max < 0.1) {
       return(round(raw_max, 2))
@@ -107,9 +94,41 @@ create_pdf_plot <- function(filename, data, trinuc.lab, graph_type) {
   axis(side = 2, line = -3.5)
   add_labels(trinuc.lab, bar_positions)
   add_axis_names(graph_type)
-  if (graph_type != "ori" && graph_type != "oricds" && graph_type != "orinoncds") {
+  if (graph_type != "ori") {
     add_colored_rectangles(bar_positions, pct_yaxs_max, color_array)
   }
+  dev.off()
+}
+
+create_pdf_plot_ori <- function(filename, data, trinuc.lab) {
+  # Get unique oriType and totalRootNum combinations
+  unique_data <- data %>%
+    select(oriType, totalRootNum) %>%
+    unique() %>%
+    arrange(oriType)
+
+  unique_labels <- unique_data %>% pull(oriType)
+  aggregated_counts <- unique_data %>% pull(totalRootNum)
+  pct_yaxs_max <- compute_y_axis_max(aggregated_counts)
+  upper_limit <- if (pct_yaxs_max == 0) 1 else pct_yaxs_max + 0.15 * pct_yaxs_max
+  pdf(filename, width = 20, height = 8)
+  font_add_google("Courier Prime", "mn", 700)
+  font_add_google("Roboto", "os")
+  showtext_auto()
+  par(family = "mn", mar = c(7.5, 6, 4, 1), cex.axis = 2)
+  bar_positions <- barplot(
+    axes = FALSE,
+    family = "os",
+    as.numeric(aggregated_counts),
+    col = "#808080",
+    border = NA,
+    names.arg = rep("", length(unique_labels)),
+    ylim = c(0, upper_limit),
+    space = 0.3
+  )
+  axis(side = 2, line = -3.5)
+  add_unique_labels(unique_labels, bar_positions)
+  add_axis_names("ori")
   dev.off()
 }
 
@@ -129,34 +148,25 @@ add_labels <- function(trinuc.lab, bar_positions) {
   }
 }
 
+add_unique_labels <- function(labels, bar_positions) {
+  if (length(labels) == 0) {
+    return()
+  }
+  y_range <- par("usr")[4] - par("usr")[3]
+  base_y <- par("usr")[3] - 0.03 * y_range
+  text(family = "mn", x = bar_positions, y = base_y, labels = labels, xpd = TRUE, cex = 1.5, srt = 90)
+}
+
 add_axis_names <- function(graph_type) {
   if (graph_type == "norm") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#Sbst/#AncTrinucs (%)", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#Sbst/#OriTrinucs (%)", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "sbst") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
     mtext(family = "os", "#Substitutions", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "ori") {
-    mtext(family = "os", "Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#Trinucleotides", side = 2, line = 0.5, cex = 2.5)
-  } else if (graph_type == "cds") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInCDS/#AncTrinucsInCDS (%)", side = 2, line = 0.5, cex = 2.5)
-  } else if (graph_type == "noncds") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInNoncds/#AncInNoncds (%)", side = 2, line = 0.5, cex = 2.5)
-  } else if (graph_type == "sbstcds") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInCDS", side = 2, line = 0.5, cex = 2.5)
-  } else if (graph_type == "sbstnoncds") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#SbstInNoncds", side = 2, line = 0.5, cex = 2.5)
-  } else if (graph_type == "oricds") {
-    mtext(family = "os", "Ancestral Trinucleotides", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#AncInCDS", side = 2, line = 0.5, cex = 2.5)
-  } else if (graph_type == "orinoncds") {
-    mtext(family = "os", "Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#AncInNoncds", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "Original Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "#Original Trinucleotides", side = 2, line = 0.5, cex = 2.5)
   }
 }
 
@@ -172,37 +182,45 @@ add_colored_rectangles <- function(bar_positions, pct_yaxs_max, color_array) {
 }
 
 process_norm_graph <- function(data) {
-  mutation_percentage <- as.numeric(as.numeric(data["mutNum", ]) / as.numeric(data["totalRootNum", ]) * 100)
-  data <- rbind(data, MutationPercentage = mutation_percentage)
+  # Calculate mutation percentage and create display names
+  data <- data %>%
+    mutate(
+      MutationPercentage = mutNum / totalRootNum * 100,
+      display_name = case_when(
+        nchar(mutType) >= 7 ~ paste0(
+          str_sub(mutType, 1, 1), str_sub(mutType, 3, 3), str_sub(mutType, 7, 7),
+          " → ",
+          str_sub(mutType, 1, 1), str_sub(mutType, 5, 5), str_sub(mutType, 7, 7)
+        ),
+        TRUE ~ mutType
+      )
+    )
 
-  # Transform column names
-  transformed_names <- sapply(colnames(data), function(name) {
-    char_vector <- strsplit(name, "")[[1]]
-    if (length(char_vector) < 7) {
-      return(name)
-    }
-    original_chars <- char_vector[c(1, 3, 7)]
-    final_chars <- char_vector[c(1, 5, 7)]
-    result <- paste(paste(original_chars, collapse = ""), " → ", paste(final_chars, collapse = ""), sep = "")
-    return(result)
-  })
-  colnames(data) <- transformed_names
+  # Sort data by mutation percentage (descending)
+  data_sorted <- data %>%
+    arrange(desc(MutationPercentage))
 
-  # Sort data
-  col_order <- order(as.numeric(data["MutationPercentage", ]), decreasing = TRUE)
-  data.sorted <- data[, col_order]
   print("Data sorted by Mutation Percentage:")
-  print(data.sorted)
+  print(data_sorted)
+
   cat("\n\nTop 10:\n")
-  print(data.sorted[, 1:10])
+  data_sorted %>%
+    slice_head(n = 10) %>%
+    print()
+
   cat("\n\nWorst 10:\n")
-  print(data.sorted[, (ncol(data.sorted) - 9):ncol(data.sorted)])
+  data_sorted %>%
+    slice_tail(n = 10) %>%
+    print()
 
   # Reverse sort
-  col_order_rev <- order(as.numeric(data["MutationPercentage", ]))
-  data.revsorted <- data[, col_order_rev]
+  data_rev_sorted <- data %>%
+    arrange(MutationPercentage)
+
   cat("\n\nWorst 10 (rev):\n")
-  print(data.revsorted[, 1:10])
+  data_rev_sorted %>%
+    slice_head(n = 10) %>%
+    print()
 }
 
 
