@@ -51,10 +51,6 @@ extract_values <- function(data, graph_type) {
       pull(value))
   } else if (graph_type == "sbst") {
     return(data %>% pull(mutNum))
-  } else if (graph_type == "ori") {
-    return(data %>% pull(totalRootNum))
-  } else {
-    stop("Invalid graph type")
   }
 }
 
@@ -88,15 +84,13 @@ create_pdf_plot <- function(filename, data, trinuc.lab, graph_type) {
     cex.names = 0.7,
     las = 3,
     ylim = c(0, pct_yaxs_max + 0.15 * pct_yaxs_max),
-    space = 0
+    space = 0,
   )
   # manually add y axis
   axis(side = 2, line = -3.5)
   add_labels(trinuc.lab, bar_positions)
   add_axis_names(graph_type)
-  if (graph_type != "ori") {
-    add_colored_rectangles(bar_positions, pct_yaxs_max, color_array)
-  }
+  add_colored_rectangles(bar_positions, pct_yaxs_max, color_array)
   dev.off()
 }
 
@@ -104,14 +98,13 @@ create_pdf_plot_ori <- function(filename, data, trinuc.lab) {
   # Get unique oriType and totalRootNum combinations
   unique_data <- data %>%
     select(oriType, totalRootNum) %>%
-    unique() %>%
-    arrange(oriType)
+    unique()
 
   unique_labels <- unique_data %>% pull(oriType)
   aggregated_counts <- unique_data %>% pull(totalRootNum)
   pct_yaxs_max <- compute_y_axis_max(aggregated_counts)
   upper_limit <- if (pct_yaxs_max == 0) 1 else pct_yaxs_max + 0.15 * pct_yaxs_max
-  pdf(filename, width = 20, height = 8)
+  pdf(filename, width = 30 * (32/96), height = 8)
   font_add_google("Courier Prime", "mn", 700)
   font_add_google("Roboto", "os")
   showtext_auto()
@@ -120,13 +113,14 @@ create_pdf_plot_ori <- function(filename, data, trinuc.lab) {
     axes = FALSE,
     family = "os",
     as.numeric(aggregated_counts),
+    cex.names = 1.2,
     col = "#808080",
-    border = NA,
+    border = "black",
     names.arg = rep("", length(unique_labels)),
     ylim = c(0, upper_limit),
-    space = 0.3
+    space = 0,
   )
-  axis(side = 2, line = -3.5)
+  axis(side = 2, line = -2.5)
   add_unique_labels(unique_labels, bar_positions)
   add_axis_names("ori")
   dev.off()
@@ -153,8 +147,8 @@ add_unique_labels <- function(labels, bar_positions) {
     return()
   }
   y_range <- par("usr")[4] - par("usr")[3]
-  base_y <- par("usr")[3] - 0.03 * y_range
-  text(family = "mn", x = bar_positions, y = base_y, labels = labels, xpd = TRUE, cex = 1.5, srt = 90)
+  base_y <- par("usr")[3] - 0.07 * y_range
+  text(family = "mn", x = bar_positions, y = base_y, labels = labels, xpd = TRUE, cex = 2, srt = 90)
 }
 
 add_axis_names <- function(graph_type) {
@@ -166,7 +160,7 @@ add_axis_names <- function(graph_type) {
     mtext(family = "os", "#Substitutions", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "ori") {
     mtext(family = "os", "Original Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#Original Trinucleotides", side = 2, line = 0.5, cex = 2.5)
+    mtext(family = "os", "#Original Trinucleotides", side = 2, line = 0.7, cex = 2.5)
   }
 }
 
