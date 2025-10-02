@@ -104,7 +104,7 @@ create_pdf_plot_ori <- function(filename, data, trinuc.lab) {
   aggregated_counts <- unique_data %>% pull(totalRootNum)
   pct_yaxs_max <- compute_y_axis_max(aggregated_counts)
   upper_limit <- if (pct_yaxs_max == 0) 1 else pct_yaxs_max + 0.15 * pct_yaxs_max
-  pdf(filename, width = 30 * (32/96), height = 8)
+  pdf(filename, width = 30 * (32 / 96), height = 8)
   font_add_google("Courier Prime", "mn", 700)
   font_add_google("Roboto", "os")
   showtext_auto()
@@ -114,13 +114,13 @@ create_pdf_plot_ori <- function(filename, data, trinuc.lab) {
     family = "os",
     as.numeric(aggregated_counts),
     cex.names = 1.2,
-    col = "#808080",
+    col = "#b4b4b4",
     border = "black",
     names.arg = rep("", length(unique_labels)),
     ylim = c(0, upper_limit),
     space = 0,
   )
-  axis(side = 2, line = -2.5)
+  axis(side = 2, line = -0.5)
   add_unique_labels(unique_labels, bar_positions)
   add_axis_names("ori")
   dev.off()
@@ -153,14 +153,14 @@ add_unique_labels <- function(labels, bar_positions) {
 
 add_axis_names <- function(graph_type) {
   if (graph_type == "norm") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5, cex = 2.5)
     mtext(family = "os", "#Sbst/#OriTrinucs (%)", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "sbst") {
-    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5.5, cex = 2.5)
+    mtext(family = "os", "Original Trinucleotides", side = 1, line = 5, cex = 2.5)
     mtext(family = "os", "#Substitutions", side = 2, line = 0.5, cex = 2.5)
   } else if (graph_type == "ori") {
-    mtext(family = "os", "Original Trinucleotide Patterns", side = 1, line = 5.5, cex = 2.5)
-    mtext(family = "os", "#Original Trinucleotides", side = 2, line = 0.7, cex = 2.5)
+    mtext(family = "os", "Original Trinucleotide Patterns", side = 1, line = 5, cex = 2.5)
+    mtext(family = "os", "#Original Trinucleotides", side = 2, line = 2.5, cex = 2.5)
   }
 }
 
