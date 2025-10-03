@@ -64,6 +64,9 @@ o2o12_maflinked=$(get_config '.patterns.maflinked' | sed "s/{org1_short}/$org1Sh
 o2o13_maflinked=$(get_config '.patterns.maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 joinedFile_maflinked=$(get_config '.patterns.joined_maflinked' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
+joinedFile_ncds=$(get_config '.patterns.joined_ncds' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+joinedFile_maflinked_ncds=$(get_config '.patterns.joined_maflinked_ncds' | sed "s/{org1_short}/$org1ShortName/g" | sed "s/{org2_short}/$org2ShortName/g" | sed "s/{org3_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
 org2tsv=$(get_config '.patterns.tsv' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3tsv=$(get_config '.patterns.tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2tsv_maflinked=$(get_config '.patterns.tsv_maflinked' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
@@ -77,6 +80,15 @@ org2_dinuc_tsv=$(get_config '.patterns.dinuc_tsv' | sed "s/{org_short}/$org2Shor
 org3_dinuc_tsv=$(get_config '.patterns.dinuc_tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 org2_dinuc_tsv_maflinked=$(get_config '.patterns.dinuc_maflinked_tsv' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3_dinuc_tsv_maflinked=$(get_config '.patterns.dinuc_maflinked_tsv' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+
+org2tsv_ncds=$(get_config '.patterns.tsv_ncds' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3tsv_ncds=$(get_config '.patterns.tsv_ncds' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2tsv_maflinked_ncds=$(get_config '.patterns.tsv_maflinked_ncds' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3tsv_maflinked_ncds=$(get_config '.patterns.tsv_maflinked_ncds' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_dinuc_tsv_ncds=$(get_config '.patterns.dinuc_tsv_ncds' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_dinuc_tsv_ncds=$(get_config '.patterns.dinuc_tsv_ncds' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
+org2_dinuc_tsv_maflinked_ncds=$(get_config '.patterns.dinuc_maflinked_tsv_ncds' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
+org3_dinuc_tsv_maflinked_ncds=$(get_config '.patterns.dinuc_maflinked_tsv_ncds' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
 
 org2bed=$(get_config '.patterns.bed' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 org3bed=$(get_config '.patterns.bed' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
@@ -198,38 +210,48 @@ else
 	echo "$org2_dinuc_tsv_maflinked and $org3_dinuc_tsv_maflinked already exists"
 fi
 
-# If there is a gff file of org1, generate .tsv file and .bed file
-# and count the number of substitutions in coding and non-coding regions
+# If there is a gff file of org1, cut off the CDS regions
+# and count the number of substitutions in non-coding regions
 if [ "$org1GFF" != "NO_GFF_FILE" ]; then
 	echo "There is a gff file of org1"
-	echo "Making .tsv and .bed files"
-	bash $(get_config '.paths.scripts.last')/generate_tsv_bed_files.sh \
-		"$(get_config '.paths.scripts.analysis')" \
-		"$joinedFile" \
-		"$org2tsv" \
-		"$org3tsv" \
-		"$org2bed" \
-		"$org3bed" \
-		"$joinedFile_maflinked" \
-		"$org2tsv_maflinked" \
-		"$org3tsv_maflinked" \
-		"$org2bed_maflinked" \
-		"$org3bed_maflinked"
-
-	echo "Counting the number of substitutions in coding and non-coding regions"
-	bash $(get_config '.paths.scripts.last')/count_coding_noncoding.sh \
+	echo "maf-cut (cut off the CDS regions)"
+	./$(get_config '.paths.scripts.analysis')/maf-cut-cds_uglier.py \
 		"$org1GFF" \
+		"$joinedFile" >"$joinedFile_ncds"
+	./$(get_config '.paths.scripts.analysis')/maf-cut-cds_uglier.py \
+		"$org1GFF" \
+		"$joinedFile_maflinked" >"$joinedFile_maflinked_ncds"
+
+	# Generate all TSV files including ncds files
+	bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
+		"$joinedFile" \
+		"$joinedFile_maflinked" \
 		"$org2tsv" \
-		"$org2bed" \
 		"$org3tsv" \
-		"$org3bed" \
 		"$org2tsv_maflinked" \
 		"$org3tsv_maflinked" \
-		"$org2bed_maflinked" \
-		"$org3bed_maflinked"
+		"$org2tsv_errprb" \
+		"$org3tsv_errprb" \
+		"$org2tsv_maflinked_errprb" \
+		"$org3tsv_maflinked_errprb" \
+		"$(get_config '.paths.scripts.analysis')" \
+		"$org2_dinuc_tsv" \
+		"$org3_dinuc_tsv" \
+		"$org2_dinuc_tsv_maflinked" \
+		"$org3_dinuc_tsv_maflinked" \
+		"$joinedFile_ncds" \
+		"$joinedFile_maflinked_ncds" \
+		"$org2tsv_ncds" \
+		"$org3tsv_ncds" \
+		"$org2tsv_maflinked_ncds" \
+		"$org3tsv_maflinked_ncds" \
+		"$org2_dinuc_tsv_ncds" \
+		"$org3_dinuc_tsv_ncds" \
+		"$org2_dinuc_tsv_maflinked_ncds" \
+		"$org3_dinuc_tsv_maflinked_ncds"
 else
 	echo "There is no gff file of org1"
-	# Generate all TSV files
+	# Generate all TSV files (no ncds files)
 	bash $(get_config '.paths.scripts.last')/generate_tsv_files.sh \
 		"$joinedFile" \
 		"$joinedFile_maflinked" \
