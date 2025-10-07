@@ -53,7 +53,11 @@ org3_maflinked_errprb_out_sbstCount=${30}
 org2_maflinked_errprb_out_oriCount=${31}
 org3_maflinked_errprb_out_oriCount=${32}
 
-r_scripts_path=${33}
+org2_dinuc_tsv=${33}
+org3_dinuc_tsv=${34}
+org2_dinuc_tsv_maflinked=${35}
+org3_dinuc_tsv_maflinked=${36}
+r_scripts_path=${37}
 
 # echo "org2tsv: $org2tsv"
 # echo "org3tsv: $org3tsv"
@@ -112,6 +116,17 @@ echo "time Rscript $r_scripts_path/logRatioPlot.R $org2tsv_maflinked"
 time Rscript "$r_scripts_path/logRatioPlot.R" "$org2tsv_maflinked"
 echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv_maflinked"
 time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv_maflinked"
+
+# Dinucleotide substitutions graphs
+echo "---making graphs of the dinucleotide substitutions"
+time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv"
+time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv"
+
+# Dinucleotide substitutions graphs (with maf-linked)
+echo "---making graphs of the dinucleotide substitutions (with maf-linked)"
+time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv_maflinked"
+time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv_maflinked"
+
 
 # generate_graph "$org2tsv_maflinked" "$r_scripts_path/sbmut_sbstCount.R" "$org2_maflinked_out_sbstCount"
 # generate_graph "$org3tsv_maflinked" "$r_scripts_path/sbmut_sbstCount.R" "$org3_maflinked_out_sbstCount"

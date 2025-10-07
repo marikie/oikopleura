@@ -304,4 +304,8 @@ bash $(get_config '.paths.scripts.last')/generate_graphs.sh \
 	"$org3_maflinked_errprb_out_sbstCount" \
 	"$org2_maflinked_errprb_out_oriCount" \
 	"$org3_maflinked_errprb_out_oriCount" \
+	"$org2_dinuc_tsv" \
+	"$org3_dinuc_tsv" \
+	"$org2_dinuc_tsv_maflinked" \
+	"$org3_dinuc_tsv_maflinked" \
 	"$(get_config '.paths.scripts.r')"
