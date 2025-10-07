@@ -8,22 +8,15 @@ library(rlang)
 
 generate_plots <- function(tsv_path) {
   data <- read.csv(tsv_path, sep = "\t", header = TRUE)
-  isAnno <- check_annotation_columns(data)
 
   path_without_extension <- tools::file_path_sans_ext(tsv_path)
-
   graph_path <- paste(path_without_extension, "_logRatio.pdf", sep = "")
   data <- add_logRatio(data)
-  create_pdf(graph_path, data, value_col = "logRatio")
-
-  if (isAnno) {
-    graph_path_ncds <- paste(path_without_extension, "_logRatio_ncds.pdf", sep = "")
-    data <- add_logRatio_ncds(data)
-    create_pdf(graph_path_ncds, data, value_col = "logRatio_ncds")
-  }
+  create_pdf(graph_path, data, value_col = "logRatio_exp")
+  create_pdf(graph_path, data, value_col = "logRatio_mean")
 }
 
-create_pdf <- function(graph_path, data, value_col = "logRatio") {
+create_pdf <- function(graph_path, data, value_col) {
   # Prepare ordering by substitution type groups and within-group order
   group_order <- c("C>A", "C>G", "C>T", "T>A", "T>C", "T>G")
   # Fonts for labels
@@ -31,8 +24,7 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
   sysfonts::font_add_google("Roboto", "os")
   showtext::showtext_auto()
   data <- data %>%
-    mutate(trans = substr(mutType, 3, 5)) %>%
-    mutate(trans = factor(trans, levels = group_order)) %>%
+    mutate(trans = factor(substr(mutType, 3, 5), levels = group_order)) %>%
     arrange(trans, oriType)
 
   # Insert small gaps between groups on the x-axis
@@ -55,10 +47,6 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
   # Stats
   value_sym <- rlang::sym(value_col)
   mean_val <- mean(data[[value_col]], na.rm = TRUE)
-  # mean_val <- data %>%
-  #   filter(substr(oriType, 2, 2) == "C") %>%
-  #   pull(!!value_sym) %>%
-  #   mean(na.rm = TRUE)
   sd_val <- sd(data[[value_col]], na.rm = TRUE)
 
   # X labels: oriType in the arranged order
@@ -107,7 +95,12 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
       c2 = substr(oriType, 2, 2),
       c3 = substr(oriType, 3, 3)
     )
-
+  if (value_col == "logRatio_exp") {
+    y_label <- "Log2{(#sbst/#ori) / (expected #sbst/#ori)}"
+  }
+  if (value_col == "logRatio_mean") {
+    y_label <- "Log2{(#sbst/#ori) / (mean of #sbst/#ori)}"
+  }
   p <- ggplot(data, aes(x = pos, y = !!value_sym)) +
     geom_rect(
       data = gdf,
@@ -165,8 +158,7 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
     geom_hline(yintercept = mean_val + 2 * sd_val, linetype = "dashed", color = line_col_2sd) +
     geom_hline(yintercept = mean_val - 2 * sd_val, linetype = "dashed", color = line_col_2sd) +
     scale_x_continuous(breaks = x_breaks, labels = x_labels, expand = c(0, 0), minor_breaks = NULL) +
-    # labs(x = "Ancestral Trinucleotides", y = "Log2{(#Observed sbst/#Observed anc)\n/ ((sum of all sbst/sum of all anc)/3)}") +
-    labs(x = "Ancestral Trinucleotides", y = "Log2{(#Observed sbst/#Observed anc)\n/ (sum of all sbst/sum of all anc)}") +
+    labs(x = "Original Trinucleotides", y = y_label) +
     theme_minimal(base_size = 12) +
     ggplot2::theme(
       axis.text.x = element_blank(),
@@ -184,9 +176,7 @@ create_pdf <- function(graph_path, data, value_col = "logRatio") {
 add_logRatio <- function(data) {
   # Add transition column to data
   # Add observed figure of mutNum/totalRootNum
-  data <- data %>%
-    mutate(trans = substr(mutType, 3, 5)) %>%
-    mutate(obs_mut_over_ori = mutNum / totalRootNum)
+  obs_mut_over_ori <- data$mutNum / data$totalRootNum
 
   all_sbst_sum <- data %>%
     select(mutNum) %>%
@@ -196,97 +186,17 @@ add_logRatio <- function(data) {
     unique() %>%
     pull(totalRootNum) %>%
     sum()
-  allsbst_over_allori <- all_sbst_sum / all_ori_sum
+  expected_sbst_over_ori <- (all_sbst_sum / all_ori_sum) / 3
+  mean_obs_sbst_over_ori <- mean(obs_mut_over_ori, na.rm = TRUE)
 
   data <- data %>%
-    mutate(logRatio = log2(obs_mut_over_ori / allsbst_over_allori))
-  return(data)
+    mutate(
+      obs_mut_over_ori = obs_mut_over_ori,
+      logRatio_exp = log2(obs_mut_over_ori / expected_sbst_over_ori),
+      logRatio_mean = log2(obs_mut_over_ori / mean_obs_sbst_over_ori)
+    )
 }
 
-add_logRatio_ncds <- function(data) {
-  data <- data %>%
-    mutate(obs_snc_over_onc = s_ncds / o_ncds)
-
-  all_sbst_ncds_sum <- data %>%
-    select(s_ncds) %>%
-    sum()
-  sbst_ncds_c_sum <- data %>%
-    filter(substr(oriType, 2, 2) == "C") %>%
-    select(s_ncds) %>%
-    sum()
-  sbst_ncds_t_sum <- data %>%
-    filter(substr(oriType, 2, 2) == "T") %>%
-    select(s_ncds) %>%
-    sum()
-  all_ori_ncds_sum <- data %>%
-    select(oriType, o_ncds) %>%
-    unique() %>%
-    pull(o_ncds) %>%
-    sum()
-  # Get the sum of o_ncds where the middle letter of oriType is "C"
-  ori_ncds_c_sum <- data %>%
-    filter(substr(oriType, 2, 2) == "C") %>%
-    select(oriType, o_ncds) %>%
-    unique() %>%
-    pull(o_ncds) %>%
-    sum()
-  ori_ncds_t_sum <- data %>%
-    filter(substr(oriType, 2, 2) == "T") %>%
-    select(oriType, o_ncds) %>%
-    unique() %>%
-    pull(o_ncds) %>%
-    sum()
-
-  allsbst_ncds_over_allori_ncds <- all_sbst_ncds_sum / all_ori_ncds_sum
-  sbst_ncds_c_over_ori_ncds_c <- sbst_ncds_c_sum / ori_ncds_c_sum
-  sbst_ncds_t_over_ori_ncds_t <- sbst_ncds_t_sum / ori_ncds_t_sum
-  print(paste("sbst_ncds_c_over_ori_ncds_c: ", sbst_ncds_c_over_ori_ncds_c))
-  print(paste("sbst_ncds_t_over_ori_ncds_t: ", sbst_ncds_t_over_ori_ncds_t))
-  print(paste("allsbst_ncds_over_allori_ncds: ", allsbst_ncds_over_allori_ncds))
-  print(paste("sbst_ncds_c_over_ori_ncds_c/3: ", sbst_ncds_c_over_ori_ncds_c / 3))
-  print(paste("sbst_ncds_t_over_ori_ncds_t/3: ", sbst_ncds_t_over_ori_ncds_t / 3))
-  print(paste("allsbst_ncds_over_allori_ncds/3: ", allsbst_ncds_over_allori_ncds / 3))
-
-  print(paste("mean of obs_snc_over_onc: ", data %>% pull(obs_snc_over_onc) %>% mean(na.rm = TRUE)))
-  print(paste("mean of obs_snc_over_onc_c: ", data %>% filter(substr(oriType, 2, 2) == "C") %>% pull(obs_snc_over_onc) %>% mean(na.rm = TRUE)))
-  print(paste("mean of obs_snc_over_onc_t: ", data %>% filter(substr(oriType, 2, 2) == "T") %>% pull(obs_snc_over_onc) %>% mean(na.rm = TRUE)))
-
-  mean_obs_snc_over_onc <- data %>%
-    pull(obs_snc_over_onc) %>%
-    mean(na.rm = TRUE)
-  # Add logRatio_ncds column based on the middle base of oriType
-  # data <- data %>%
-  #   mutate(
-  #     logRatio_ncds = case_when(
-  #       substr(oriType, 2, 2) == "C" ~ log2(obs_snc_over_onc / (sbst_ncds_c_over_ori_ncds_c / 3)),
-  #       substr(oriType, 2, 2) == "T" ~ log2(obs_snc_over_onc / (sbst_ncds_t_over_ori_ncds_t / 3)),
-  #       TRUE ~ NA_real_
-  #     )
-  #   )
-
-  data <- data %>%
-    mutate(logRatio_ncds = log2(obs_snc_over_onc / mean_obs_snc_over_onc))
-  # mutate(logRatio_ncds = log2(obs_snc_over_onc / allsbst_ncds_over_allori_ncds))
-
-  print(paste("mean of logRatio_ncds: ", data %>% pull(logRatio_ncds) %>% mean(na.rm = TRUE)))
-  # logRatio_ncds_c_mean <- data %>%
-  #   filter(substr(oriType, 2, 2) == "C") %>%
-  #   pull(logRatio_ncds) %>%
-  #   mean(na.rm = TRUE)
-  # logRatio_ncds_t_mean <- data %>%
-  #   filter(substr(oriType, 2, 2) == "T") %>%
-  #   pull(logRatio_ncds) %>%
-  #   mean(na.rm = TRUE)
-  # print(paste("logRatio_ncds_c_mean: ", logRatio_ncds_c_mean))
-  # print(paste("logRatio_ncds_t_mean: ", logRatio_ncds_t_mean))
-
-  return(data)
-}
-
-check_annotation_columns <- function(data) {
-  required_cols <- c("s_cds", "s_ncds", "o_cds", "o_ncds")
-  return(all(required_cols %in% colnames(data)))
-}
 # Access the arguments
 args <- commandArgs(trailingOnly = TRUE)
 
