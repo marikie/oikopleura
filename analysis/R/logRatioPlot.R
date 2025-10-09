@@ -10,10 +10,11 @@ generate_plots <- function(tsv_path) {
   data <- read.csv(tsv_path, sep = "\t", header = TRUE)
 
   path_without_extension <- tools::file_path_sans_ext(tsv_path)
-  graph_path <- paste(path_without_extension, "_logRatio.pdf", sep = "")
+  graph_path_exp <- paste(path_without_extension, "_logRatio_exp.pdf", sep = "")
+  graph_path_mean <- paste(path_without_extension, "_logRatio_mean.pdf", sep = "")
   data <- add_logRatio(data)
-  create_pdf(graph_path, data, value_col = "logRatio_exp")
-  create_pdf(graph_path, data, value_col = "logRatio_mean")
+  create_pdf(graph_path_exp, data, value_col = "logRatio_exp")
+  create_pdf(graph_path_mean, data, value_col = "logRatio_mean")
 }
 
 create_pdf <- function(graph_path, data, value_col) {
@@ -66,15 +67,18 @@ create_pdf <- function(graph_path, data, value_col) {
   line_col_2sd <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
 
   yr <- range(data[[value_col]], na.rm = TRUE)
-  y_span <- diff(yr)
-  if (!is.finite(y_span) || y_span == 0) y_span <- 1
-  yrect_low <- yr[2] + 0.16 * y_span
-  yrect_high <- yr[2] + 0.20 * y_span
-  y_text <- yr[2] + 0.24 * y_span
-  # Custom x labels positions (moved further down)
-  y_label3 <- yr[1] - 0.10 * y_span
-  y_label2 <- yr[1] - 0.14 * y_span
-  y_label1 <- yr[1] - 0.18 * y_span
+  max_abs <- max(abs(yr[1]), abs(yr[2]))
+  # Create symmetric range around 0
+  ylim_high <- max_abs * 1.4 # Space above for rectangles and text
+  ylim_low <- -max_abs * 1.4 # Equal space below for labels and grid
+
+  # Position rectangles and labels relative to symmetric limits
+  yrect_low <- ylim_high - 0.10 * (ylim_high - ylim_low)
+  yrect_high <- ylim_high - 0.06 * (ylim_high - ylim_low)
+  y_text <- ylim_high - 0.02 * (ylim_high - ylim_low)
+  y_label3 <- ylim_low + 0.06 * (ylim_high - ylim_low)
+  y_label2 <- ylim_low + 0.03 * (ylim_high - ylim_low)
+  y_label1 <- ylim_low - 0.02 * (ylim_high - ylim_low)
 
   gdf <- data %>%
     group_by(trans) %>%
@@ -96,10 +100,10 @@ create_pdf <- function(graph_path, data, value_col) {
       c3 = substr(oriType, 3, 3)
     )
   if (value_col == "logRatio_exp") {
-    y_label <- "Log2{(#sbst/#ori) / (expected #sbst/#ori)}"
+    y_label <- "Log2{(#sbst/#ori) / (expected #sbst/#ori)}\n - mean"
   }
   if (value_col == "logRatio_mean") {
-    y_label <- "Log2{(#sbst/#ori) / (mean of #sbst/#ori)}"
+    y_label <- "Log2{(#sbst/#ori) / (mean of #sbst/#ori)}\n - mean"
   }
   p <- ggplot(data, aes(x = pos, y = !!value_sym)) +
     geom_rect(
@@ -162,18 +166,22 @@ create_pdf <- function(graph_path, data, value_col) {
     theme_minimal(base_size = 12) +
     ggplot2::theme(
       axis.text.x = element_blank(),
-      axis.title.x = element_text(size = 26, margin = margin(t = 60), family = "os"),
+      axis.title.x = element_text(size = 26, margin = margin(t = 10), family = "os"),
       axis.title.y = element_text(size = 26, margin = margin(r = 10), family = "os"),
       axis.text.y = element_text(size = 22, margin = margin(r = 8)),
       panel.grid.minor.x = element_blank(),
       plot.margin = margin(t = 12, r = 12, b = 12, l = 20)
     ) +
-    coord_cartesian(ylim = c(yr[1], y_text), clip = "off")
+    coord_cartesian(ylim = c(ylim_low, ylim_high), clip = "off")
 
   ggsave(filename = graph_path, plot = p, device = "pdf", width = 30, height = 8)
 }
 
 add_logRatio <- function(data) {
+  # Add oriType column to data
+  data <- data %>%
+    mutate(oriType = paste0(substr(mutType, 1, 1), substr(mutType, 3, 3), substr(mutType, nchar(mutType), nchar(mutType))))
+
   # Add transition column to data
   # Add observed figure of mutNum/totalRootNum
   obs_mut_over_ori <- data$mutNum / data$totalRootNum
@@ -188,12 +196,18 @@ add_logRatio <- function(data) {
     sum()
   expected_sbst_over_ori <- (all_sbst_sum / all_ori_sum) / 3
   mean_obs_sbst_over_ori <- mean(obs_mut_over_ori, na.rm = TRUE)
+  print(paste("expected_sbst_over_ori:", expected_sbst_over_ori))
+  print(paste("mean_obs_sbst_over_ori:", mean_obs_sbst_over_ori))
 
   data <- data %>%
     mutate(
       obs_mut_over_ori = obs_mut_over_ori,
       logRatio_exp = log2(obs_mut_over_ori / expected_sbst_over_ori),
       logRatio_mean = log2(obs_mut_over_ori / mean_obs_sbst_over_ori)
+    ) %>%
+    mutate(
+      logRatio_exp = logRatio_exp - mean(logRatio_exp, na.rm = TRUE),
+      logRatio_mean = logRatio_mean - mean(logRatio_mean, na.rm = TRUE)
     )
 }
 
