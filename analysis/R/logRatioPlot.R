@@ -45,10 +45,7 @@ create_pdf <- function(graph_path, data, value_col) {
     left_join(group_info, by = "trans") %>%
     mutate(pos = pos_in_group + offset)
 
-  # Stats
   value_sym <- rlang::sym(value_col)
-  mean_val <- mean(data[[value_col]], na.rm = TRUE)
-  sd_val <- sd(data[[value_col]], na.rm = TRUE)
 
   # X labels: oriType in the arranged order
   x_breaks <- data$pos
@@ -57,14 +54,6 @@ create_pdf <- function(graph_path, data, value_col) {
   # Header rectangles like sbmut.R's add_colored_rectangles
   color_array <- RColorBrewer::brewer.pal(6, "Dark2")
   fill_map <- setNames(color_array, group_order)
-  # Line colors: use Dark2 7th and 8th colors
-  line_palette <- RColorBrewer::brewer.pal(8, "Dark2")
-  line_base_col_a <- line_palette[7] # for y=0 and mean
-  line_base_col_b <- line_palette[8] # for ±SD and ±2SD
-  line_col_0 <- grDevices::adjustcolor(line_base_col_b, alpha.f = 1.00)
-  line_col_mean <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
-  line_col_sd <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
-  line_col_2sd <- grDevices::adjustcolor(line_base_col_a, alpha.f = 1.00)
 
   yr <- range(data[[value_col]], na.rm = TRUE)
   max_abs <- max(abs(yr[1]), abs(yr[2]))
@@ -72,13 +61,16 @@ create_pdf <- function(graph_path, data, value_col) {
   ylim_high <- max_abs * 1.4 # Space above for rectangles and text
   ylim_low <- -max_abs * 1.4 # Equal space below for labels and grid
 
+  # Calculate max integer for grid breaks
+  max_int <- ceiling(max_abs)
+
   # Position rectangles and labels relative to symmetric limits
   yrect_low <- ylim_high - 0.10 * (ylim_high - ylim_low)
   yrect_high <- ylim_high - 0.06 * (ylim_high - ylim_low)
   y_text <- ylim_high - 0.02 * (ylim_high - ylim_low)
-  y_label3 <- ylim_low + 0.06 * (ylim_high - ylim_low)
-  y_label2 <- ylim_low + 0.03 * (ylim_high - ylim_low)
-  y_label1 <- ylim_low - 0.02 * (ylim_high - ylim_low)
+  y_label3 <- ylim_low + 0.02 * (ylim_high - ylim_low)
+  y_label2 <- ylim_low - 0.01 * (ylim_high - ylim_low)
+  y_label1 <- ylim_low - 0.04 * (ylim_high - ylim_low)
 
   gdf <- data %>%
     group_by(trans) %>%
@@ -100,10 +92,10 @@ create_pdf <- function(graph_path, data, value_col) {
       c3 = substr(oriType, 3, 3)
     )
   if (value_col == "logRatio_exp") {
-    y_label <- "Log2{(#sbst/#ori) / (expected #sbst/#ori)}\n - mean"
+    y_label <- "Log2{(#sbst/#ori) / (expected #sbst/#ori)}"
   }
   if (value_col == "logRatio_mean") {
-    y_label <- "Log2{(#sbst/#ori) / (mean of #sbst/#ori)}\n - mean"
+    y_label <- "Log2{(#sbst/#ori) / (mean of #sbst/#ori)}"
   }
   p <- ggplot(data, aes(x = pos, y = !!value_sym)) +
     geom_rect(
@@ -116,9 +108,9 @@ create_pdf <- function(graph_path, data, value_col) {
     annotate("text", x = gdf$xmid, y = y_text, label = gdf$label, size = 10, family = "os", fontface = "bold") +
     geom_segment(
       data = data,
-      aes(x = pos, xend = pos, y = mean_val, yend = !!value_sym, color = trans),
+      aes(x = pos, xend = pos, y = 0, yend = !!value_sym, color = trans),
       inherit.aes = FALSE,
-      linewidth = 0.6, alpha = 0.8, show.legend = FALSE
+      linewidth = 0.8, alpha = 0.9, show.legend = FALSE
     ) +
     scale_color_manual(values = fill_map, guide = "none") +
     geom_point(size = 4, aes(color = trans), show.legend = FALSE) +
@@ -155,13 +147,9 @@ create_pdf <- function(graph_path, data, value_col) {
       data = subset(labels_df, trans == "T>G"), aes(x = pos, y = y_label2, label = c2),
       inherit.aes = FALSE, angle = 90, size = 8, family = "mn", color = fill_map["T>G"]
     ) +
-    geom_hline(yintercept = 0, linetype = "dotted", color = line_col_0) +
-    geom_hline(yintercept = mean_val, linetype = "solid", color = line_col_mean, linewidth = 0.8) +
-    geom_hline(yintercept = mean_val + sd_val, linetype = "dashed", color = line_col_sd) +
-    geom_hline(yintercept = mean_val - sd_val, linetype = "dashed", color = line_col_sd) +
-    geom_hline(yintercept = mean_val + 2 * sd_val, linetype = "dashed", color = line_col_2sd) +
-    geom_hline(yintercept = mean_val - 2 * sd_val, linetype = "dashed", color = line_col_2sd) +
+    geom_hline(yintercept = 0, linetype = "solid", color = "#666666", linewidth = 0.6) +
     scale_x_continuous(breaks = x_breaks, labels = x_labels, expand = c(0, 0), minor_breaks = NULL) +
+    scale_y_continuous(breaks = seq(-max_int, max_int, by = 1), minor_breaks = NULL) +
     labs(x = "Original Trinucleotides", y = y_label) +
     theme_minimal(base_size = 12) +
     ggplot2::theme(
@@ -170,6 +158,9 @@ create_pdf <- function(graph_path, data, value_col) {
       axis.title.y = element_text(size = 26, margin = margin(r = 10), family = "os"),
       axis.text.y = element_text(size = 22, margin = margin(r = 8)),
       panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = element_line(color = "#cecece", linewidth = 0.2),
+      panel.grid.major.y = element_line(color = "#cecece", linewidth = 0.5),
+      panel.grid.minor.y = element_blank(),
       plot.margin = margin(t = 12, r = 12, b = 12, l = 20)
     ) +
     coord_cartesian(ylim = c(ylim_low, ylim_high), clip = "off")
@@ -196,19 +187,18 @@ add_logRatio <- function(data) {
     sum()
   expected_sbst_over_ori <- (all_sbst_sum / all_ori_sum) / 3
   mean_obs_sbst_over_ori <- mean(obs_mut_over_ori, na.rm = TRUE)
-  print(paste("expected_sbst_over_ori:", expected_sbst_over_ori))
-  print(paste("mean_obs_sbst_over_ori:", mean_obs_sbst_over_ori))
 
   data <- data %>%
     mutate(
       obs_mut_over_ori = obs_mut_over_ori,
       logRatio_exp = log2(obs_mut_over_ori / expected_sbst_over_ori),
       logRatio_mean = log2(obs_mut_over_ori / mean_obs_sbst_over_ori)
-    ) %>%
-    mutate(
-      logRatio_exp = logRatio_exp - mean(logRatio_exp, na.rm = TRUE),
-      logRatio_mean = logRatio_mean - mean(logRatio_mean, na.rm = TRUE)
     )
+  print(paste("logRatio_exp: ", data$logRatio_exp))
+  print(paste("logRatio_mean: ", data$logRatio_mean))
+  print(paste("expected_sbst_over_ori: ", expected_sbst_over_ori))
+  print(paste("mean_obs_sbst_over_ori: ", mean_obs_sbst_over_ori))
+  return(data)
 }
 
 # Access the arguments
