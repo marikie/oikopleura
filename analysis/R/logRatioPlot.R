@@ -10,10 +10,10 @@ generate_plots <- function(tsv_path) {
   data <- read.csv(tsv_path, sep = "\t", header = TRUE)
 
   path_without_extension <- tools::file_path_sans_ext(tsv_path)
-  graph_path_exp <- paste(path_without_extension, "_logRatio_exp.pdf", sep = "")
+  # graph_path_exp <- paste(path_without_extension, "_logRatio_exp.pdf", sep = "")
   graph_path_mean <- paste(path_without_extension, "_logRatio_mean.pdf", sep = "")
   data <- add_logRatio(data)
-  create_pdf(graph_path_exp, data, value_col = "logRatio_exp")
+  # create_pdf(graph_path_exp, data, value_col = "logRatio_exp")
   create_pdf(graph_path_mean, data, value_col = "logRatio_mean")
 }
 
@@ -177,27 +177,27 @@ add_logRatio <- function(data) {
   # Add observed figure of mutNum/totalRootNum
   obs_mut_over_ori <- data$mutNum / data$totalRootNum
 
-  all_sbst_sum <- data %>%
-    select(mutNum) %>%
-    sum()
-  all_ori_sum <- data %>%
-    select(oriType, totalRootNum) %>%
-    unique() %>%
-    pull(totalRootNum) %>%
-    sum()
-  expected_sbst_over_ori <- (all_sbst_sum / all_ori_sum) / 3
+  # all_sbst_sum <- data %>%
+  #   select(mutNum) %>%
+  #   sum()
+  # all_ori_sum <- data %>%
+  #   select(oriType, totalRootNum) %>%
+  #   unique() %>%
+  #   pull(totalRootNum) %>%
+  #   sum()
+  # expected_sbst_over_ori <- (all_sbst_sum / all_ori_sum) / 3
   mean_obs_sbst_over_ori <- mean(obs_mut_over_ori, na.rm = TRUE)
 
   data <- data %>%
     mutate(
       obs_mut_over_ori = obs_mut_over_ori,
-      logRatio_exp = log2(obs_mut_over_ori / expected_sbst_over_ori),
+      # logRatio_exp = log2(obs_mut_over_ori / expected_sbst_over_ori),
       logRatio_mean = log2(obs_mut_over_ori / mean_obs_sbst_over_ori)
     )
-  print(paste("logRatio_exp: ", data$logRatio_exp))
-  print(paste("logRatio_mean: ", data$logRatio_mean))
-  print(paste("expected_sbst_over_ori: ", expected_sbst_over_ori))
-  print(paste("mean_obs_sbst_over_ori: ", mean_obs_sbst_over_ori))
+  # print(paste("logRatio_exp: ", data$logRatio_exp))
+  # print(paste("logRatio_mean: ", data$logRatio_mean))
+  # print(paste("expected_sbst_over_ori: ", expected_sbst_over_ori))
+  # print(paste("mean_obs_sbst_over_ori: ", mean_obs_sbst_over_ori))
   return(data)
 }
 

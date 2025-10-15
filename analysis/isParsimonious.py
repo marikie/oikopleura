@@ -3,17 +3,22 @@ Let's say we have a tree with 3 species: A, B, C.
 A and B are the ingroup.
 C is the outgroup.
 
-Let's say the sequence identity between A and B is idt_AB.
 Let's say the sequence identity between A and C is idt_AC.
+Let's say the sequence identity between A and B is idt_AB.
 Let's say the sequence identity between B and C is idt_BC.
+
+Then the sequence mismatch rate between A and C is 1 - idt_AC = x.
+Then the sequence mismatch rate between A and B is 1 - idt_AB = y.
+Then the sequence mismatch rate between B and C is 1 - idt_BC = z.
 
 Let's say the probablity of mutating from the common ancestor of A and B and C to A is p_A.
 Let's say the probablity of mutating from the common ancestor of A and B and C to B is p_B.
 Let's say the probablity of mutating from the common ancestor of A and B and C to C is p_C.
 
-Let's assume p_A = p_B = (1 - idt_AB) / 2.
-Then let's assume 1-idt_AC = p_A + p_C.
-Thus p_C = 1 - idt_AC - p_A.
+We can assume:
+x = p_A + p_C
+y = p_B + p_C
+z = p_A + p_B
 
 The probability of Parsimony p_pars = (substitution occurred only once) is p_A/3 * (1-p_B) * (1-p_C)
 The probability of non-Parsimony p_nonpars = (substitution occurred twice) is (1-p_A) * p_B/3 * p_C/3
