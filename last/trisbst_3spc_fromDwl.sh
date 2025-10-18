@@ -1,6 +1,13 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+LAST_DIR="$SCRIPT_DIR"
+
+LAST_DIR="${LAST_DIR_OVERRIDE:-$LAST_DIR}"
+
+PATH="$LAST_DIR:$PATH"
+
 config_file="$SCRIPT_DIR/dwl_config.yaml"
 # Load YAML configuration using yq
 if [ ! -f "$config_file" ]; then
@@ -73,24 +80,48 @@ fi
 if [ -z "$org1FullName" ]; then
     org1FullName=$(get_org_full_name_from_id "$org1ID") || exit 1
     echo "Derived org1FullName: $org1FullName"
+else
+    org1FullName="${org1FullName// /_}"  # Replace spaces with underscores
+    echo "Using provided org1FullName: $org1FullName"
 fi
 if [ -z "$org2FullName" ]; then
     org2FullName=$(get_org_full_name_from_id "$org2ID") || exit 1
     echo "Derived org2FullName: $org2FullName"
+else
+    org2FullName="${org2FullName// /_}"  # Replace spaces with underscores
+    echo "Using provided org2FullName: $org2FullName"
 fi
 if [ -z "$org3FullName" ]; then
     org3FullName=$(get_org_full_name_from_id "$org3ID") || exit 1
     echo "Derived org3FullName: $org3FullName"
+else
+    org3FullName="${org3FullName// /_}"  # Replace spaces with underscores
+    echo "Using provided org3FullName: $org3FullName"
 fi
 
-cd $(get_config '.paths.base_genomes')
+base_genomes=$(get_config '.paths.base_genomes')
+if [ -z "$base_genomes" ] || [ "$base_genomes" = "null" ]; then
+    echo "Error: .paths.base_genomes is not set in dwl_config.yaml" >&2
+    exit 1
+fi
+
+if [ ! -d "$base_genomes" ]; then
+    mkdir -p "$base_genomes" || {
+        echo "Error: Unable to create base genomes directory at $base_genomes" >&2
+        exit 1
+    }
+fi
+
+cd "$base_genomes" || {
+    echo "Error: Cannot change directory to $base_genomes" >&2
+    exit 1
+}
 for orgFullName in $org1FullName $org2FullName $org3FullName; do
     if [ ! -d "$orgFullName" ]; then
         mkdir "$orgFullName"
     fi
 done
 
-base_genomes=$(get_config '.paths.base_genomes')
 includes=$(get_config '.download.includes'|tr -d ' '|tr '\n' ','|sed 's/,$//')
 echo "includes: $includes"
 
@@ -231,4 +262,4 @@ else
 fi
 
 # Run downstream pipeline (no checkInnerGroupIdt argument anymore)
-bash $(get_config '.paths.scripts.last')/trisbst_3spc.sh "$DATE" "$org1FASTA" "$org2FASTA" "$org3FASTA" "$org1GFF"
+bash "$LAST_DIR/trisbst_3spc.sh" "$DATE" "$org1FASTA" "$org2FASTA" "$org3FASTA" "$org1GFF"

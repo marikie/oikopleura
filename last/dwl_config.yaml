@@ -1,9 +1,7 @@
 # Directory paths
 paths:
   # Change paths to the paths of your last directory and genomes
-  base_genomes: "/home/mrk/genomes"
-  scripts:
-    last: "/home/mrk/scripts/last"
+  base_genomes: "/home/mrk/sbst/genomes"
 
 # Configuration for genome download and processing
 settings:
