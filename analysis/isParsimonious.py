@@ -52,19 +52,19 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("idt_AB", type=float, help="Sequence percent identity between ingroup A and ingroup B (e.g. 97)")
-    parser.add_argument("idt_AC", type=float, help="Sequence percent identity between outgroup C and ingroup A (e.g. 93)")
-    parser.add_argument("idt_BC", type=float, help="Sequence percent identity between outgroup C and ingroup B (e.g. 92)")
+    parser.add_argument("idt_inin_AB", type=float, help="Sequence percent identity between ingroup A and ingroup B (e.g. 97)")
+    parser.add_argument("idt_outin_CA", type=float, help="Sequence percent identity between outgroup C and ingroup A (e.g. 93)")
+    parser.add_argument("idt_outin_CB", type=float, help="Sequence percent identity between outgroup C and ingroup B (e.g. 92)")
     args = parser.parse_args()
 
-    x = 100 - args.idt_AB
-    y = 100 - args.idt_AC
-    z = 100 - args.idt_BC
+    x = 100 - args.idt_inin_AB
+    y = 100 - args.idt_outin_CA
+    z = 100 - args.idt_outin_CB
 
     p_A = (x + y - z) / 2
     p_B = (x + z - y) / 2
     p_C = (y + z - x) / 2
 
     print(f"p_A = {p_A}, p_B = {p_B}, p_C = {p_C}")
-    print(f"p_pars / p_nonpars for species A = (p_A/3 * (1-p_B) * (1-p_C)) / ((1-p_A) * p_B/3 * p_C/3) = {((p_A/3 * (1-p_B) * (1-p_C)) / ((1-p_A) * p_B/3 * p_C/3))}")
-    print(f"p_pars / p_nonpars for species B = ((1-p_A) * p_B/3 * (1-p_C)) / (p_A/3 * (1-p_B) * p_C/3) = {((1-p_A) * p_B/3 * (1-p_C)) / (p_A/3 * (1-p_B) * p_C/3)}")
+    print(f"p_pars / p_nonpars for species A = (p_A/3 * (100-p_B) * (100-p_C)) / ((100-p_A) * p_B/3 * p_C/3) = {((p_A/3 * (100-p_B) * (100-p_C)) / ((100-p_A) * p_B/3 * p_C/3))}")
+    print(f"p_pars / p_nonpars for species B = ((100-p_A) * p_B/3 * (100-p_C)) / (p_A/3 * (100-p_B) * p_C/3) = {((100-p_A) * p_B/3 * (100-p_C)) / (p_A/3 * (100-p_B) * p_C/3)}")
