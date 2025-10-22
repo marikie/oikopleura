@@ -1,7 +1,7 @@
 #!/bin/bash
 
 argNum=$#
-if [ $argNum -ne 6 ]; then
+if [ $argNum -ne 5 ]; then
     echo "Usage: $0 <Today's Date> <org2FASTA> <org3FASTA> <org2ShortName> <org3ShortName>"
     exit 1
 fi

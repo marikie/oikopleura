@@ -48,6 +48,26 @@ extract_accession_from_path() {
     echo ""
 }
 
+make_short_name() {
+    local full_name="$1"
+    local suffix="$2"
+    local first_part=""
+    local second_part=""
+    local rest=""
+    local IFS='_'
+    read -r first_part second_part rest <<< "$full_name"
+
+    local first_trimmed="${first_part:0:3}"
+
+    if [ -z "$second_part" ]; then
+        second_part="${first_part:3}"
+    fi
+
+    local second_trimmed="${second_part:0:3}"
+
+    echo "${first_trimmed}${second_trimmed}${suffix}"
+}
+
 # Get required arguments count from config
 argNum=$(get_config '.settings.required_args')
 if [ $# -ne "$argNum" ]; then
@@ -72,9 +92,9 @@ org2FullName="${org2DirName}_2"
 org3FullName="${org3DirName}_3"
 
 # make short names
-org1ShortName="${org1FullName:0:3}$(echo $org1FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)1"
-org2ShortName="${org2FullName:0:3}$(echo $org2FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)2"
-org3ShortName="${org3FullName:0:3}$(echo $org3FullName | sed -n 's/.*\([A-Z][a-z]\{2\}\).*/\1/p' | head -n 1)3"
+org1ShortName=$(make_short_name "$org1FullName" "1")
+org2ShortName=$(make_short_name "$org2FullName" "2")
+org3ShortName=$(make_short_name "$org3FullName" "3")
 
 org1ID=$(extract_accession_from_path "$org1FASTA")
 org2ID=$(extract_accession_from_path "$org2FASTA")
@@ -259,10 +279,10 @@ fi
 if [ "$org1GFF" != "NO_GFF_FILE" ]; then
 	echo "There is a gff file of org1"
 	echo "maf-cut (cut off the CDS regions)"
-	"$ANALYSIS_DIR/maf-cut-cds_uglier.py" \
+	"$ANALYSIS_DIR/maf-cut-cds-uglier.py" \
 		"$org1GFF" \
 		"$joinedFile" >"$joinedFile_ncds"
-	"$ANALYSIS_DIR/maf-cut-cds_uglier.py" \
+	"$ANALYSIS_DIR/maf-cut-cds-uglier.py" \
 		"$org1GFF" \
 		"$joinedFile_maflinked" >"$joinedFile_maflinked_ncds"
 
@@ -324,44 +344,28 @@ bash "$LAST_DIR/generate_graphs.sh" \
     "$org3tsv_errprb" \
     "$org2tsv_maflinked_errprb" \
     "$org3tsv_maflinked_errprb" \
-	"$org2_out" \
-	"$org3_out" \
-	"$org2_out_sbstCount" \
-	"$org3_out_sbstCount" \
-	"$org2_out_oriCount" \
-	"$org3_out_oriCount" \
-	"$org2_maflinked_out" \
-	"$org3_maflinked_out" \
-	"$org2_maflinked_out_sbstCount" \
-	"$org3_maflinked_out_sbstCount" \
-	"$org2_maflinked_out_oriCount" \
-	"$org3_maflinked_out_oriCount" \
-	"$org2_errprb_out" \
-	"$org3_errprb_out" \
-	"$org2_errprb_out_sbstCount" \
-	"$org3_errprb_out_sbstCount" \
-	"$org2_errprb_out_oriCount" \
-	"$org3_errprb_out_oriCount" \
-	"$org2_maflinked_errprb_out" \
-	"$org3_maflinked_errprb_out" \
-	"$org2_maflinked_errprb_out_sbstCount" \
-	"$org3_maflinked_errprb_out_sbstCount" \
-	"$org2_maflinked_errprb_out_oriCount" \
-	"$org3_maflinked_errprb_out_oriCount" \
-	"$org2_dinuc_tsv" \
-	"$org3_dinuc_tsv" \
-	"$org2_dinuc_tsv_maflinked" \
-	"$org3_dinuc_tsv_maflinked" \
-	"$R_DIR"
+    "$org2tsv_ncds" \
+    "$org3tsv_ncds" \
+    "$org2tsv_maflinked_ncds" \
+    "$org3tsv_maflinked_ncds" \
+    "$org2_dinuc_tsv" \
+    "$org3_dinuc_tsv" \
+    "$org2_dinuc_tsv_maflinked" \
+    "$org3_dinuc_tsv_maflinked" \
+    "$org2_dinuc_tsv_ncds" \
+    "$org3_dinuc_tsv_ncds" \
+    "$org2_dinuc_tsv_maflinked_ncds" \
+    "$org3_dinuc_tsv_maflinked_ncds" \
+    "$R_DIR"
 
-collect_pca_script="$LAST_DIR/collect_for_pca.sh"
-if [ -x "$collect_pca_script" ]; then
-    bash "$collect_pca_script" \
-        "$DATE" \
-        "$org1ID" "$org2ID" "$org3ID" \
-        "$org1ShortName" "$org2ShortName" "$org3ShortName" \
-        "$org1DirName" "$org2DirName" "$org3DirName" \
-        "$outDirPath"
-else
-    echo "Warning: collect_for_pca.sh not found or not executable at $collect_pca_script" >&2
-fi
+# collect_pca_script="$LAST_DIR/collect_for_pca.sh"
+# if [ -x "$collect_pca_script" ]; then
+#     bash "$collect_pca_script" \
+#         "$DATE" \
+#         "$org1ID" "$org2ID" "$org3ID" \
+#         "$org1ShortName" "$org2ShortName" "$org3ShortName" \
+#         "$org1DirName" "$org2DirName" "$org3DirName" \
+#         "$outDirPath"
+# else
+#     echo "Warning: collect_for_pca.sh not found or not executable at $collect_pca_script" >&2
+# fi

@@ -20,43 +20,77 @@ get_config() {
 }
 
 # Function to derive organism full name from NCBI Datasets summary JSON
-# - Writes summary to "$orgID.json" in current working directory
+# - Writes summary JSON to "$base_genomes/<orgFullName>/<accession>.json" when configured
 # - Base name: reports[0].organism.organism_name (spaces -> underscores)
 # - If infraspecific_names exists, append all values joined by '_'
 get_org_full_name_from_id() {
     local accession="$1"
-    local json_file="${accession}.json"
+    local tmp_json
+    tmp_json=$(mktemp) || {
+        echo "Error: Unable to create temporary file for $accession summary." >&2
+        return 1
+    }
 
     # Require jq
     if ! command -v jq >/dev/null 2>&1; then
         echo "Error: 'jq' is required but not found in PATH." >&2
+        rm -f "$tmp_json"
         return 1
     fi
 
     # Fetch summary JSON
-    if ! datasets summary genome accession "$accession" > "$json_file"; then
+    if ! datasets summary genome accession "$accession" > "$tmp_json"; then
         echo "Error: Failed to run 'datasets summary' for $accession" >&2
+        rm -f "$tmp_json"
         return 1
     fi
 
     # Parse organism name
     local base_name
-    base_name=$(jq -r 'try .reports[0].organism.organism_name catch ""' "$json_file")
+    base_name=$(jq -r 'try .reports[0].organism.organism_name catch ""' "$tmp_json")
     if [ -z "$base_name" ] || [ "$base_name" = "null" ]; then
-        echo "Error: '.reports[0].organism.organism_name' not found in $json_file" >&2
-        return 1
+        echo "Warning: '.reports[0].organism.organism_name' not found in temporary summary; using accession $accession" >&2
+        base_name="$accession"
     fi
     base_name=${base_name// /_}
 
     # Parse infraspecific names (optional)
     local infra
-    infra=$(jq -r 'try [.reports[0].organism.infraspecific_names[]] | map(tostring) | join("_") catch ""' "$json_file")
+    infra=$(jq -r 'try ([.reports[0].organism.infraspecific_names[]] | map(tostring) | join("_")) catch ""' "$tmp_json")
+    infra=${infra// /_}
 
+    local calculated_full_name
     if [ -n "$infra" ] && [ "$infra" != "null" ]; then
-        echo "${base_name}_${infra}"
+        calculated_full_name="${base_name}_${infra}"
     else
-        echo "$base_name"
+        calculated_full_name="$base_name"
     fi
+
+    # Determine final JSON location
+    local destination_json=""
+    if [ -n "$base_genomes" ] && [ "$base_genomes" != "null" ]; then
+        local dest_dir="$base_genomes/$calculated_full_name"
+        if ! mkdir -p "$dest_dir"; then
+            echo "Error: Unable to create directory $dest_dir for storing summary JSON." >&2
+            rm -f "$tmp_json"
+            return 1
+        fi
+        destination_json="$dest_dir/${accession}.json"
+    else
+        destination_json="${accession}.json"
+    fi
+
+    if ! mv "$tmp_json" "$destination_json"; then
+        echo "Warning: Failed to move summary JSON to $destination_json; attempting to copy instead." >&2
+        if ! cp "$tmp_json" "$destination_json"; then
+            echo "Error: Unable to place summary JSON for $accession." >&2
+            rm -f "$tmp_json"
+            return 1
+        fi
+        rm -f "$tmp_json"
+    fi
+
+    echo "$calculated_full_name"
 }
 
 # Parse positional arguments
@@ -72,8 +106,21 @@ org3FullName="$7"
 # Check minimally required arguments (DATE and 3 accessions)
 if [ -z "$DATE" ] || [ -z "$org1ID" ] || [ -z "$org2ID" ] || [ -z "$org3ID" ]; then
     echo "$(get_config '.errors.arg_count' | sed "s/{arg_num}/$(get_config '.settings.required_args')/g")" >&2
-    echo "$(get_config '.errors.usage')" >&2
+   echo "$(get_config '.errors.usage')" >&2
+   exit 1
+fi
+
+base_genomes=$(get_config '.paths.base_genomes')
+if [ -z "$base_genomes" ] || [ "$base_genomes" = "null" ]; then
+    echo "Error: .paths.base_genomes is not set in dwl_config.yaml" >&2
     exit 1
+fi
+
+if [ ! -d "$base_genomes" ]; then
+    mkdir -p "$base_genomes" || {
+        echo "Error: Unable to create base genomes directory at $base_genomes" >&2
+        exit 1
+    }
 fi
 
 # Auto-generate org full names from NCBI Datasets summary if not provided
@@ -97,19 +144,6 @@ if [ -z "$org3FullName" ]; then
 else
     org3FullName="${org3FullName// /_}"  # Replace spaces with underscores
     echo "Using provided org3FullName: $org3FullName"
-fi
-
-base_genomes=$(get_config '.paths.base_genomes')
-if [ -z "$base_genomes" ] || [ "$base_genomes" = "null" ]; then
-    echo "Error: .paths.base_genomes is not set in dwl_config.yaml" >&2
-    exit 1
-fi
-
-if [ ! -d "$base_genomes" ]; then
-    mkdir -p "$base_genomes" || {
-        echo "Error: Unable to create base genomes directory at $base_genomes" >&2
-        exit 1
-    }
 fi
 
 cd "$base_genomes" || {
