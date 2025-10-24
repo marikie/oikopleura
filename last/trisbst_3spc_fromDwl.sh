@@ -19,6 +19,13 @@ get_config() {
     yq eval "$1" "$config_file"
 }
 
+sanitize_for_path() {
+    local name="$1"
+    name=${name// /_}
+    name=${name//[^A-Za-z0-9._-]/_}
+    echo "$name"
+}
+
 # Function to derive organism full name from NCBI Datasets summary JSON
 # - Writes summary JSON to "$base_genomes/<orgFullName>/<accession>.json" when configured
 # - Base name: reports[0].organism.organism_name (spaces -> underscores)
@@ -52,12 +59,12 @@ get_org_full_name_from_id() {
         echo "Warning: '.reports[0].organism.organism_name' not found in temporary summary; using accession $accession" >&2
         base_name="$accession"
     fi
-    base_name=${base_name// /_}
+    base_name=$(sanitize_for_path "$base_name")
 
     # Parse infraspecific names (optional)
     local infra
     infra=$(jq -r 'try ([.reports[0].organism.infraspecific_names[]] | map(tostring) | join("_")) catch ""' "$tmp_json")
-    infra=${infra// /_}
+    infra=$(sanitize_for_path "$infra")
 
     local calculated_full_name
     if [ -n "$infra" ] && [ "$infra" != "null" ]; then
@@ -65,6 +72,7 @@ get_org_full_name_from_id() {
     else
         calculated_full_name="$base_name"
     fi
+    calculated_full_name=$(sanitize_for_path "$calculated_full_name")
 
     # Determine final JSON location
     local destination_json=""
@@ -92,6 +100,45 @@ get_org_full_name_from_id() {
 
     echo "$calculated_full_name"
 }
+
+OUT_DIR_OVERRIDE=""
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --out-dir)
+            if [[ -z "${2:-}" ]]; then
+                echo "Error: --out-dir requires a non-empty path argument." >&2
+                exit 1
+            fi
+            OUT_DIR_OVERRIDE="$2"
+            shift 2
+            continue
+            ;;
+        --out-dir=*)
+            OUT_DIR_OVERRIDE="${1#*=}"
+            if [[ -z "$OUT_DIR_OVERRIDE" ]]; then
+                echo "Error: --out-dir requires a non-empty path argument." >&2
+                exit 1
+            fi
+            shift
+            continue
+            ;;
+        --)
+            shift
+            POSITIONAL_ARGS+=("$@")
+            break
+            ;;
+        -*)
+            echo "Error: Unknown option $1" >&2
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}"
 
 # Parse positional arguments
 DATE="$1"
@@ -296,4 +343,9 @@ else
 fi
 
 # Run downstream pipeline (no checkInnerGroupIdt argument anymore)
-bash "$LAST_DIR/trisbst_3spc.sh" "$DATE" "$org1FASTA" "$org2FASTA" "$org3FASTA" "$org1GFF"
+trisbst_args=()
+if [ -n "$OUT_DIR_OVERRIDE" ]; then
+    trisbst_args+=("--out-dir" "$OUT_DIR_OVERRIDE")
+fi
+trisbst_args+=("$DATE" "$org1FASTA" "$org2FASTA" "$org3FASTA" "$org1GFF")
+bash "$LAST_DIR/trisbst_3spc.sh" "${trisbst_args[@]}"

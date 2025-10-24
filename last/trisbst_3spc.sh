@@ -30,22 +30,71 @@ get_config() {
     yq eval "$1" "$config_file"
 }
 
+OUT_DIR_OVERRIDE=""
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --out-dir)
+            if [[ -z "${2:-}" ]]; then
+                echo "Error: --out-dir requires a non-empty path argument." >&2
+                exit 1
+            fi
+            OUT_DIR_OVERRIDE="$2"
+            shift 2
+            continue
+            ;;
+        --out-dir=*)
+            OUT_DIR_OVERRIDE="${1#*=}"
+            if [[ -z "$OUT_DIR_OVERRIDE" ]]; then
+                echo "Error: --out-dir requires a non-empty path argument." >&2
+                exit 1
+            fi
+            shift
+            continue
+            ;;
+        --)
+            shift
+            POSITIONAL_ARGS+=("$@")
+            break
+            ;;
+        -*)
+            echo "Error: Unknown option $1" >&2
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+set -- "${POSITIONAL_ARGS[@]}"
+
 extract_accession_from_path() {
     local input_path=$1
     local base
     base=$(basename "$input_path")
 
-    if [[ $base =~ ^(G[CF]A_[0-9]+\.[0-9]+) ]]; then
-        echo "${BASH_REMATCH[1]}"
+    if [[ -z $base ]]; then
+        echo ""
         return 0
     fi
 
-    if [[ $base =~ ^(G[CF]A_[0-9]+) ]]; then
-        echo "${BASH_REMATCH[1]}"
+    local first_part="${base%%_*}"
+    local after_first="${base#*_}"
+
+    if [[ $after_first == "$base" ]]; then
+        echo "$base"
         return 0
     fi
 
-    echo ""
+    local second_part="${after_first%%_*}"
+
+    if [[ -z $second_part ]]; then
+        echo "$first_part"
+        return 0
+    fi
+
+    echo "${first_part}_${second_part}"
 }
 
 make_short_name() {
@@ -106,7 +155,16 @@ if [ -z "$org1ID" ] || [ -z "$org2ID" ] || [ -z "$org3ID" ]; then
 fi
 
 # Use config patterns to generate filenames
-outDirPath="$(get_config '.paths.out_dir')/""$org1ShortName""_""$org2ShortName""_""$org3ShortName"
+default_out_dir=$(get_config '.paths.out_dir')
+outDirBase="${OUT_DIR_OVERRIDE:-$default_out_dir}"
+if [ ! -d "$outDirBase" ]; then
+    echo "---making $outDirBase"
+    if ! mkdir -p "$outDirBase"; then
+        echo "Error: Unable to create output base directory $outDirBase" >&2
+        exit 1
+    fi
+fi
+outDirPath="${outDirBase}/${org1ShortName}_${org2ShortName}_${org3ShortName}"
 
 gcContent_org2=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org2ShortName/g" | sed "s/{date}/$DATE/g")
 gcContent_org3=$(get_config '.patterns.gc_content' | sed "s/{org_short}/$org3ShortName/g" | sed "s/{date}/$DATE/g")
@@ -279,12 +337,21 @@ fi
 if [ "$org1GFF" != "NO_GFF_FILE" ]; then
 	echo "There is a gff file of org1"
 	echo "maf-cut (cut off the CDS regions)"
-	"$ANALYSIS_DIR/maf-cut-cds-uglier.py" \
-		"$org1GFF" \
-		"$joinedFile" >"$joinedFile_ncds"
-	"$ANALYSIS_DIR/maf-cut-cds-uglier.py" \
-		"$org1GFF" \
-		"$joinedFile_maflinked" >"$joinedFile_maflinked_ncds"
+	if [ ! -e "$joinedFile_ncds" ]; then
+		"$ANALYSIS_DIR/maf-cut-cds-uglier.py" \
+			"$org1GFF" \
+			"$joinedFile" >"$joinedFile_ncds"
+	else
+		echo "$joinedFile_ncds already exists"
+	fi
+
+	if [ ! -e "$joinedFile_maflinked_ncds" ]; then
+		"$ANALYSIS_DIR/maf-cut-cds-uglier.py" \
+			"$org1GFF" \
+			"$joinedFile_maflinked" >"$joinedFile_maflinked_ncds"
+	else
+		echo "$joinedFile_maflinked_ncds already exists"
+	fi
 
 	# Generate all TSV files including ncds files
 	bash "$LAST_DIR/generate_tsv_files.sh" \

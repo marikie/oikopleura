@@ -1,7 +1,7 @@
 # Directory paths
 paths:
   # Change paths to the paths of your last directory and genomes
-  base_genomes: "/home/mrk/sbst/genomes"
+  base_genomes: "/home/mrk/sbst/genomes/test"
 
 # Configuration for genome download and processing
 settings:
