@@ -4,11 +4,7 @@
 generate_graph() {
     local input_file=$1
     local script=$2
-
     local output_log="${input_file%.*}.out"
-    if [ "$output_log" = "$input_file" ]; then
-        output_log="${input_file}.out"
-    fi
 
     echo "time Rscript $script $input_file > $output_log"
     time Rscript "$script" "$input_file" > "$output_log"
@@ -52,13 +48,15 @@ echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv"
 time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv"
 
 # Trinucleotide substitutions graphs (of ncds)
-echo "---making graphs of the trinucleotide substitutions (of ncds)"
-generate_graph "$org2tsv_ncds" "$r_scripts_path/sbmut.R"
-generate_graph "$org3tsv_ncds" "$r_scripts_path/sbmut.R"
-echo "time Rscript $r_scripts_path/logRatioPlot.R $org2tsv_ncds"
-time Rscript "$r_scripts_path/logRatioPlot.R" "$org2tsv_ncds"
-echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv_ncds"
-time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv_ncds"
+if [ -e "$org2tsv_ncds" ] && [ -e "$org3tsv_ncds" ]; then
+    echo "---making graphs of the trinucleotide substitutions (of ncds)"
+    generate_graph "$org2tsv_ncds" "$r_scripts_path/sbmut.R"
+    generate_graph "$org3tsv_ncds" "$r_scripts_path/sbmut.R"
+    echo "time Rscript $r_scripts_path/logRatioPlot.R $org2tsv_ncds"
+    time Rscript "$r_scripts_path/logRatioPlot.R" "$org2tsv_ncds"
+    echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv_ncds"
+    time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv_ncds"
+fi
 
 # Trinucleotide substitutions graphs (with maf-linked)
 echo "---making graphs of the trinucleotide substitutions (with maf-linked)"
@@ -70,13 +68,15 @@ echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv_maflinked"
 time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv_maflinked"
 
 # Trinucleotide substitutions graphs (of ncds and maf-linked)
-echo "---making graphs of the trinucleotide substitutions (of ncds and maf-linked)"
-generate_graph "$org2tsv_maflinked_ncds" "$r_scripts_path/sbmut.R"
-generate_graph "$org3tsv_maflinked_ncds" "$r_scripts_path/sbmut.R"
-echo "time Rscript $r_scripts_path/logRatioPlot.R $org2tsv_maflinked_ncds"
-time Rscript "$r_scripts_path/logRatioPlot.R" "$org2tsv_maflinked_ncds"
-echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv_maflinked_ncds"
-time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv_maflinked_ncds"
+if [ -e "$org2tsv_maflinked_ncds" ] && [ -e "$org3tsv_maflinked_ncds" ]; then
+    echo "---making graphs of the trinucleotide substitutions (of maf-linked_ncds)"
+    generate_graph "$org2tsv_maflinked_ncds" "$r_scripts_path/sbmut.R"
+    generate_graph "$org3tsv_maflinked_ncds" "$r_scripts_path/sbmut.R"
+    echo "time Rscript $r_scripts_path/logRatioPlot.R $org2tsv_maflinked_ncds"
+    time Rscript "$r_scripts_path/logRatioPlot.R" "$org2tsv_maflinked_ncds"
+    echo "time Rscript $r_scripts_path/logRatioPlot.R $org3tsv_maflinked_ncds"
+    time Rscript "$r_scripts_path/logRatioPlot.R" "$org3tsv_maflinked_ncds"
+fi
 
 # Dinucleotide substitutions graphs
 echo "---making graphs of the dinucleotide substitutions"
@@ -84,9 +84,11 @@ time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv"
 time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv"
 
 # Dinucleotide substitutions graphs (of ncds)
-echo "---making graphs of the dinucleotide substitutions (of ncds)"
-time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv_ncds"
-time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv_ncds"
+if [ -e "$org2_dinuc_tsv_ncds" ] && [ -e "$org3_dinuc_tsv_ncds" ]; then
+    echo "---making graphs of the dinucleotide substitutions (of ncds)"
+    time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv_ncds"
+    time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv_ncds"
+fi
 
 # Dinucleotide substitutions graphs (with maf-linked)
 echo "---making graphs of the dinucleotide substitutions (with maf-linked)"
@@ -94,9 +96,11 @@ time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv_maflinked"
 time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv_maflinked"
 
 # Dinucleotide substitutions graphs (of ncds and maf-linked)
-echo "---making graphs of the dinucleotide substitutions (of ncds and maf-linked)"
-time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv_maflinked_ncds"
-time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv_maflinked_ncds"
+if [ -e "$org2_dinuc_tsv_maflinked_ncds" ] && [ -e "$org3_dinuc_tsv_maflinked_ncds" ]; then
+    echo "---making graphs of the dinucleotide substitutions (of ncds and maf-linked)"
+    time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org2_dinuc_tsv_maflinked_ncds"
+    time Rscript "$r_scripts_path/dinucleotide-plot.R" "$org3_dinuc_tsv_maflinked_ncds"
+fi
 
 # Trinucleotide substitutions graphs (with error probability)
 # echo "---making graphs of the trinucleotide substitutions (with error probability)"
