@@ -1,4 +1,3 @@
-# Directory paths
 paths:
   # Change paths to the paths of your last directory and genomes
   base_genomes: "/home/mrk/sbst/genomes/test"
@@ -49,3 +48,6 @@ errors:
     - org1 full name
     - org2 full name
     - org3 full name
+
+    Optional flags:
+    - --out-dir /path/to/output (override downstream run directory)
