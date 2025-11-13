@@ -14,7 +14,7 @@ generate_plots <- function(tsv_path) {
   graph_path_mean <- paste(path_without_extension, "_logRatio.pdf", sep = "")
   data <- add_logRatio(data)
   # create_pdf(graph_path_exp, data, value_col = "logRatio_exp")
-  create_pdf(graph_path_mean, data, value_col = "logRatio")
+  create_pdf(graph_path_mean, data, value_col = "logRatio_mean")
 }
 
 create_pdf <- function(graph_path, data, value_col) {
