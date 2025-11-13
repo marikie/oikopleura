@@ -436,3 +436,5 @@ bash "$LAST_DIR/generate_graphs.sh" \
 # else
 #     echo "Warning: collect_for_pca.sh not found or not executable at $collect_pca_script" >&2
 # fi
+
+echo "[[ This is the end of the pipeline ]]"
