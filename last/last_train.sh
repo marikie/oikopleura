@@ -14,6 +14,7 @@ org3ShortName=$5
 
 dbName="${org2ShortName}db_${DATE}"
 trainFile="${org2ShortName}2${org3ShortName}_${DATE}.train"
+threadNum=2
 
 # lastdb
 echo "---lastdb"
@@ -21,13 +22,13 @@ if [ ! -d $dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName
-	echo "time lastdb -P8 -c -uRY4 $dbName $org2FASTA"
-	time lastdb -P8 -c -uRY4 $dbName $org2FASTA
+	echo "time lastdb -P${threadNum} -c -uRY4 $dbName $org2FASTA"
+	time lastdb -P${threadNum} -c -uRY4 $dbName $org2FASTA
 	cd ..
 else
 	echo "$dbName already exists"
 fi
-# -P8: makes it faster by using 8 threads (This has no effect on the results.)
+# -P4: makes it faster by using 4 threads (This has no effect on the results.)
 # -c: Soft-mask lowercase letters.  This means that, when we compare
 #     these sequences to some other sequences using lastal, lowercase
 #     letters will be excluded from initial matches.  This will apply
@@ -37,8 +38,8 @@ fi
 # last-train
 echo "--last-train"
 if [ ! -e $trainFile ]; then
-	echo "time last-train -P8 --revsym -C2 $dbName/$dbName $org3FASTA >$trainFile"
-	time last-train -P8 --revsym -C2 $dbName/$dbName $org3FASTA >$trainFile
+	echo "time last-train -P${threadNum} --revsym -C2 $dbName/$dbName $org3FASTA >$trainFile"
+	time last-train -P${threadNum} --revsym -C2 $dbName/$dbName $org3FASTA >$trainFile
 else
 	echo "$trainFile already exists"
 fi

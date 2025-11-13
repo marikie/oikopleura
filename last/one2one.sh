@@ -10,20 +10,20 @@ m2omaf=$6
 o2omaf=$7
 o2omaf_maflinked=$8
 
-
+threadNum=2
 # lastdb
 echo "---lastdb"
 if [ ! -d $dbName ]; then
 	echo "making lastdb"
 	mkdir $dbName
 	cd $dbName
-	echo "time lastdb -P8 -c -uRY4 $dbName $org1FASTA"
-	time lastdb -P8 -c -uRY4 $dbName $org1FASTA
+	echo "time lastdb -P${threadNum} -c -uRY4 $dbName $org1FASTA"
+	time lastdb -P${threadNum} -c -uRY4 $dbName $org1FASTA
 	cd ..
 else
 	echo "$dbName already exists"
 fi
-# -P8: makes it faster by using 8 threads (This has no effect on the results.)
+# -P4: makes it faster by using 4 threads (This has no effect on the results.)
 # -c: Soft-mask lowercase letters.  This means that, when we compare
 #     these sequences to some other sequences using lastal, lowercase
 #     letters will be excluded from initial matches.  This will apply
@@ -33,8 +33,8 @@ fi
 # last-train
 echo "--last-train"
 if [ ! -e $trainFile ]; then
-	echo "time last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile"
-	time last-train -P8 --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile
+	echo "time last-train -P${threadNum} --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile"
+	time last-train -P${threadNum} --revsym -C2 $dbName/$dbName $org2FASTA >$trainFile
 else
 	echo "$trainFile already exists"
 fi
@@ -46,8 +46,8 @@ fi
 # lastal
 echo "---lastal"
 if [ ! -e $m2omaf ]; then
-	echo "time lastal -P8 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf"
-	time lastal -P8 -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
+	echo "time lastal -P${threadNum} -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf"
+	time lastal -P${threadNum} -H1 -C2 --split-f=MAF+ -p $trainFile $dbName/$dbName $org2FASTA >$m2omaf
 else
 	echo "$m2omaf already exists"
 fi
