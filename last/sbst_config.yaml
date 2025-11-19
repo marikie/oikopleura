@@ -1,7 +1,7 @@
 # Directory paths
 paths:
   # Change the paths of your directories and the one to store results
-  out_dir: "/home/mrk/sbst/data"
+  out_dir: "/path/to/outputs"
   # Relative values resolve from out_dir; override with absolute path if needed
   pca_analysis: "pca_analysis"
   # Script locations are resolved dynamically by the entrypoint scripts.
