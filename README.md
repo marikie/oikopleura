@@ -69,7 +69,7 @@ paths:
 Run the following script:
 
 ```text
-./trisbst_3spc_fromDwl.sh <today's> <org1 accession ID> <org2 accession ID> <org3 accession ID> [--out-dir /absolute/path/to/outputs]
+./trisbst_3spc_fromDwl.sh <today's date> <org1 accession ID> <org2 accession ID> <org3 accession ID> [--out-dir /absolute/path/to/outputs]
 ```
 
 ※ The org1 should be the outgroup among the three genomes.  
