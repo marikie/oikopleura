@@ -245,7 +245,7 @@ org3_maflinked_errprb_out_oriCount=$(get_config '.patterns.graph_maflinked_errpr
 
 if [ ! -d "$outDirPath" ]; then
 	echo "---making $outDirPath"
-	mkdir "$outDirPath"
+	mkdir -p "$outDirPath"
 fi
 cd "$outDirPath"
 if [ ! -d "$DATE" ]; then

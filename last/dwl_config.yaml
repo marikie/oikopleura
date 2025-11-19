@@ -1,6 +1,6 @@
 paths:
-  # Change paths to the paths of your last directory and genomes
-  base_genomes: "/path/to/genomes"
+  # Change paths to the paths of your directory to store downloaded genomes
+  base_genomes: "/absolute/path/to/genomes"
 
 # Configuration for genome download and processing
 settings:

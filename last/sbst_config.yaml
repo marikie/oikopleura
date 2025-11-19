@@ -1,10 +1,6 @@
-# Directory paths
 paths:
-  # Change the paths of your directories and the one to store results
-  out_dir: "/path/to/outputs"
-  # Relative values resolve from out_dir; override with absolute path if needed
-  pca_analysis: "pca_analysis"
-  # Script locations are resolved dynamically by the entrypoint scripts.
+  # Change the path to the directory to store outputs
+  out_dir: "/absolute/path/to/outputs"
 
 # Script settings
 settings:
@@ -24,14 +20,11 @@ messages:
 errors:
   arg_count: "You need {arg_num} arguments"
   usage: |
-    You'll get one-to-one alignments of org1-org2 and org1-org3.
-    The top genome of each alignment .maf file will be org1. org1 should be in the outgroup.
-    - today's date
-    - path to the org1 reference fasta file << outgroup >>
-    - path to the org2 reference fasta file
-    - path to the org3 reference fasta file
-    - path to the org1 reference gff file (if there is no gff file, set it to NO_GFF_FILE)
-
+    Usage: ./trisbst_3spc.sh <date> <org1.fa> <org2.fa> <org3.fa> <org1.gff|NO_GFF_FILE> [--out-dir /absolute/path/to/outputs]
+    - org1 should be the outgroup.
+    - All FASTA file paths must be absolute paths.
+    - If org1 annotation (GFF file) is unavailable, enter "NO_GFF_FILE"; otherwise, provide the GFF file path.
+    - The `--out-dir` flag is optional. If not provided, the outputs will be stored in the directory specified in `scripts/last/sbst_config.yaml`.
 # Options
 options:
   checkInnerGroupIdt:

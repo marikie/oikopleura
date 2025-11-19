@@ -2,84 +2,65 @@
 
 ## Introduction
 
-We aim to observe single-base substitution trends across diverse organisms, taking into account the influence of neighboring bases. To do this, we obtain reference genomes for three closely related species (_Species A_, _Species B_, and _Species C_) from NCBI ([https://www.ncbi.nlm.nih.gov/datasets](https://www.ncbi.nlm.nih.gov/datasets)), designating _Species A_ as the outgroup in their phylogenetic relationship.
+We aim to observe single-base and double-base substitution trends across diverse organisms, taking into account the influence of neighboring bases. 
 
-Pairwise alignments will be performed between _Species A_ and _Species B_, and between _Species A_ and _Species C_. These two sets of alignments will then be merged into a multiple sequence alignment. We will examine all trinucleotides and infer substitutions in _Species B_ and _Species C_ based on the principle of parsimony.
+Our pipeline’s input should be NCBI genome accession IDs of three closely related species of your choice (we
+suggest >80% identity of orthologous DNA): species A as an outgroup, species B, and species C. It downloads
+the corresponding genomic FASTA files and, when available, gene annotations.
 
-We also applied two filtering strategies. The first omits isolated alignments using the maf-linked method ([https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst](https://gitlab.com/mcfrith/last/-/blob/main/doc/maf-linked.rst)). The second filters out aligned columns with an error probability (i.e., the probability that a base should be aligned to a different part of the genome) greater than 0.01, as described in last-split ([https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst](https://gitlab.com/mcfrith/last/-/blob/main/doc/last-split.rst)).
+Pairwise alignments will be performed between _Species A_ and _Species B_, and between _Species A_ and _Species C_. These two sets of alignments will then be merged into a multiple sequence alignment. Our pipeline infers substitutions in _Species B_ and _Species C_ based on the principle of parsimony, and outputs visualizations.
 
 ## How to run the pipeline
 
-### 1. Install Dependencies
+### 1. Prerequisites
 
-#### Install NCBI Datasets command-line tools
+Install the following command-line tools before running any scripts:
+- #### NCBI Datasets command-line tools [(https://www.ncbi.nlm.nih.gov/datasets/docs/v2/command-line-tools/download-and-install/)](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/command-line-tools/download-and-install/)
 
-[https://www.ncbi.nlm.nih.gov/datasets/docs/v2/command-line-tools/download-and-install/](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/command-line-tools/download-and-install/)
+- #### LAST [(https://gitlab.com/mcfrith/last)](https://gitlab.com/mcfrith/last)
 
-#### Install bedtools
+- #### yq [(https://github.com/mikefarah/yq)](https://github.com/mikefarah/yq)
 
-[https://bedtools.readthedocs.io/en/latest/content/installation.html](https://bedtools.readthedocs.io/en/latest/content/installation.html)
+- #### jq [(https://jqlang.org)](https://jqlang.org)
 
-#### Install LAST
+- #### R (≥4.0) with the following libraries:
+    * stringr
+    * RColorBrewer
+    * showtext
+    * jsonlite
+    * curl
+    * dplyr
+    * ggplot2
+    * rlang
+    * sysfonts
 
-[https://gitlab.com/mcfrith/last](https://gitlab.com/mcfrith/last)
-
-#### Install yq
-
-[https://github.com/mikefarah/yq](https://github.com/mikefarah/yq)
-
-#### Install R libraries
-
-* stringr
-* RColorBrewer
-* showtext
-* jsonlite
-* curl
-* dplyr
-* ggplot2
-* rlang
-* sysfonts
+- #### Python3 (3.8 or later) with standard library modules
 
 ### 2. Git Clone the Repository
 
 ```bash
-git clone https://mrknkgw@bitbucket.org/mrknkgw/oikopleura.git scripts
+git clone https://github.com/marikie/EvoSubster.git scripts
 ```
 
 ### 3. Run The Pipeline
 
-#### 1. Make directories
-
-```bash
-mkdir genomes # to store genome data downloaded from NCBI
-mkdir results # to store results (alignment.maf files, .tsv files, pdf files, etc.)
-```
-
-#### 2. Set variables in configuration files
+#### 1. Set variables in configuration files
 
 * In `scripts/last/dwl_config.yaml`, set the absolute paths:
 
 ```yaml
-# Directory paths
 paths:
-  base_genomes: "/absolute/path/to/your/directory/genomes" # Change this to your desired genome storage path you made in step 1
-  scripts:
-    last: "/absolute/path/to/your/scripts/last" # Change this to your last directory under the scripts directory you cloned
+  # Change the path to the directory to store downloaded genomes
+  base_genomes: "/absolute/path/to/genomes"
 ```
 
-* In `scripts/last/sbst_config.yaml`, set the absolute paths:
+* In `scripts/last/sbst_config.yaml`, set the absolute paths. (This can be overridden with the `--out-dir` flag, later. See below for more details.):
 
 ```yaml
-# Directory paths
 paths:
-  # Change the paths of your directories and the one to store results
-  out_dir: "/absolute/path/to/your/directory/results" # Change this to your desired output path you made in step 1
-  scripts:
-    last: "/absolute/path/to/your/scripts/last" # Change this to your last directory under the scripts directory you cloned
-    analysis: "/absolute/path/to/your/scripts/analysis" # Change this to your analysis directory under the scripts directory you cloned
-    r: "/absolute/path/to/your/scripts/analysis/R" # Change this to your R directory under the scripts/analysis directory you cloned
+  # Change the path to the directory to store outputs
+  out_dir: "/absolute/path/to/outputs"
 ```
-
 
 #### 3. Run the script under the `scripts/last` directory  
 
@@ -87,20 +68,20 @@ paths:
 
 Run the following script:
 
-```bash
-./trisbst_3spc_fromDwl.sh <today's date> <org1 accession ID> <org2 accession ID> <org3 accession ID> <org1 full name> <org2 full name> <org3 full name>
+```text
+./trisbst_3spc_fromDwl.sh <today's> <org1 accession ID> <org2 accession ID> <org3 accession ID> [--out-dir /absolute/path/to/outputs]
 ```
 
 ※ The org1 should be the outgroup among the three genomes.  
 ※ The accession ID is the NCBI accession ID. (e.g. GCA_023078555.1)  
-※ The full names should be the genus in small letters followed by the species name starting with a capital letter followed by small letters (e.g. ulvaProlifera)  
+※ The `--out-dir` flag is optional. If not provided, the outputs will be stored in the directory specified in `scripts/last/sbst_config.yaml`.
 
 #### If the genomes are already downloaded:
 
-Run:
+You can also run the pipeline directly from the downloaded genomes by running the following script:
 
-```bash
-./trisbst_3spc.sh <today's date> <path to the org1 reference fasta file> <path to the org2 reference fasta file> <path to the org3 reference fasta file>
+```text
+./trisbst_3spc.sh <today's date> <path to the org1 reference fasta file> <path to the org2 reference fasta file> <path to the org3 reference fasta file> <path to the org1 reference gff file|NO_GFF_FILE> [--out-dir /absolute/path/to/outputs]
 ```
 
-※ The parent directory of the reference fasta files should be the same as the full names of the species. (e.g. /path/to/your/directory/ulvaProlifera/GCF_023078555.1_Upr_v1.0_genomic.fna)
+※ If org1 annotation (GFF file) is unavailable, enter "NO_GFF_FILE"; otherwise, provide the GFF file path.
